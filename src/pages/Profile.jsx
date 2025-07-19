@@ -12,7 +12,7 @@ const Profile = () => {
     const [invoiceOrder, setInvoiceOrder] = useState(null); // Track which invoice to show
     const navigate = useNavigate();
 
-    const API = process.env.api_url;
+    // const API = process.env.api_url;
     // const API = import.meta.env.VITE_API_URL;
 
 
@@ -26,7 +26,7 @@ const Profile = () => {
         setUser(userObj);
 
         axios
-            .get(`${API}/api/users/${userObj._id}`)
+            .get(`/api/users/${userObj._id}`)
             .then((res) => {
                 setUser(res.data);
                 setAddress(res.data.address || '');
@@ -51,11 +51,11 @@ const Profile = () => {
             },
         ];
         setOrders(fakeOrders);
-    }, [API, navigate]);
+    }, [ navigate]);
 
     const handleSave = async () => {
         try {
-            const res = await axios.put(`${API}/api/users/${user._id}/address`, { address });
+            const res = await axios.put(`/api/users/${user._id}/address`, { address });
             setUser(res.data);
             localStorage.setItem('user', JSON.stringify(res.data));
             setEditing(false);

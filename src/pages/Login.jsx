@@ -13,7 +13,7 @@ const LoginPage = () => {
 
   // const API = import.meta.env.VITE_API_URL;
 
-const API = process.env.api_url;
+// const API = process.env.api_url;
 
   const handleChange = e => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -22,7 +22,7 @@ const API = process.env.api_url;
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${API}/api/users/login`, formData);
+      const res = await axios.post(`/api/users/login`, formData);
       localStorage.setItem('user', JSON.stringify(res.data.user));
 
       toast.success(`Welcome back, ${res.data.user.name}!`, {

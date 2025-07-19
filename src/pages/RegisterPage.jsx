@@ -45,8 +45,8 @@ const RegisterPage = () => {
   const [error, setError] = useState('');
   const [passwordStrength, setPasswordStrength] = useState('');
 
-//   const API = process.env.REACT_APP_API_URL;
-  const API = process.env.api_url;
+  //   const API = process.env.REACT_APP_API_URL;
+  // const API = process.env.api_url;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -80,7 +80,7 @@ const RegisterPage = () => {
     }
 
     try {
-      const res = await axios.post(`${API}/api/users/register`, formData);
+      const res = await axios.post(`/api/users/register`, formData);
       console.log(`Result status and code of post request is: ${res.statusText}, ${res.status}`);
       toast.success('Registration successful!');
       navigate('/login');
@@ -131,9 +131,10 @@ const RegisterPage = () => {
             required
           />
           {formData.password && (
-            <p style={{ fontWeight: 'bold', color: 
-              passwordStrength === 'Strong' ? 'green' :
-              passwordStrength === 'Medium' ? 'orange' : 'red' 
+            <p style={{
+              fontWeight: 'bold', color:
+                passwordStrength === 'Strong' ? 'green' :
+                  passwordStrength === 'Medium' ? 'orange' : 'red'
             }}>
               Password strength: {passwordStrength}
             </p>
