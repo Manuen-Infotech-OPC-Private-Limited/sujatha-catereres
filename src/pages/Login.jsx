@@ -11,9 +11,9 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: '', password: '' });
 
-  const API = import.meta.env.VITE_API_URL;
+  // const API = import.meta.env.VITE_API_URL;
 
-// const API = process.env.REACT_APP_API_URL;
+const API = process.env.api_url;
 
   const handleChange = e => {
     setFormData({ ...formData, [e.target.id]: e.target.value });

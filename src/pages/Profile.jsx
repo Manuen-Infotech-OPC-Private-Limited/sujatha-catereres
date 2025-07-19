@@ -12,8 +12,8 @@ const Profile = () => {
     const [invoiceOrder, setInvoiceOrder] = useState(null); // Track which invoice to show
     const navigate = useNavigate();
 
-    // const API = process.env.REACT_APP_API_URL;
-    const API = import.meta.env.VITE_API_URL;
+    const API = process.env.api_url;
+    // const API = import.meta.env.VITE_API_URL;
 
 
     useEffect(() => {
