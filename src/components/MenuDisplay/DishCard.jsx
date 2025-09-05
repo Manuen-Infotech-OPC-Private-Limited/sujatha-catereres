@@ -8,7 +8,7 @@ const DishCard = ({ name, packages, selectedPackage, image }) => {
     : null;
 
   return (
-    <div className={`dish-card ${!isAvailable ? 'restricted' : ''}`}>
+    <div className={`dish-card ${!isAvailable ? 'restricted' : ''}` }>
       {image && (
         <img
           src={image}

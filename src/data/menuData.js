@@ -118,6 +118,7 @@ export const MENU = {
       {
         "name": "Masala Idly",
         "packages": [
+          "Basic",
           "Classic",
           "Premium",
           "Luxury"
@@ -139,6 +140,7 @@ export const MENU = {
       {
         "name": "Masala Vada",
         "packages": [
+          "Basic",
           "Classic",
           "Premium",
           "Luxury"
@@ -150,7 +152,7 @@ export const MENU = {
       {
         "name": "Set Dosa",
         "packages": [
-          "Basic",
+          // "Basic",
           "Classic",
           "Premium",
           "Luxury"
@@ -180,7 +182,7 @@ export const MENU = {
       {
         "name": "Plain Pongal",
         "packages": [
-          "Basic",
+          // "Basic",
           "Classic",
           "Premium",
           "Luxury"
@@ -211,6 +213,7 @@ export const MENU = {
       {
         "name": "Godhuma Ravva Upma",
         "packages": [
+          "Basic",
           "Classic",
           "Premium",
           "Luxury"
@@ -220,6 +223,7 @@ export const MENU = {
       {
         "name": "Tomato Bath",
         "packages": [
+          "Basic",
           "Classic",
           "Premium",
           "Luxury"
@@ -229,19 +233,30 @@ export const MENU = {
     ],
     "complimentary": [
       {
-        "name": "Chutney (2 Types)",
+        "name": "Allam Chutney",
         "packages": [
           "Basic",
           "Classic",
           "Premium",
           "Luxury"
         ],
-        "image": null
+        "image": null,
+        "autoInclude": true,
+      },
+      {
+        "name": "Coconut Chutney",
+        "packages": [
+          "Basic",
+          "Classic",
+          "Premium",
+          "Luxury"
+        ],
+        "autoInclude": true,
+        "image": null,
       },
       {
         "name": "Sambar",
         "packages": [
-          "Basic",
           "Classic",
           "Premium",
           "Luxury"
@@ -249,14 +264,26 @@ export const MENU = {
         "image": sambar
       },
       {
-        "name": "Coffee or Tea",
+        "name": "Coffee",
         "packages": [
           "Basic",
           "Classic",
           "Premium",
           "Luxury"
         ],
-        "image": null
+        "image": null,
+        "selectableGroup": "drink",
+      },
+      {
+        "name": "Tea",
+        "packages": [
+          "Basic",
+          "Classic",
+          "Premium",
+          "Luxury"
+        ],
+        "image": null,
+        "selectableGroup": "drink",
       },
       {
         "name": "Paper Plates",
@@ -644,7 +671,6 @@ export const MENU = {
       {
         "name": "Mini Parotta",
         "packages": [
-          "Classic",
           "Premium",
           "Luxury"
         ],
@@ -1138,18 +1164,41 @@ export const MENU = {
         "image": gonguraPhoolMakani
       }
     ],
-    gravyCurry: [
+    // gravyCurry: [
+    //   {
+    //     "name": "Gravy Curry",
+    //     "packages": [
+    //       "Basic",
+    //       "Classic",
+    //       "Premium",
+    //       "Luxury"
+    //     ],
+    //     "image": gravyCurry
+    //   }
+    // ],
+    pappu: [
       {
-        "name": "Gravy Curry",
-        "packages": [
-          "Basic",
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Tomato Pappu",
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
+        "image": gravyCurry
+      },
+      {
+        "name": "Aakura Pappu",
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
+        "image": gravyCurry
+      },
+      {
+        "name": "Mango Pappu",
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
+        "image": gravyCurry
+      },
+      {
+        "name": "Dosakaya Pappu",
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
         "image": gravyCurry
       }
     ],
+
     "iceCreams": [
       {
         "name": "Vanilla",

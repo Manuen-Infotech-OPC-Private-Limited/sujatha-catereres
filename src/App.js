@@ -11,26 +11,35 @@ import ContactUs from './pages/ContacUs';
 import LoginPage from './pages/Login';
 import RegisterPage from './pages/RegisterPage';
 import Profile from './pages/Profile';
-
+import OrderPage from './pages/OrderPage';
+import { CartProvider } from './utils/cartContext';
+import ReviewOrder from './pages/ReviewOrder';
+import InvoicePage from "./pages/InvoicePage";
 
 function App() {
   return (
 
-    <Router>
-      <div className="App">
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<ContactUs />} />
-          <Route path="/menu" element={<MenuPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/profile" element={<Profile/>} />
-        </Routes>
-        <ToastContainer position="top-right" autoClose={3000} />
-      </div>
-    </Router>
+    <CartProvider>
+      <Router>
+        <div className="App">
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<ContactUs />} />
+            <Route path="/menu" element={<MenuPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/order" element={<OrderPage />} />
+            <Route path="/review-order" element={<ReviewOrder />} />
+            <Route path="/invoice/:orderId" element={<InvoicePage />} />
+
+          </Routes>
+          <ToastContainer position="top-right" autoClose={3000} />
+        </div>
+      </Router>
+    </CartProvider>
   );
 }
 

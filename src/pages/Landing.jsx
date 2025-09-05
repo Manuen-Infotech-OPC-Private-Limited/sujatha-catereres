@@ -4,62 +4,119 @@ import './Landing.css';
 import Header from '../components/Header';
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
 const Home = () => {
   const navigate = useNavigate();
   const [visitCount, setVisitCount] = useState(null);
   const [user, setUser] = useState(null);
+  const [sessionExpired, setSessionExpired] = useState(false);
+
   const [showCookiePrompt, setShowCookiePrompt] = useState(false);
 
-  useEffect(() => {
-    // Load user from localStorage
-    const storedUser = JSON.parse(localStorage.getItem('user'));
-    if (storedUser) {
-      setUser(storedUser);
-    }
+  const API = process.env.REACT_APP_API_URL;
+  // console.log(`API url is: ${API}`);
 
-    // Handle cookie permission
-    const consent = Cookies.get('cookie_consent');
+  useEffect(() => {
     const alreadyVisited = Cookies.get('already_visited');
+    if (!alreadyVisited) {
+      Cookies.set('already_visited', 'true', { expires: 365 });
+    }
+    // Fetch logged-in user info if token cookie is present
+    axios
+      .get(`${API}/api/users/me`, { withCredentials: true })
+      .then((res) => {
+        // console.log("Full response: ", res);
+        setUser(res.data.user);
+        setSessionExpired(false);
+        // Mark that user was logged in at least once
+        Cookies.set('was_logged_in_once', 'true', { expires: 365 });
+      })
+      .catch((err) => {
+        const wasLoggedInOnce = Cookies.get('was_logged_in_once');
+
+        if (err.response?.status === 401) {
+          setUser(null);
+
+          // Show session expired only if they visited and logged in at least once
+          if (alreadyVisited === 'true' && wasLoggedInOnce === 'true') {
+            setSessionExpired(true);
+            // Auto-hide session expired box after 10 seconds
+            setTimeout(() => {
+              setSessionExpired(false);
+            }, 10000); // 10 seconds
+          }
+
+          Cookies.remove('is_authenticated'); // Optional cleanup
+        } else {
+          console.error("Error fetching user:", err);
+        }
+      });
+
+
+    const consent = Cookies.get('cookie_consent');
 
     if (!consent) {
-      setShowCookiePrompt(true); // Ask for permission
-    } else {
+      // No consent cookie at all — show prompt
+      setShowCookiePrompt(true);
+    } else if (consent === 'true') {
+      // Consent given — do visit counting
       if (!alreadyVisited) {
-        fetch('/api/visit', { method: 'POST' }) // Count visit once
-          .then(res => res.json())
-          .then(data => {
-            setVisitCount(data.count);
+        axios
+          .get(`${API}/api/visit`, { withCredentials: true }) // Ensure credentials are included for cookie
+          .then((res) => {
+            setVisitCount(res.data.count);
             Cookies.set('already_visited', 'true', { expires: 7 });
           })
-          .catch(err => console.error('Failed to increment visit', err));
+          .catch((err) => console.error('Failed to fetch visit count:', err));
       } else {
-        fetch('/api/visit')
-          .then(res => res.json())
-          .then(data => setVisitCount(data.count))
-          .catch(err => console.error('Failed to fetch visit count', err));
+        axios
+          .get(`${API}/api/visit`, { withCredentials: true }) // Ensure credentials are included for cookie
+          .then((res) => {
+            setVisitCount(res.data.count);
+          })
+          .catch((err) => console.error('Failed to fetch visit count:', err));
       }
+    } else if (consent === 'customize') {
+      // User chose to customize later, so no visit counting
+      // but fetch count just to display
+      axios
+        .get(`${API}/api/visit`, { withCredentials: true }) // Ensure credentials are included for cookie
+        .then((res) => {
+          setVisitCount(res.data.count);
+        })
+        .catch((err) => console.error('Failed to fetch visit count:', err));
     }
-  }, []);
+    // If consent has any other value, treat as no consent (optional)
+  }, [API, navigate]);
 
   const handleViewMenu = () => {
     navigate('/menu');
   };
 
-  const acceptCookies = () => {
+  const acceptAllCookies = () => {
     Cookies.set('cookie_consent', 'true', { expires: 365 });
     setShowCookiePrompt(false);
-    window.location.reload(); // Trigger count increment
+    window.location.reload(); // Reload to trigger visit counting
   };
 
-  const rejectCookies = () => {
-    toast.warn('You must accept cookies for full functionality.');
-    setShowCookiePrompt(false); // Hide for now, will show again on next visit
+  const customizeLater = () => {
+    // Set consent cookie to 'customize' to remember choice
+    Cookies.set('cookie_consent', 'customize', { expires: 365 });
+    toast.info('You can customize your cookie preferences later.');
+    setShowCookiePrompt(false);
+    window.location.reload();
   };
 
   return (
     <div className="home">
       <Header />
+      {sessionExpired && (
+        <div className="session-expired-box">
+          <p>Your session has expired. Please log in again to continue.</p>
+          <button onClick={() => navigate('/login')}>Go to Login</button>
+        </div>
+      )}
 
       <section className="home-content">
         {user && <h2 className="welcome-message">Welcome, {user.name} 👋</h2>}
@@ -79,7 +136,7 @@ const Home = () => {
 
       <footer className="visit-counter">
         {visitCount !== null ? (
-          <p>This page has been visited <strong>{visitCount}</strong> times</p>
+          <p>Look who’s hungry! We’ve had <strong>{visitCount}</strong> food-loving visitors.</p>
         ) : (
           <p>Loading visit count...</p>
         )}
@@ -88,10 +145,12 @@ const Home = () => {
       {/* Cookie consent prompt */}
       {showCookiePrompt && (
         <div className="cookie-box">
-          <p>This site uses cookies to enhance your experience. Do you accept?</p>
+          <p>
+            This site uses essential cookies by default. To improve your experience, do you accept all cookies?
+          </p>
           <div className="cookie-actions">
-            <button onClick={acceptCookies}>Accept</button>
-            <button onClick={rejectCookies}>Reject</button>
+            <button onClick={acceptAllCookies}>Accept All</button>
+            <button onClick={customizeLater}>Customize Later</button>
           </div>
         </div>
       )}

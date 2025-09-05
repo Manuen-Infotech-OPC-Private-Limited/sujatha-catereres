@@ -13,7 +13,7 @@ const LunchDinnerMenu = ({ menuData, selectedMealType, selectedPackage }) => {
             {category.replace(/([A-Z])/g, ' $1')}
           </h3>
           <div className="dish-card-container">
-            {dishes.map((dish) => (
+            {dishes.length === 0 ? (<p>No items available in this category</p>) : dishes.map((dish) => (
               <DishCard
                 key={dish.name}
                 name={dish.name}
