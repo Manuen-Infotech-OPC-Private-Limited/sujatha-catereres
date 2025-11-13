@@ -118,6 +118,7 @@ export const MENU = {
       {
         "name": "Masala Idly",
         "packages": [
+          "Basic",
           "Classic",
           "Premium",
           "Luxury"
@@ -139,6 +140,7 @@ export const MENU = {
       {
         "name": "Masala Vada",
         "packages": [
+          "Basic",
           "Classic",
           "Premium",
           "Luxury"
@@ -150,7 +152,7 @@ export const MENU = {
       {
         "name": "Set Dosa",
         "packages": [
-          "Basic",
+          // "Basic",
           "Classic",
           "Premium",
           "Luxury"
@@ -180,7 +182,7 @@ export const MENU = {
       {
         "name": "Plain Pongal",
         "packages": [
-          "Basic",
+          // "Basic",
           "Classic",
           "Premium",
           "Luxury"
@@ -211,6 +213,7 @@ export const MENU = {
       {
         "name": "Godhuma Ravva Upma",
         "packages": [
+          "Basic",
           "Classic",
           "Premium",
           "Luxury"
@@ -220,6 +223,7 @@ export const MENU = {
       {
         "name": "Tomato Bath",
         "packages": [
+          "Basic",
           "Classic",
           "Premium",
           "Luxury"
@@ -229,19 +233,30 @@ export const MENU = {
     ],
     "complimentary": [
       {
-        "name": "Chutney (2 Types)",
+        "name": "Allam Chutney",
         "packages": [
           "Basic",
           "Classic",
           "Premium",
           "Luxury"
         ],
-        "image": null
+        "image": null,
+        "autoInclude": true,
+      },
+      {
+        "name": "Coconut Chutney",
+        "packages": [
+          "Basic",
+          "Classic",
+          "Premium",
+          "Luxury"
+        ],
+        "autoInclude": true,
+        "image": null,
       },
       {
         "name": "Sambar",
         "packages": [
-          "Basic",
           "Classic",
           "Premium",
           "Luxury"
@@ -249,14 +264,26 @@ export const MENU = {
         "image": sambar
       },
       {
-        "name": "Coffee or Tea",
+        "name": "Coffee",
         "packages": [
           "Basic",
           "Classic",
           "Premium",
           "Luxury"
         ],
-        "image": null
+        "image": null,
+        "selectableGroup": "drink",
+      },
+      {
+        "name": "Tea",
+        "packages": [
+          "Basic",
+          "Classic",
+          "Premium",
+          "Luxury"
+        ],
+        "image": null,
+        "selectableGroup": "drink",
       },
       {
         "name": "Paper Plates",
@@ -303,892 +330,529 @@ export const MENU = {
   "lunchDinner": {
     "sweets": [
       {
-        "name": "Gulab Jamun",
-        "packages": [
-          "Basic",
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Gulab Jaamun",
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
         "image": gulabJamun
       },
       {
-        "name": "Bottle Gourd Halwa",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Sorakaya Halwa",
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": bottleGuardHalwa
       },
       {
-        "name": "Kala Jamun",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Kaala Jaamun",
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": kalaJamun
       },
       {
         "name": "Bread Halwa",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": breadHalwa
       },
       {
-        "name": "Sweet Pongal",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Chakrapongali",
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": sweetPongal
       },
       {
-        "name": "Seviyan Kheer",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Semiya Payasam",
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": semiyaUpma
       },
       {
-        "name": "Carrot & Bottle Gourd Halwa",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
-        "image": bottleGuardHalwa
-      },
-      {
-        "name": "Kaaju Barfi",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
-        "image": kaajuBarfi
-      },
-      {
-        "name": "Dry Fruit Halwa",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
-        "image": dryFruitsHalwa
-      },
-      {
-        "name": "Malpuri",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
-        "image": maalPuri
-      },
-      {
-        "name": "Puta Rekulu",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
-        "image": putaRekulu
-      },
-      {
         "name": "Jilebi",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": jilebi
       },
       {
         "name": "Bobbatlu",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": bobbatlu
       },
       {
+        "name": "Carrot & Sorakaya Halwa",
+        "packages": ["Premium", "Luxury"],
+        "image": bottleGuardHalwa
+      },
+      {
+        "name": "Kaaju Barfi",
+        "packages": ["Premium", "Luxury"],
+        "image": kaajuBarfi
+      },
+      {
+        "name": "Dry Fruit Halwa",
+        "packages": ["Premium", "Luxury"],
+        "image": dryFruitsHalwa
+      },
+      {
+        "name": "Maalpuri",
+        "packages": ["Premium", "Luxury"],
+        "image": maalPuri
+      },
+      {
+        "name": "Poota Rekulu",
+        "packages": ["Premium", "Luxury"],
+        "image": putaRekulu
+      },
+      {
         "name": "Malai Sandwich",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Premium", "Luxury"],
         "image": malaiSandwich
       },
       {
-        "name": "Mini SweetCuff",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Mini Sweet Puff",
+        "packages": ["Premium", "Luxury"],
         "image": miniSweetpuff
       },
       {
         "name": "Kaaju Roll",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Premium", "Luxury"],
         "image": kaajuRoll
       },
       {
         "name": "Pista Roll",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Premium", "Luxury"],
         "image": kaajuPistaRoll
       },
       {
-        "name": "Pineapple Kesari",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Anasa Pandu Kesari",
+        "packages": ["Premium", "Luxury"],
         "image": pineAppleKesari
       },
       {
-        "name": "Junnu (Milk Custard)",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
-        "image": junnu,
+        "name": "Junnu (Paalu Custard)",
+        "packages": ["Premium", "Luxury"],
+        "image": junnu
       },
       {
         "name": "Halwa Poori",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Premium", "Luxury"],
         "image": halwaPuri
       }
     ],
+
     "hotSnacks": [
       {
-        "name": "Veg Cutlet",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Vegetable Katlet",
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
         "image": vegCutlet
       },
       {
-        "name": "Paneer Cutlet",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
-        "image": paneerCutlet
-      },
-      {
-        "name": "Baingan Pakora",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Vankaya Pakodi",
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
         "image": vegPakoda
       },
       {
-        "name": "Aalu Bonda",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Aloo Bonda",
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
         "image": aluBonda
       },
       {
-        "name": "Corn Samosa/Roll",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
-        "image": cornSamosa
-      },
-      {
         "name": "Masala Vada",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
         "image": masalaVada
       },
       {
-        "name": "Mirchi Bajji",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Mirapakaya Bajji",
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
         "image": mirchiBajji
       },
       {
         "name": "Cut Bajji",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
         "image": cutBajjiBiryanii
       },
       {
         "name": "Mini Aloo Samosa",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
         "image": miniAluuSamosa
       },
       {
-        "name": "Veg Lollipop",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
-        "image": vegLallipop
-      },
-      {
-        "name": "Veg Shanghai Roll",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
-        "image": vegShangaiiRoll
-      },
-      {
-        "name": "Gaarey",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Gaarelu",
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
         "image": gaarey
       },
       {
-        "name": "Green and Stuffed Kabab",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
-        "image": hotGreenStuffedKabab
-      },
-      {
-        "name": "Veg Manchurian",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Vegetable Manchurian",
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
         "image": vegManchuriyan
       },
       {
         "name": "Gobi Manchurian",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
         "image": gobiManchuriyan
+      },
+      {
+        "name": "Paneer Katlet",
+        "packages": ["Premium", "Luxury"],
+        "image": paneerCutlet
+      },
+      {
+        "name": "Mokka Jonna Samosa / Roll",
+        "packages": ["Premium", "Luxury"],
+        "image": cornSamosa
+      },
+      {
+        "name": "Vegetable Lollipop",
+        "packages": ["Premium", "Luxury"],
+        "image": vegLallipop
+      },
+      {
+        "name": "Vegetable Shanghai Roll",
+        "packages": ["Premium", "Luxury"],
+        "image": vegShangaiiRoll
+      },
+      {
+        "name": "Pachhi Koora Stuffed Kabab",
+        "packages": ["Premium", "Luxury"],
+        "image": hotGreenStuffedKabab
       }
-    ],
+    ]
+    ,
     "indianBreads": [
       {
         "name": "Pulka",
-        "packages": [
-          "Basic",
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
         "image": pulkaa
       },
       {
         "name": "Rumaali Roti",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
         "image": rumaliRotii
       },
       {
+        "name": "Chapathi",
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
+        "image": chapathii
+      },
+      {
         "name": "Plain Kulcha",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Premium", "Luxury"],
         "image": plainKulchaa
       },
       {
         "name": "Masala Kulcha",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Premium", "Luxury"],
         "image": masalaDosa
       },
       {
-        "name": "Mini Parotta",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Mini Parota",
+        "packages": ["Premium", "Luxury"],
         "image": miniAluuSamosa
-      },
-      {
-        "name": "Chapathi",
-        "packages": [
-          "Basic",
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
-        "image": chapathii
       }
     ],
     "flavoredRice": [
       {
-        "name": "Jackfruit Biryani",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Pulihora Rice",
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
+        "image": mangoPulihora
+      },
+      {
+        "name": "Nimmakaya Pulihora",
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
+        "image": lemonPulihopra
+      },
+      {
+        "name": "Chintapandu Pulihora",
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
+        "image": tamarindPulihora
+      },
+      {
+        "name": "Tomota Rice",
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
+        "image": tomatoRice
+      },
+      {
+        "name": "Vegetable Fried Rice",
+        "packages": ["Classic", "Premium", "Luxury"],
+        "image": vegFriedRice
+      },
+      {
+        "name": "Vegetable Noodles",
+        "packages": ["Classic", "Premium", "Luxury"],
+        "image": noodles
+      },
+      {
+        "name": "Mamidikaya Pulihora",
+        "packages": ["Classic", "Premium", "Luxury"],
+        "image": mangoPulihora
+      },
+      {
+        "name": "Vegetable Biryani",
+        "packages": ["Classic", "Premium", "Luxury"],
+        "image": vegBiryani
+      },
+      {
+        "name": "Kobbari Rice",
+        "packages": ["Classic", "Premium", "Luxury"],
+        "image": podinaRice
+      },
+      {
+        "name": "Pudina Rice",
+        "packages": ["Classic", "Premium", "Luxury"],
+        "image": podinaRice
+      },
+      {
+        "name": "Panasapottu Biryani",
+        "packages": ["Premium", "Luxury"],
         "image": jeeraBiryanii
       },
       {
         "name": "Cut Bajji Biryani",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Premium", "Luxury"],
         "image": cutBajjiBiryanii
       },
       {
-        "name": "Veg Fried Rice",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
-        "image": vegFriedRice
-      },
-      {
-        "name": "Veg Noodles",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
-        "image": noodles
-      },
-      {
-        "name": "Pulihora Rice",
-        "packages": [
-          "Basic",
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
-        "image": mangoPulihora
-      },
-      {
-        "name": "Lemon Pulihora",
-        "packages": [
-          "Basic",
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
-        "image": lemonPulihopra
-      },
-      {
-        "name": "Tamarind Pulihora",
-        "packages": [
-          "Basic",
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
-        "image": tamarindPulihora
-      },
-      {
-        "name": "Mango Pulihora",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
-        "image": mangoPulihora
-      },
-      {
-        "name": "Tomato Rice",
-        "packages": [
-          "Basic",
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
-        "image": tomatoRice
-      },
-      {
-        "name": "Veg Biryani",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
-        "image": vegBiryani
-      },
-      {
-        "name": "Coconut Rice",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
-        "image": podinaRice
-      },
-      {
-        "name": "Mint Rice",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
-        "image": podinaRice
-      },
-      {
-        "name": "Jeera Biryani",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Jeelakarra Biryani",
+        "packages": ["Premium", "Luxury"],
         "image": jeeraBiryanii
       },
       {
-        "name": "UlavaCharu Biryani",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Ulava Chaaru Biryani",
+        "packages": ["Premium", "Luxury"],
         "image": ulavaChaaruBiryani
       },
       {
         "name": "Karivepaku Rice",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Premium", "Luxury"],
         "image": kariveyPakuRice
       }
     ],
     "northIndian": [
       {
+        "name": "Veg Curry",
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
+        "image": mixedVegCurry
+      },
+      {
         "name": "Paneer Butter Masala",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": paneerButterMasala
       },
       {
-        "name": "Methi Chaman Curry",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
-        "image": methiChamanCurry
-      },
-      {
         "name": "Palak Paneer",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": palakPaneer
       },
       {
         "name": "Capsicum Masala",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": capsicumMasala
       },
       {
-        "name": "BabyCorn Masala",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
-        "image": babyCornMasala
-      },
-      {
         "name": "Mixed Veg Curry",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": mixedVegCurry
-      },
-      {
-        "name": "Veg Curry",
-        "packages": [
-          "Basic",
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
-        "image": mixedVegCurry
-      },
-      {
-        "name": "Mushroom Masala",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
-        "image": mushroomMasala
       },
       {
         "name": "Aloo Gobi Masala",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": aluGobiMasala
       },
       {
         "name": "Aloo Kurma",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": aluuKurma
       },
       {
-        "name": "Phool Makhana Curry",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
-        "image": phoolMakanaCurry
-      },
-      {
         "name": "Aloo Capsicum Tomato",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": aluuCapsicumTamota
       },
       {
         "name": "Veg & Green Peas Kurma",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": vegGreenBatanyKurmaa
       },
       {
         "name": "Kadai Vegetable",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": kadaiiVegitable
       },
       {
+        "name": "Methi Chaman Curry",
+        "packages": ["Premium", "Luxury"],
+        "image": methiChamanCurry
+      },
+      {
+        "name": "BabyCorn Masala",
+        "packages": ["Premium", "Luxury"],
+        "image": babyCornMasala
+      },
+      {
+        "name": "Mushroom Masala",
+        "packages": ["Premium", "Luxury"],
+        "image": mushroomMasala
+      },
+      {
+        "name": "Phool Makhana Curry",
+        "packages": ["Premium", "Luxury"],
+        "image": phoolMakanaCurry
+      },
+      {
         "name": "Navratna Kurma",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Premium", "Luxury"],
         "image": navratnaaKurmaa
       },
       {
         "name": "Milk Maker Kurma",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Premium", "Luxury"],
         "image": millMakerKurma
       }
     ],
+
     "southIndianFries": [
       {
-        "name": "Bhindi Kaju Fry",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
-        "image": kaajuBhindiFry
-      },
-      {
         "name": "Dondakaya Fry",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
         "image": dondaKaayaFry
       },
       {
+        "name": "Aloo Fry",
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
+        "image": aluuFry
+      },
+      {
         "name": "Cabbage 65",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": cabbage65
       },
       {
         "name": "Veg Pakoda",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": vegPakoda
       },
       {
-        "name": "Aloo Fry",
-        "packages": [
-          "Basic",
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
-        "image": aluuFry
-      },
-      {
-        "name": "Spicy Stuffed Brinjal",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Spicy Gutti-Vankaya",
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": hotGreenStuffedKabab
       },
       {
         "name": "Capsicum 65",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": capsicum65
       },
       {
-        "name": "Bitter Gourd Fry",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
-        "image": bottleGuardHalwa
-      },
-      {
         "name": "Kanda Fry",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": kandhaFry
       },
       {
         "name": "Cabbage Beans Carrot",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": cabbageBeansCarrot
       },
       {
         "name": "Thota Kura Fry",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": thotaKuraFry
       },
       {
         "name": "Aloo 65",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": alu65
       },
       {
         "name": "Gobi 65",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": gobi65
       },
       {
         "name": "Chamadumpala Fry",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": chamadumpalaFry
+      },
+      {
+        "name": "Bendakaya Kaju Fry",
+        "packages": ["Premium", "Luxury"],
+        "image": kaajuBhindiFry
+      },
+      {
+        "name": "Kakarakaaya Fry",
+        "packages": ["Premium", "Luxury"],
+        "image": bottleGuardHalwa
       }
     ],
+
     "southIndianCurries": [
       {
-        "name": "Stuffed Brinjal Curry",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Gutti Vankaya Kura",
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": taatiMunjalaCurry
       },
       {
-        "name": "Brinjal Tomato Curry",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Vankaya Tomato Kura",
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": taatiMunjalaCurry
       },
       {
-        "name": "Ridge Gourd with Dal",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
-        "image": bottleGuardHalwa
-      },
-      {
-        "name": "Green Peas Curry",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
-        "image": mixedVegCurry
-      },
-      {
-        "name": "Chama Dumpala Pulusu",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Chamadumpala Pulusu",
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": chamaDumpalaPulusu
       },
       {
-        "name": "Tatimunjala Curry",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Tatimunjala Kura",
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": taatiMunjalaCurry
       },
       {
-        "name": "Broad Beans Curry",
-        "packages": [
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Chikkudukaya Kura",
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": cabbageBeansCarrot
       },
       {
-        "name": "Gongura Phoolmakna Curry",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Gongura Phoolmakhana Kura",
+        "packages": ["Premium", "Luxury"],
         "image": gonguraPhoolMakani
       }
     ],
-    gravyCurry: [
+    pappu: [
       {
-        "name": "Gravy Curry",
-        "packages": [
-          "Basic",
-          "Classic",
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Tomato Pappu",
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
+        "image": gravyCurry
+      },
+      {
+        "name": "Aakukura Pappu",
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
+        "image": gravyCurry
+      },
+      {
+        "name": "Mamidikaaya Pappu",
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
+        "image": gravyCurry
+      },
+      {
+        "name": "Dosakaaya Pappu",
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
         "image": gravyCurry
       }
     ],
+
     "iceCreams": [
       {
         "name": "Vanilla",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": vanilla
       },
       {
         "name": "Mango",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": mangoIceCream
       },
       {
-        "name": "Trooty Fruity",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
+        "name": "Tooty Fruity",
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": tootyFruity
       },
       {
         "name": "Butterscotch",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": butterscotch
       },
       {
         "name": "Strawberry",
-        "packages": [
-          "Premium",
-          "Luxury"
-        ],
+        "packages": ["Classic", "Premium", "Luxury"],
         "image": strawberry
       }
     ],
@@ -1235,9 +899,72 @@ export const MENU = {
         ],
         "image": water
       },
+
       {
-        "name": "Transport",
+        "name": "Rice",
         "packages": [
+          "Basic",
+          "Classic",
+          "Premium",
+          "Luxury"
+        ],
+        "image": transport
+      },
+      {
+        "name": "Sambar",
+        "packages": [
+          "Basic",
+          "Classic",
+          "Premium",
+          "Luxury"
+        ],
+        "image": transport
+      },
+      {
+        "name": "Salt",
+        "packages": [
+          "Basic",
+          "Classic",
+          "Premium",
+          "Luxury"
+        ],
+        "image": transport
+      },
+      {
+        "name": "Ghee",
+        "packages": [
+          "Basic",
+          "Classic",
+          "Premium",
+          "Luxury"
+        ],
+        "image": transport
+      },
+      {
+        "name": "Papad",
+        "packages": [
+          "Basic",
+          "Classic",
+          "Premium",
+          "Luxury"
+        ],
+        "image": transport
+      },
+      {
+        "name": "Curd",
+        "packages": [
+          "Basic",
+          "Classic",
+          "Premium",
+          "Luxury"
+        ],
+        "image": transport
+      },
+      {
+        "name": "Raita",
+        "packages": [
+          "Basic",
+          "Classic",
           "Premium",
           "Luxury"
         ],
@@ -1250,7 +977,15 @@ export const MENU = {
           "Luxury"
         ],
         "image": supply,
-      }
+      },
+      {
+        "name": "Transport",
+        "packages": [
+          "Premium",
+          "Luxury"
+        ],
+        "image": transport
+      },
     ]
   }
 };

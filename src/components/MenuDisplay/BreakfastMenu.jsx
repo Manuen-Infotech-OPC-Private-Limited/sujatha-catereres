@@ -10,15 +10,16 @@ const BreakfastMenu = ({ menuData, selectedPackage }) => {
         <div key={category} className="breakfast-section">
           <h3 className="breakfast-category-title">{category}</h3>
           <div className="dish-card-container">
-            {dishes.map((dish) => (
-              <DishCard
-                key={dish.name}
-                name={dish.name}
-                packages={dish.packages}
-                selectedPackage={selectedPackage}
-                image={dish.image}
-              />
-            ))}
+            {dishes.length === 0 ? (<p>No items available in this category</p>) :
+              dishes.map((dish) => (
+                <DishCard
+                  key={dish.name}
+                  name={dish.name}
+                  packages={dish.packages}
+                  selectedPackage={selectedPackage}
+                  image={dish.image}
+                />
+              ))}
           </div>
         </div>
       ))}

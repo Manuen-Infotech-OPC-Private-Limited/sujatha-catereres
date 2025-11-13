@@ -2,23 +2,16 @@ html,
 body {
   height: 100%;
   margin: 0;
-  padding: 0;
-
+  padding: 0
 }
 
 .home {
   position: relative;
   min-height: 100vh;
   padding-top: 5px;
-  /* enough space so content won't go under sticky navbar */
-  background-image: url('../assets/logos/doodle.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  z-index: 0;
+  overflow: hidden
 }
 
-/* Overlay with 10% opacity */
 .home::before {
   content: "";
   position: absolute;
@@ -26,69 +19,59 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: white;
-  opacity: 0.1;
-  z-index: 1;
+  background: url('../assets/logos/doodle.png') center/cover no-repeat;
+  filter: blur(1px);
+  transform: scale(1.05);
+  z-index: 0
 }
 
-/* Make sure content is above the overlay */
+.home::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  opacity: .1;
+  z-index: 1
+}
+
 .home>* {
   position: relative;
-  z-index: 2;
+  z-index: 2
 }
 
-
-/* Container for the centered home content */
 .home-content {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: calc(100vh - 80px);
-  /* full viewport height minus navbar height */
   padding: 0 20px;
   text-align: center;
   z-index: 2;
-  position: relative;
-}
-
-/* Sticky navbar styles */
-.header-nav {
-  position: sticky;
-  top: 0;
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: flex-end;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(5px);
-  border-bottom: 1px solid #eee;
-  background-color: transparent !important;
-  z-index: 10;
-  /* above everything */
+  position: relative
 }
 
 .welcome-message {
   color: #222;
   font-size: 22px;
   margin-bottom: 1rem;
-  text-align: center;
+  text-align: center
 }
 
-
-/* Container for the centered home content */
 .home-title {
   font-size: 40px;
   margin: 0 0 20px;
-  font-family: 'Belleza', sans-serif;
+  font-family: 'Belleza', sans-serif
 }
 
 .home-tagline {
   font-size: 18px;
   margin: 0 0 20px;
   font-family: 'Belleza', sans-serif;
-  font-weight: 400;
+  font-weight: 400
 }
 
 .home-description {
@@ -97,49 +80,80 @@ body {
   margin: 0 0 40px;
   font-family: 'Belleza', sans-serif;
   font-weight: 300;
-  line-height: 1.4;
+  line-height: 1.4
 }
 
 .cta-button {
+  position: relative;
   padding: 15px 40px;
   font-size: 20px;
   cursor: pointer;
   font-family: 'Belleza', sans-serif;
+  background: #e63946;
+  color: #fff;
   border: none;
   border-radius: 5px;
-  background-color: #e63946;
-  color: white;
-  transition: background-color 0.3s ease;
-  animation: pulse 2s infinite ease-in-out;
+  overflow: hidden
 }
 
-@keyframes pulse {
-
-  0%,
-  100% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.05);
-  }
+.cta-button::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 0;
+  background: yellow;
+  transition: width .3s ease;
+  border-radius: 2px
 }
 
-.cta-button:hover {
-  background-color: #a62832;
+.cta-button:hover::after {
+  width: 100%
 }
 
 .nav-links button:focus,
 .cta-button:focus {
-  outline: 2px dashed red;
-  outline-offset: 2px;
+  outline: 2px solid yellow;
+  outline-offset: 2px
+}
+
+.session-expired-box {
+  background: #fff3f3;
+  border: 1px solid #ffb3b3;
+  padding: 16px;
+  margin: 16px auto;
+  width: 80%;
+  text-align: center;
+  border-radius: 8px;
+  color: #c00;
+  animation: fadeIn .3s ease-in
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0
+  }
+
+  to {
+    opacity: 1
+  }
+}
+
+.session-expired-box button {
+  margin-top: 10px;
+  background: #c00;
+  color: #fff;
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer
 }
 
 .header-logo {
   width: 40px;
   height: 48px;
   padding-left: 30px;
-  flex-shrink: 0;
+  flex-shrink: 0
 }
 
 .nav-links {
@@ -149,11 +163,10 @@ body {
   justify-content: flex-end;
   gap: 40px;
   align-items: center;
-  margin-right: 30px;
+  margin: 16px 30px 0 0;
   font-size: 16px;
-  margin-top: 16px;
   min-width: 0;
-  overflow-x: auto;
+  overflow-x: auto
 }
 
 .nav-links button {
@@ -162,23 +175,21 @@ body {
   font-size: inherit;
   font-family: inherit;
   font-weight: 500;
-  color: black;
+  color: #000;
   white-space: nowrap;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all .3s ease
 }
 
 .nav-links button:hover {
-  color: red;
+  color: yellow
 }
 
 .nav-links button.active {
   text-decoration: underline;
-  color: red;
+  color: yellow
 }
 
-
-/* Hamburger icon */
 .hamburger {
   display: none;
   flex-direction: column;
@@ -187,35 +198,33 @@ body {
   height: 20px;
   cursor: pointer;
   margin: 20px 30px 0 auto;
-  z-index: 20;
+  z-index: 20
 }
 
 .hamburger div {
   height: 3px;
-  background-color: #000;
+  background: #000;
   border-radius: 2px;
-  transition: 0.3s ease;
+  transition: .3s ease
 }
 
-/* Hamburger animation (X shape) */
 .hamburger.open div:nth-child(1) {
-  transform: rotate(45deg) translateY(8px);
+  transform: rotate(45deg) translateY(8px)
 }
 
 .hamburger.open div:nth-child(2) {
-  opacity: 0;
+  opacity: 0
 }
 
 .hamburger.open div:nth-child(3) {
-  transform: rotate(-45deg) translateY(-8px);
+  transform: rotate(-45deg) translateY(-8px)
 }
 
 .visit-counter {
   text-align: center;
-  margin-top: 3rem;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-  color: #666;
+  margin: 3rem 0 1rem;
+  font-size: .9rem;
+  color: #666
 }
 
 .cookie-box {
@@ -224,25 +233,25 @@ body {
   left: 20px;
   right: 20px;
   margin: auto;
-  background-color: #fffbe6;
+  background: #fffbe6;
   border: 1px solid #e6c200;
   padding: 15px 20px;
   border-radius: 10px;
   z-index: 999;
   max-width: 400px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.15);
-  text-align: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .15);
+  text-align: center
 }
 
 .cookie-box p {
   margin-bottom: 10px;
   font-size: 16px;
-  color: #222;
+  color: #222
 }
 
 .cookie-actions {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-around
 }
 
 .cookie-actions button {
@@ -250,24 +259,22 @@ body {
   border-radius: 5px;
   font-size: 14px;
   border: none;
-  cursor: pointer;
+  cursor: pointer
 }
 
 .cookie-actions button:first-child {
-  background-color: #4caf50;
-  color: white;
+  background: #4caf50;
+  color: #fff
 }
 
 .cookie-actions button:last-child {
-  background-color: #f44336;
-  color: white;
+  background: #f44336;
+  color: #fff
 }
 
-
-/* Mobile nav links visibility */
-@media (max-width: 768px) {
+@media(max-width:768px) {
   .hamburger {
-    display: flex;
+    display: flex
   }
 
   .nav-links {
@@ -276,7 +283,7 @@ body {
     right: 0;
     width: 100%;
     flex-direction: column;
-    background-color: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, .95);
     backdrop-filter: blur(5px);
     gap: 20px;
     padding: 0;
@@ -284,22 +291,19 @@ body {
     overflow: hidden;
     opacity: 0;
     transform: translateY(-10px);
-    transition: max-height 0.4s ease, opacity 0.4s ease, transform 0.3s ease;
-
+    transition: max-height .4s ease, opacity .4s ease, transform .3s ease
   }
 
   .nav-links.show {
-    /* display: flex; */
     padding: 20px 0;
     max-height: 500px;
     opacity: 1;
-    transform: translateY(0);
-
+    transform: translateY(0)
   }
 
   .nav-links button {
     font-size: 18px;
     width: 100%;
-    text-align: center;
+    text-align: center
   }
 }

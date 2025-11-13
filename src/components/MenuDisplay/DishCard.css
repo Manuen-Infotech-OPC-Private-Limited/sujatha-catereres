@@ -41,3 +41,18 @@
   color: #c0392b;
   font-weight: bold;
 }
+.dish-card.selected {
+  border: 2px solid #28a745; /* green highlight */
+  position: relative;
+}
+
+.selected-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #28a745;
+  color: white;
+  font-size: 0.8rem;
+  padding: 2px 6px;
+  border-radius: 12px;
+}

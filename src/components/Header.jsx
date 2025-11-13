@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import logo from '../assets/logos/logo-nobg.png';
 import './Header.css';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -9,12 +11,20 @@ const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
 
-  // Check localStorage for user info on mount or route change
+  // Fetch user info from the server on mount or route change
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/users/me`, {
+          withCredentials: true,
+        });
+        setUser(response.data.user); // or just response.data, depending on your API structure
+      } catch (error) {
+        setUser(null); // Not logged in
+      }
+    };
+
+    fetchUser();
   }, [location.pathname]);
 
   const isActive = (path) => location.pathname === path;
@@ -24,11 +34,16 @@ const Header = () => {
     setMenuOpen(false);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    setUser(null);
-    navigate('/');
-    window.location.reload();
+  const handleLogout = async () => {
+    try {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/users/logout`, {}, { withCredentials: true });
+      toast.success('Logged out successfully');
+      setUser(null);
+      window.location.href = '/';
+    } catch (err) {
+      console.log(`error while logout is: ${err}`);
+      toast.error('Logout failed');
+    }
   };
 
   return (
