@@ -18,7 +18,8 @@ router.get('/', async (req, res) => {
       // Set cookie (expires in 1 year)
       res.cookie('visitorId', visitorId, {
         httpOnly: true,
-        sameSite: 'Strict',
+        secure:true,
+        sameSite: 'none',
         maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year
       });
     }
