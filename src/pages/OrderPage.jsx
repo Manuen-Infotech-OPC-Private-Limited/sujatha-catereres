@@ -11,6 +11,7 @@ import CollapsibleMenu from '../components/MenuDisplay/CollapsibleMenu';
 import CartSummary from '../components/CartSummary';
 
 import { PRICES } from '../utils/pricing';
+import { getEligibleItems } from '../utils/eligibility';
 
 
 const OrderPage = () => {
@@ -66,7 +67,7 @@ const OrderPage = () => {
                     {['Lunch', 'Dinner'].includes(selectedMealType) ? (
                         MENU.lunchDinner ? (
                             <CollapsibleMenu
-                                menuData={MENU.lunchDinner}
+                                menuData={getEligibleItems(selectedMealType, selectedPackage, MENU.lunchDinner)}
                                 selectedPackage={selectedPackage}
                             />
                         ) : (
@@ -74,7 +75,7 @@ const OrderPage = () => {
                         )
                     ) : MENU.breakfast ? (
                         <CollapsibleMenu
-                            menuData={MENU.breakfast}
+                            menuData={getEligibleItems(selectedMealType, selectedPackage, MENU.breakfast)}
                             selectedPackage={selectedPackage}
                         />
                     ) : (

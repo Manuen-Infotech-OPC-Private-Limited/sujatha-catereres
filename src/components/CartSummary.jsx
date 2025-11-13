@@ -39,7 +39,8 @@ const CartSummary = ({ selectedPackage, selectedMealType }) => {
                       aria-label={`Remove ${item.name}`}
                       onClick={() => handleRemoveClick(category, item.name)}
                     >
-                      ×
+                      {/* × */}
+                      x
                     </button>
                   </li>
                 ))}

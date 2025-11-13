@@ -1,22 +1,20 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
+const JWT_SECRET = process.env.JWT_SECRET || "123456";
 
 const authenticateToken = (req, res, next) => {
-  const token = req.cookies.token;
-  console.log('Received token:', token);
+  const token =
+    req.cookies?.token ||
+    (req.headers.authorization && req.headers.authorization.split(" ")[1]);
 
-  if (!token) {
-    console.log('❌ No token found');
-    return res.status(401).json({ message: 'No token provided' });
-  }
+  if (!token) return res.status(401).json({ error: "No token provided" });
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('✅ Token decoded:', decoded);
-    req.user = { id: decoded.id };
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
     next();
   } catch (err) {
-    console.log('❌ Token verification failed:', err.message);
-    return res.status(403).json({ message: 'Invalid token' });
+    console.error("Invalid token:", err);
+    res.status(403).json({ error: "Invalid or expired token" });
   }
 };
 

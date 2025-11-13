@@ -4,32 +4,47 @@ import './CollapsibleMenu.css';
 import { useCart } from '../../utils/cartContext';
 import { getCategoryLimit } from '../../utils/cartRules';
 import { toast } from 'react-toastify';
+
 const CollapsibleMenu = ({ menuData, selectedPackage, selectedMealType }) => {
     const [openCategory, setOpenCategory] = useState(null);
-    const { setCategoryItem } = useCart();
+    const { cart, setCategoryItem, removeItemFromCategory } = useCart();
 
     const toggleCategory = (category) => {
         setOpenCategory((prev) => (prev === category ? null : category));
     };
 
     const handleItemClick = (category, item) => {
-        // Check if item is available for the selected package
         if (!item.packages.includes(selectedPackage)) {
-            // Optionally, show a toast or just ignore silently
             toast.error(`"${item.name}" is not available in the "${selectedPackage}" package.`);
             return;
         }
 
         const limit = getCategoryLimit(selectedMealType, selectedPackage, category);
-        setCategoryItem(category, item, limit);
-    };
+        const existing = cart[category] || [];
 
+        const isAlreadySelected = existing.some(i => i.name === item.name);
+
+        if (isAlreadySelected) {
+            // Deselect
+            removeItemFromCategory(category, item.name);
+            toast.info(`"${item.name}" removed from "${category}".`);
+        } else {
+            if (existing.length >= limit) {
+                toast.info(`Limit reached for "${category}". Remove an item to add new ones.`);
+                return;
+            }
+
+            setCategoryItem(category, item, limit);
+        }
+    };
 
     return (
         <div className="collapsible-menu">
             <div className="category-header-container">
-                {Object.entries(menuData).map(([category]) => {
+                {Object.entries(menuData).map(([category, dishes]) => {
                     const limit = getCategoryLimit(selectedMealType, selectedPackage, category);
+                    const selectedCount = (cart[category] || []).length;
+                    const isComplimentary = category.toLowerCase() === 'complimentary';
 
                     return (
                         <div
@@ -37,7 +52,10 @@ const CollapsibleMenu = ({ menuData, selectedPackage, selectedMealType }) => {
                             className={`category-header-chip ${openCategory === category ? 'active' : ''}`}
                             onClick={() => toggleCategory(category)}
                         >
-                            {category.replace(/([A-Z])/g, ' $1')} ({limit ?? 0})
+                            {isComplimentary
+                                ? category.replace(/([A-Z])/g, ' $1').trim()
+                                : `${category.replace(/([A-Z])/g, ' $1').trim()} (${selectedCount}/${limit})`
+                            }
                         </div>
                     );
                 })}
@@ -51,25 +69,34 @@ const CollapsibleMenu = ({ menuData, selectedPackage, selectedMealType }) => {
                                 <p className="empty-category">No items in this category</p>
                             ) : (
                                 dishes.map((dish) => {
+                                    const limit = getCategoryLimit(selectedMealType, selectedPackage, category);
+                                    const selectedCount = (cart[category] || []).length;
                                     const isComplementary = category.toLowerCase() === 'complimentary';
-                                    const isSelectable = isComplementary && !!dish.selectableGroup;
+                                    const isSelectable = !isComplementary || !!dish.selectableGroup;
+
+                                    const disabled = selectedCount >= limit && !(cart[category] || []).some(i => i.name === dish.name);
 
                                     return (
                                         <div
                                             key={dish.name}
                                             onClick={() => {
-                                                if (!isComplementary || isSelectable) {
+                                                if (!disabled && isSelectable) {
                                                     handleItemClick(category, dish);
                                                 }
                                             }}
-                                            style={{ cursor: isSelectable ? 'pointer' : 'default', }}
+                                            style={{
+                                                cursor: disabled ? 'not-allowed' : 'pointer',
+                                                opacity: disabled ? 0.5 : 1,
+                                            }}
                                         >
                                             <DishCard
                                                 name={dish.name}
                                                 packages={dish.packages}
                                                 selectedPackage={selectedPackage}
                                                 image={dish.image}
+                                                isSelected={(cart[category] || []).some(i => i.name === dish.name)}
                                             />
+
                                         </div>
                                     );
                                 })
