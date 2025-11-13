@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Analytics } from "@vercel/analytics/react"
 import Landing from './pages/Landing';
 import MenuPage from './pages/MenuPage';
 import Services from './pages/Services';
@@ -21,7 +20,6 @@ function App() {
 
     <CartProvider>
       <Router>
-        <Analytics />
         <div className="App">
           <Routes>
             <Route path="/" element={<Landing />} />
