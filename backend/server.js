@@ -31,34 +31,35 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// CORS setup
 app.use(cors({
   origin: function (origin, callback) {
     console.log(`CORS check for origin: ${origin}`);
-    // In production, require an origin and match allowedOrigins.
+
     if (isProd) {
       if (!origin) {
-        console.warn('CORS error: no origin provided in production');
-        return callback(new Error('Not allowed by CORS'));
+        console.log('No origin header — allowing (server-to-server or health check)');
+        return callback(null, true);
       }
+
       if (allowedOrigins.includes(origin)) {
-        console.log('Origin allowed by CORS (prod)');
+        console.log(`Origin ${origin} allowed by CORS`);
         return callback(null, true);
       } else {
         console.warn(`CORS error: Origin ${origin} not allowed`);
         return callback(new Error('Not allowed by CORS'));
       }
     }
-    // In development, allow undefined origin (curl, server-to-server) and localhost
+
+    // Dev mode
     if (!origin || allowedOrigins.includes(origin)) {
-      console.log('Origin allowed by CORS (dev)');
       return callback(null, true);
     }
-    console.warn(`CORS error: Origin ${origin} not allowed`);
+
     callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
 }));
+
 
 // JSON middleware
 app.use(express.json({ limit: '10mb' }));
