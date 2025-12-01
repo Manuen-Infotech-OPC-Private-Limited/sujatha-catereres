@@ -202,24 +202,63 @@ router.get("/me", authenticateToken, async (req, res) => {
 
 // Update user profile
 router.put("/update-profile", authenticateToken, async (req, res) => {
-  const { name, email, address } = req.body;
-  if (!name || !email) return res.status(400).json({ error: "Missing required fields" });
+  const { name, email, phone, address } = req.body;
+
+  if (!name || !email) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
 
   try {
-    const user = await User.findByIdAndUpdate(
+    // 1️⃣ Check if phone is being updated and already exists
+    if (phone) {
+      const existingPhoneUser = await User.findOne({ phone });
+      if (existingPhoneUser && existingPhoneUser._id.toString() !== req.user.id) {
+        return res.status(409).json({ error: "Phone number already in use" });
+      }
+    }
+
+    // 2️⃣ Check if email is being updated and already exists
+    if (email) {
+      const existingEmailUser = await User.findOne({ email });
+      if (existingEmailUser && existingEmailUser._id.toString() !== req.user.id) {
+        return res.status(409).json({ error: "Email already in use" });
+      }
+    }
+
+    // 3️⃣ Perform the update
+    const updatedUser = await User.findByIdAndUpdate(
       req.user.id,
-      { name, email, ...(address && { address }) },
+      { name, email, ...(phone && { phone }), ...(address && { address }) },
       { new: true }
     ).select("-password");
 
-    if (!user) return res.status(404).json({ error: "User not found" });
+    if (!updatedUser) return res.status(404).json({ error: "User not found" });
 
-    res.json({ message: "Profile updated", user });
+    res.json({ message: "Profile updated", user: updatedUser });
   } catch (err) {
     console.error("Error updating profile:", err);
     res.status(500).json({ error: "Failed to update profile" });
   }
 });
+
+
+// Check if a phone number is already registered
+router.post("/check-phone", async (req, res) => {
+  const { phone } = req.body;
+  if (!phone) return res.status(400).json({ error: "Phone number is required" });
+
+  try {
+    const existingUser = await User.findOne({ phone });
+    if (existingUser) {
+      return res.status(409).json({ error: "Phone number already registered" });
+    }
+    res.json({ message: "Phone number available" });
+  } catch (err) {
+    console.error("Error checking phone:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 
 // Logout by clearing cookie
 router.post("/logout", (req, res) => {

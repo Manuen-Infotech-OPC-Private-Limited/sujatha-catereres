@@ -44,7 +44,7 @@ const Home = () => {
             // Auto-hide session expired box after 10 seconds
             setTimeout(() => {
               setSessionExpired(false);
-            }, 10000); // 10 seconds
+            }, 3000); // 10 seconds
           }
 
           Cookies.remove('is_authenticated'); // Optional cleanup
@@ -113,7 +113,7 @@ const Home = () => {
       <Header />
       {sessionExpired && (
         <div className="session-expired-box">
-          <p>Your session has expired. Please log in again to continue.</p>
+          <p>Session expired or logged out. Please sign in to continue.</p>
           <button onClick={() => navigate('/login')}>Go to Login</button>
         </div>
       )}

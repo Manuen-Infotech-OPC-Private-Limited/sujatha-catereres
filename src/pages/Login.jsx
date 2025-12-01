@@ -169,6 +169,9 @@ const LoginPage = () => {
   const [timer, setTimer] = useState(30);
   const [canResend, setCanResend] = useState(false);
   const [confirmationResult, setConfirmationResult] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+
   const navigate = useNavigate();
 
   const normalizePhone = (inputPhone) => {
@@ -197,6 +200,7 @@ const LoginPage = () => {
     }
 
     try {
+      setIsLoading(true);  // <-- START LOADING
       setupRecaptcha();
       const appVerifier = window.recaptchaVerifier;
       const result = await signInWithPhoneNumber(auth, normalizedPhone, appVerifier);
@@ -219,6 +223,8 @@ const LoginPage = () => {
     } catch (err) {
       console.error('Error sending OTP:', err);
       toast.error('Failed to send OTP');
+    } finally {
+      setIsLoading(false); // <-- END LOADING
     }
   };
 
@@ -229,6 +235,7 @@ const LoginPage = () => {
     }
 
     try {
+      setIsVerifying(true);  // <-- START LOADING
       const res = await confirmationResult.confirm(otp);
       const user = res.user;
       console.log('Firebase user:', user);
@@ -245,6 +252,8 @@ const LoginPage = () => {
     } catch (err) {
       console.error('OTP verification failed:', err);
       toast.error('Invalid OTP');
+    } finally {
+      setIsVerifying(false);  // <-- END LOADING
     }
   };
 
@@ -276,7 +285,10 @@ const LoginPage = () => {
               onChange={(e) => setPhone(e.target.value)}
               required
             />
-            <button type="submit">Send OTP</button>
+            <button type="submit" disabled={isLoading}>
+              {isLoading ? "Sending OTP..." : "Send OTP"}
+            </button>
+
           </form>
         ) : (
           <form
@@ -303,7 +315,10 @@ const LoginPage = () => {
             >
               {canResend ? 'Resend OTP' : `Resend in ${timer}s`}
             </button>
-            <button type="submit">Verify & Login</button>
+            <button type="submit" disabled={isVerifying}>
+              {isVerifying ? "Verifying..." : "Verify & Login"}
+            </button>
+
           </form>
         )}
 
