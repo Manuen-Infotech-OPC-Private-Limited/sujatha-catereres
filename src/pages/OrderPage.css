@@ -58,3 +58,42 @@
   font-weight: 500;
 }
 
+
+/* Default desktop layout */
+.order-content {
+  display: flex;
+  width: 95%;
+}
+
+.order-left {
+  flex: 0 0 70%;
+  padding: 20px;
+  overflow-y: auto;
+  border-right: 1px solid #ddd;
+}
+
+.order-right {
+  flex: 0 0 30%;
+  padding: 20px;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+/* Mobile layout */
+@media screen and (max-width: 768px) {
+  .order-content {
+    flex-direction: column;
+  }
+  
+  .order-left,
+  .order-right {
+    flex: 1 1 auto;
+    width: 100%;
+    border-right: none; /* remove desktop border */
+    padding: 10px 0;
+  }
+
+  .order-right {
+    order: -1; /* move cart above menu */
+  }
+}

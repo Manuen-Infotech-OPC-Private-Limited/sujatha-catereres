@@ -62,34 +62,35 @@ const OrderPage = () => {
 
 
             <section className="order-main">
-                <div className="order-left">
-                    {/* Collapsible menu categories will go here */}
-                    {['Lunch', 'Dinner'].includes(selectedMealType) ? (
-                        MENU.lunchDinner ? (
+                <div className="order-content">
+                    <div className="order-right">
+                        <CartSummary
+                            selectedPackage={selectedPackage}
+                            selectedMealType={selectedMealType}
+                        />
+                    </div>
+                    <div className="order-left">
+                        {['Lunch', 'Dinner'].includes(selectedMealType) ? (
+                            MENU.lunchDinner ? (
+                                <CollapsibleMenu
+                                    menuData={getEligibleItems(selectedMealType, selectedPackage, MENU.lunchDinner)}
+                                    selectedPackage={selectedPackage}
+                                />
+                            ) : (
+                                <p>No menu available for {selectedMealType}</p>
+                            )
+                        ) : MENU.breakfast ? (
                             <CollapsibleMenu
-                                menuData={getEligibleItems(selectedMealType, selectedPackage, MENU.lunchDinner)}
+                                menuData={getEligibleItems(selectedMealType, selectedPackage, MENU.breakfast)}
                                 selectedPackage={selectedPackage}
                             />
                         ) : (
-                            <p>No menu available for {selectedMealType}</p>
-                        )
-                    ) : MENU.breakfast ? (
-                        <CollapsibleMenu
-                            menuData={getEligibleItems(selectedMealType, selectedPackage, MENU.breakfast)}
-                            selectedPackage={selectedPackage}
-                        />
-                    ) : (
-                        <p>No breakfast menu available</p>
-                    )}
+                            <p>No breakfast menu available</p>
+                        )}
+                    </div>
                 </div>
-                <div className="order-right">
-                    <CartSummary
-                        selectedPackage={selectedPackage}
-                        selectedMealType={selectedMealType}
-                    />
-                </div>
-
             </section>
+
         </div>
     );
 };

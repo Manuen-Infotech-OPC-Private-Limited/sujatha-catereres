@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './DishCard.css';
 
 const DishCard = ({ name, packages, selectedPackage, image, isSelected }) => {
+  const [loaded, setLoaded] = useState(false); // Track image load
   const isAvailable = packages.includes(selectedPackage);
   const restrictionNote = !isAvailable
     ? `Available in: ${packages.join(', ')}`
@@ -13,13 +14,20 @@ const DishCard = ({ name, packages, selectedPackage, image, isSelected }) => {
         ${!isAvailable ? 'restricted' : ''} 
         ${isSelected ? 'selected' : ''}`}
     >
-      {image && (
-        <img
-          src={image}
-          alt={name}
-          className="dish-image"
-        />
-      )}
+      <div className="dish-image-wrapper">
+        {/* Skeleton placeholder */}
+        {!loaded && <div className="image-skeleton"></div>}
+
+        {image && (
+          <img
+            src={image}
+            alt={name}
+            loading="lazy"
+            className={`dish-image ${loaded ? 'visible' : 'hidden'}`}
+            onLoad={() => setLoaded(true)}
+          />
+        )}
+      </div>
 
       <div className="dish-info">
         <h4>{name}</h4>

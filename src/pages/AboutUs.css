@@ -74,6 +74,7 @@
   margin: 1rem 0 2rem;
 }
 
+/* Make all badges equal width */
 .about-badges span {
   background-color: #d2393c;
   color: #fff;
@@ -81,7 +82,10 @@
   border-radius: 0.5rem;
   font-size: 0.9rem;
   font-weight: 500;
-  white-space: nowrap;
+  text-align: center;
+  white-space: normal; /* allow text to wrap */
+  flex: 1 1 calc(33.33% - 0.5rem); /* three badges per row, adjust gap */
+  box-sizing: border-box;
 }
 
 /* Closing line */
@@ -118,5 +122,15 @@
 
   .about-badges {
     justify-content: center;
+  }
+  .about-badges span {
+    flex: 1 1 100%; /* full width on mobile */
+  }
+}
+
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .about-badges span {
+    flex: 1 1 calc(50% - 0.5rem); /* two per row on tablets */
   }
 }
