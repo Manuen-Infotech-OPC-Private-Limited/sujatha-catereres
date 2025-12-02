@@ -22,7 +22,13 @@ const isProd = process.env.NODE_ENV === 'production';
 console.log('Initializing server...');
 
 // Security middleware (optional but recommended)
-app.use(helmet());
+app.use(helmet(
+  {
+    crossOriginOpenerPolicy: false,
+    crossOriginResourcePolicy: false,
+    crossOriginEmbedderPolicy: false
+  }
+));
 
 // Basic rate limiter (adjust as needed)
 const limiter = rateLimit({
