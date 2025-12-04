@@ -17,7 +17,7 @@
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
   text-align: center;
   width: 90%;
-  max-width: 400px;
+  max-width: 500px;
 }
 
 /* Logo */
@@ -135,5 +135,22 @@ button:disabled {
 
   .login-form button {
     font-size: 14px;
+  }
+}
+
+/* Two-column layout for form */
+.grid-form .form-row {
+  display: flex;
+  gap: 15px;
+}
+
+.grid-form .form-group {
+  flex: 1;
+}
+
+/* Responsive: single column on small screens */
+@media (max-width: 480px) {
+  .grid-form .form-row {
+    flex-direction: column;
   }
 }

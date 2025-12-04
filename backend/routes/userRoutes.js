@@ -184,6 +184,54 @@ router.post("/firebase-login", async (req, res) => {
   }
 });
 
+// Registration route
+router.post("/register", async (req, res) => {
+  const { name, email, address, idToken } = req.body;
+
+  if (!idToken || !name || !email) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  try {
+    // 1️⃣ Verify Firebase token
+    const decoded = await verifyFirebaseToken(idToken);
+    const phone = decoded.phone_number;
+
+    if (!phone) return res.status(400).json({ error: "Phone number missing in Firebase token" });
+
+    // 2️⃣ Check if user exists
+    let user = await User.findOne({ phone });
+    if (!user) {
+      // Create new user
+      user = new User({ name, email, phone, address });
+      await user.save();
+    } else {
+      // Update existing user (optional)
+      user.name = name;
+      user.email = email;
+      if (address) user.address = address;
+      await user.save();
+    }
+
+    // 3️⃣ Issue JWT
+    const token = jwt.sign({ id: user._id, phone: user.phone }, JWT_SECRET, { expiresIn: "30d" });
+
+    // 4️⃣ Set cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    });
+
+    res.json({ message: "Registration successful", user });
+  } catch (err) {
+    console.error("Registration failed:", err);
+    res.status(500).json({ error: "Registration failed" });
+  }
+});
+
+
 // =============================
 // 🔹 Protected routes
 // =============================
