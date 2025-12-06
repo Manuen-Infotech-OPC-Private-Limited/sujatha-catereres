@@ -8,6 +8,15 @@
   font-weight: 700;
 }
 
+/* ==== Wrapper for All Services ==== */
+.service-items {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3rem;
+  padding: 2rem 3rem;
+}
+
 /* ==== Container for Each Service Item ==== */
 .service-item-container {
   position: relative;
@@ -15,6 +24,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  text-align: justify;
   align-items: center;
   min-height: 365px;
   max-height: 80vh;
@@ -29,15 +39,6 @@
 .service-item-container:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-}
-
-/* ==== Wrapper for All Services ==== */
-.service-items {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 3rem;
-  padding: 2rem 3rem;
 }
 
 /* ==== Coming Soon Tag ==== */
@@ -55,12 +56,33 @@
   z-index: 2;
 }
 
-/* ==== Image Styling ==== */
-.service-item-container img {
+/* ==== Image Wrapper & Skeleton ==== */
+.image-wrapper {
   width: 100%;
-  height: auto;
-  object-fit: cover;
+  position: relative;
+}
+
+.image-skeleton {
+  width: 100%;
+  height: 200px; /* adjust to match your image */
+  background: linear-gradient(
+    90deg,
+    #e0e0e0 25%,
+    #f5f5f5 50%,
+    #e0e0e0 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
   border-radius: 8px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 /* ==== Titles & Taglines ==== */
@@ -128,7 +150,7 @@
     text-align: center;
   }
 
-  .service-item-container img {
+  .image-wrapper img {
     width: 80%;
     max-width: 280px;
     margin-bottom: 1rem;

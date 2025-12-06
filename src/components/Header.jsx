@@ -1,4 +1,4 @@
-import React, { useState, } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import logo from '../assets/logos/logo-nobg.png';
 import './Header.css';
@@ -11,9 +11,11 @@ const Header = () => {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const { user, loading } = useAuth(); // ⬅ using the shared hook
+  const { user } = useAuth();
 
-  const isActive = (path) => location.pathname === path;
+  // const isActive = (path) => location.pathname === path;
+  const isActive = (path) => location.pathname === path ? 'active' : '';
+
 
   const handleNavigate = (path) => {
     navigate(path);
@@ -58,39 +60,46 @@ const Header = () => {
         <button className={isActive('/')} onClick={() => handleNavigate('/')}>
           Home
         </button>
-        <button className={isActive('/services')} onClick={() => handleNavigate('/services')}>
+
+        <button
+          className={isActive('/services')}
+          onClick={() => handleNavigate('/services')}
+        >
           Services
         </button>
-        <button className={isActive('/about')} onClick={() => handleNavigate('/about')}>
+
+        <button
+          className={isActive('/about')}
+          onClick={() => handleNavigate('/about')}
+        >
           About Us
         </button>
-        <button className={isActive('/contact')} onClick={() => handleNavigate('/contact')}>
+
+        <button
+          className={isActive('/contact')}
+          onClick={() => handleNavigate('/contact')}
+        >
           Contact Us
         </button>
 
-        {/* Wait for auth to finish loading before showing buttons */}
-        {!loading && (
+        {user ? (
           <>
-            {user ? (
-              <>
-                <button
-                  className={isActive('/profile')}
-                  onClick={() => handleNavigate('/profile')}
-                >
-                  Profile
-                </button>
+            <button
+              className={isActive('/profile')}
+              onClick={() => handleNavigate('/profile')}
+            >
+              Profile
+            </button>
 
-                <button onClick={handleLogout}>Logout</button>
-              </>
-            ) : (
-              <button
-                className={isActive('/login')}
-                onClick={() => handleNavigate('/login')}
-              >
-                Login
-              </button>
-            )}
+            <button onClick={handleLogout}>Logout</button>
           </>
+        ) : (
+          <button
+            className={isActive('/login')}
+            onClick={() => handleNavigate('/login')}
+          >
+            Login
+          </button>
         )}
       </div>
     </nav>

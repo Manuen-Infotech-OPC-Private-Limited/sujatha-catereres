@@ -1,6 +1,3 @@
-// utils/eligibility.js
-
-// utils/eligibility.js
 
 export function getEligibleItems(mealType, selectedPackage, menuData) {
     if (mealType === "Breakfast") {

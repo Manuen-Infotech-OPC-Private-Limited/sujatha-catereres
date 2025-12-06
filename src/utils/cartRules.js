@@ -1,12 +1,22 @@
-// utils/cartRules.js
-
 export function getCategoryLimit(mealType, selectedPackage, category) {
-  // if (category === 'complimentary') return 2;
-
   // Breakfast rules
   if (mealType === "Breakfast") {
-    // Every item type in breakfast is limited to 1
-    return 1;
+    if (category.toLowerCase() === 'complimentary') {
+      return 0;
+    }
+
+    // Allowed items per package
+    const breakfastItems = {
+      Basic: ['idly', 'vada', 'upma'],
+      Classic: ['idly', 'vada', 'pongal'],
+      Premium: ['idly', 'vada', 'pongal', 'dosa'],
+      Luxury: ['idly', 'vada', 'pongal', 'dosa', 'upma'],
+    };
+
+    const allowedItems = breakfastItems[selectedPackage] || [];
+
+    // If the category/item is in the allowed list, limit is 1, else 0
+    return allowedItems.includes(category.toLowerCase()) ? 1 : 0;
   }
 
   // Lunch & Dinner rules
@@ -18,20 +28,15 @@ export function getCategoryLimit(mealType, selectedPackage, category) {
       flavoredrice: 1,
       northindian: 1,
       southindian: 1,
-      fries: 1, 
+      fries: 1,
       icecreams: 0,
       paan: 0,
+      complimentary: 0,
     },
     Classic: {
       sweets: 2,
-      // hotsnacks: 1,
-      // indianbreads: 1, // all allowed except mini parotta
-      // flavoredrice: 1,
-      // northindian: 1,
-      // southindian: 1,
-      // fries: 1,
-      // icecreams: 1,
       paan: 0,
+      complimentary: 0,
     },
     Premium: {
       sweets: 2,
@@ -43,6 +48,7 @@ export function getCategoryLimit(mealType, selectedPackage, category) {
       fries: 2,
       icecreams: 2,
       paan: 1,
+      complimentary: 0,
     },
     Luxury: {
       sweets: 3,
@@ -54,12 +60,10 @@ export function getCategoryLimit(mealType, selectedPackage, category) {
       fries: 2,
       icecreams: 2,
       paan: 1,
+      complimentary: 0,
     }
   };
 
   const lowerCategory = category.toLowerCase();
-  console.log(`Mealtype: ${mealType}\nselected Package: ${selectedPackage}\nCategory: ${lowerCategory} \n Rules are: ${rules[selectedPackage]?.[lowerCategory]}`)
   return rules[selectedPackage]?.[lowerCategory] ?? 1;
 }
-
-

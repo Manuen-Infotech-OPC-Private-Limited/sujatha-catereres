@@ -1,5 +1,6 @@
 :root {
   --primary-red: #d32f2f;
+  --primary-grey: #787070;
   --font-main: 'Belleza', sans-serif;
 }
 
@@ -81,6 +82,20 @@ input[type="date"]:focus {
   outline: none;
 }
 
+.button-row {
+  display: flex;
+  gap: 1rem;
+  /* space between buttons */
+  justify-content: space-between;
+  margin-top: 1.5rem;
+}
+
+/* Optional: make buttons equal width */
+.button-row button {
+  flex: 1;
+}
+
+
 .place-order-btn {
   display: block;
   width: 100%;
@@ -99,4 +114,24 @@ input[type="date"]:focus {
 
 .place-order-btn:hover {
   background-color: #b71c1c;
+}
+
+.adjust-order-btn {
+  display: block;
+  width: 20%;
+  margin-top: 1.5rem;
+  padding: 0.9rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--primary-grey);
+  color: #fff;
+  cursor: pointer;
+  font-family: var(--font-main);
+  transition: background-color 0.3s ease;
+}
+
+.adjust-order-btn:hover {
+  background-color: #605050;
 }

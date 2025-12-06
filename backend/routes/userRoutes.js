@@ -291,21 +291,31 @@ router.put("/update-profile", authenticateToken, async (req, res) => {
 
 
 // Check if a phone number is already registered
-router.post("/check-phone", async (req, res) => {
+router.post('/check-phone', async (req, res) => {
   const { phone } = req.body;
-  if (!phone) return res.status(400).json({ error: "Phone number is required" });
+  if (!phone) return res.status(400).json({ error: 'Phone number is required' });
 
   try {
-    const existingUser = await User.findOne({ phone });
-    if (existingUser) {
-      return res.status(409).json({ error: "Phone number already registered" });
+    const user = await User.findOne({ phone });
+
+    if (req.query.for === 'login') {
+      if (!user) return res.status(404).json({ error: 'Phone not registered' });
+      return res.json({ message: 'Phone exists' });
     }
-    res.json({ message: "Phone number available" });
+
+    // registration check
+    if (req.query.for === 'register') {
+      if (user) return res.status(409).json({ error: 'Phone already registered' });
+      return res.json({ message: 'Phone available' });
+    }
+
+    res.json({ exists: !!user });
   } catch (err) {
-    console.error("Error checking phone:", err);
-    res.status(500).json({ error: "Server error" });
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
   }
 });
+
 
 
 // Logout by clearing cookie

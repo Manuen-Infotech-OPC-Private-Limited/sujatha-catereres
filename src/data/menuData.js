@@ -776,37 +776,37 @@ export const MENU = {
 
     "southIndianCurries": [
       {
-        "name": "Gutti Vankaya Kura",
-        "packages": ["Classic", "Premium", "Luxury"],
+        "name": "Gutti Vankaya Curry",
+        "packages": ["Basic","Classic", "Premium", "Luxury"],
         "image": taatiMunjalaCurry
       },
       {
-        "name": "Vankaya Tomato Kura",
-        "packages": ["Classic", "Premium", "Luxury"],
+        "name": "Vankaya Tomato Curry",
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
         "image": taatiMunjalaCurry
       },
       {
         "name": "Chamadumpala Pulusu",
-        "packages": ["Classic", "Premium", "Luxury"],
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
         "image": chamaDumpalaPulusu
       },
       {
-        "name": "Tatimunjala Kura",
-        "packages": ["Classic", "Premium", "Luxury"],
+        "name": "Tatimunjala Curry",
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
         "image": taatiMunjalaCurry
       },
       {
-        "name": "Chikkudukaya Kura",
-        "packages": ["Classic", "Premium", "Luxury"],
+        "name": "Chikkudukaya Curry",
+        "packages": ["Basic", "Classic", "Premium", "Luxury"],
         "image": cabbageBeansCarrot
       },
       {
-        "name": "Gongura Phoolmakhana Kura",
+        "name": "Gongura Phoolmakhana Curry",
         "packages": ["Premium", "Luxury"],
         "image": gonguraPhoolMakani
       }
     ],
-    pappu: [
+    "pappu": [
       {
         "name": "Tomato Pappu",
         "packages": ["Basic", "Classic", "Premium", "Luxury"],
@@ -856,7 +856,7 @@ export const MENU = {
         "image": strawberry
       }
     ],
-    paan: [
+    "paan": [
       {
         "name": "Paan",
         "packages": [

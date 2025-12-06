@@ -1,23 +1,16 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import './Profile.css';
 import Header from '../components/Header';
-import logo from '../assets/logos/logo-nobg.png';
-import * as htmlToImage from 'html-to-image';
 
 const Profile = () => {
     const [user, setUser] = useState(null);
     const [address, setAddress] = useState('');
     const [editing, setEditing] = useState(false);
     const [orders, setOrders] = useState([]);
-    const [invoiceOrder, setInvoiceOrder] = useState(null);
-
-    const invoiceRef = useRef(null);
-    const closeBtnRef = useRef(null);
-    const shareBtnRef = useRef(null);
 
     const navigate = useNavigate();
     const API = process.env.REACT_APP_API_URL;
@@ -74,57 +67,6 @@ const Profile = () => {
         }
     };
 
-    const shareInvoice = async () => {
-        if (!invoiceRef.current) {
-            alert('Invoice not ready for sharing.');
-            return;
-        }
-
-        // Hide buttons
-        if (closeBtnRef.current) closeBtnRef.current.style.display = 'none';
-        if (shareBtnRef.current) shareBtnRef.current.style.display = 'none';
-
-        try {
-            const dataUrl = await htmlToImage.toPng(invoiceRef.current);
-
-            // Restore buttons visibility
-            if (closeBtnRef.current) closeBtnRef.current.style.display = '';
-            if (shareBtnRef.current) shareBtnRef.current.style.display = '';
-
-            const res = await fetch(dataUrl);
-            const blob = await res.blob();
-
-            const filesArray = [
-                new File([blob], 'invoice.png', {
-                    type: blob.type,
-                    lastModified: new Date().getTime(),
-                }),
-            ];
-
-            if (navigator.canShare && navigator.canShare({ files: filesArray })) {
-                await navigator.share({
-                    files: filesArray,
-                    title: 'Order Invoice',
-                    text: 'Here is your order invoice.',
-                });
-            } else {
-                // fallback: open image in new tab
-                const win = window.open();
-                if (win) {
-                    win.document.write(`<img src="${dataUrl}" alt="Invoice Image"/>`);
-                } else {
-                    alert('Sharing not supported, but opened image in new tab.');
-                }
-            }
-        } catch (error) {
-            // Make sure to restore buttons even if error occurs
-            if (closeBtnRef.current) closeBtnRef.current.style.display = '';
-            if (shareBtnRef.current) shareBtnRef.current.style.display = '';
-
-            console.error('Sharing image failed:', error);
-            alert('Sharing image failed.');
-        }
-    };
 
     return (
         <div className="home">
@@ -175,7 +117,7 @@ const Profile = () => {
                             ) : (
                                 <ul>
                                     {orders.map((order) => (
-                                        <li key={order._id} className="order-item" data-aos="zoom-in">
+                                        <li key={order._id} className="order-item" data-aos="fade">
                                             <p><strong>Order ID:</strong> {order._id}</p>
                                             <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleDateString()}</p>
                                             <p><strong>Total:</strong> ₹{order.guests * order.pricePerPerson}</p>
@@ -200,47 +142,7 @@ const Profile = () => {
                     </>
                 )}
 
-                {invoiceOrder && (
-                    <div className="modal-overlay" onClick={() => setInvoiceOrder(null)}>
-                        <div
-                            className="modal-content"
-                            onClick={(e) => e.stopPropagation()}
-                            data-aos="zoom-in"
-                            ref={invoiceRef}
-                        >
-                            {/* Company logo at top of invoice */}
-                            <img src={logo} alt="Company Logo" className="invoice-logo" />
 
-                            <h3>Invoice - {invoiceOrder._id}</h3>
-                            <p><strong>Date:</strong> {new Date(invoiceOrder.createdAt).toLocaleDateString()}</p>
-                            <p><strong>Status:</strong> {invoiceOrder.status || 'Confirmed'}</p>
-                            <p><strong>Items:</strong></p>
-                            <ul>
-                                {Object.values(invoiceOrder.cart).flat().map((item, idx) => (
-                                    <li key={idx}>{item.name}</li>
-                                ))}
-                            </ul>
-                            <p><strong>Total:</strong> ₹{invoiceOrder.guests * invoiceOrder.pricePerPerson}</p>
-
-                            <div className="invoice-actions">
-                                <button
-                                    className="close-btn"
-                                    onClick={() => setInvoiceOrder(null)}
-                                    ref={closeBtnRef}
-                                >
-                                    Close
-                                </button>
-                                <button
-                                    className="share-btn"
-                                    onClick={shareInvoice}
-                                    ref={shareBtnRef}
-                                >
-                                    Share Invoice
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )}
             </div>
         </div>
     );

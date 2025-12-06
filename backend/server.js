@@ -39,19 +39,19 @@ app.use(limiter);
 
 app.use(cors({
   origin: function (origin, callback) {
-    console.log(`CORS check for origin: ${origin}`);
+    // console.log(`CORS check for origin: ${origin}`);
 
     if (isProd) {
       if (!origin) {
-        console.log('No origin header — allowing (server-to-server or health check)');
+        // console.log('No origin header — allowing (server-to-server or health check)');
         return callback(null, true);
       }
 
       if (allowedOrigins.includes(origin)) {
-        console.log(`Origin ${origin} allowed by CORS`);
+        // console.log(`Origin ${origin} allowed by CORS`);
         return callback(null, true);
       } else {
-        console.warn(`CORS error: Origin ${origin} not allowed`);
+        // console.warn(`CORS error: Origin ${origin} not allowed`);
         return callback(new Error('Not allowed by CORS'));
       }
     }

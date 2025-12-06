@@ -1,5 +1,5 @@
 // src/pages/OrderPage.js
-import React, { useState } from 'react';
+import React, { useState, } from 'react';
 import './OrderPage.css';
 import MealTypeSelector from '../components/MealTypeSelector';
 import PackageSelector from '../components/PackageSelector';
@@ -15,8 +15,14 @@ import { getEligibleItems } from '../utils/eligibility';
 
 
 const OrderPage = () => {
-    const [selectedPackage, setSelectedPackage] = useState('Basic');
-    const [selectedMealType, setSelectedMealType] = useState('Breakfast');
+    const [selectedPackage, setSelectedPackage] = useState(
+        () => localStorage.getItem("selectedPackage") || 'Basic'
+    );
+
+    const [selectedMealType, setSelectedMealType] = useState(
+        () => localStorage.getItem("selectedMealType") || 'Breakfast'
+    );
+
     const { cart, resetCart } = useCart();
     const isCartEmpty = Object.keys(cart).length === 0;
 
@@ -28,6 +34,8 @@ const OrderPage = () => {
                 resetCart();
             }
             setSelectedPackage(pkg);
+            localStorage.setItem("selectedPackage", pkg);  // <-- Add this
+
         }
     };
     const handleMealTypeChange = (mealType) => {
@@ -38,8 +46,11 @@ const OrderPage = () => {
                 resetCart();
             }
             setSelectedMealType(mealType);
+            localStorage.setItem("selectedMealType", mealType); // <-- Add this
+
         }
     };
+
     return (
         <div className="home">
             <Header />
