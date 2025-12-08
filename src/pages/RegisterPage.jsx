@@ -9,7 +9,7 @@ import {
   RecaptchaVerifier,
   signInWithPhoneNumber,
 } from "../firebase";
-import loginBg from "../assets/logos/loginbg.png";
+import loginBg from "../assets/logos/loginbg.webp";
 import logonoBg from "../assets/logos/logo-nobg.png";
 import "./Login.css";
 

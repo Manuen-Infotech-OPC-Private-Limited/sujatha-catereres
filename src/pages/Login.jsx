@@ -183,7 +183,7 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { analytics, logEvent, auth, RecaptchaVerifier, signInWithPhoneNumber } from '../firebase';
 import axios from 'axios';
-import loginBg from '../assets/logos/loginbg.png';
+import loginBg from '../assets/logos/loginbg.webp';
 import logonoBg from '../assets/logos/logo-nobg.png';
 import './Login.css';
 

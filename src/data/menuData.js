@@ -1,106 +1,105 @@
-// AUTO-GENERATED: Do not edit
-import plainIdly from '../assets/itemImages/plain-idly.png';
-import masalaIdly from '../assets/itemImages/masala-idly.png';
-import plainVada from '../assets/itemImages/plain-vada.png';
-import masalaVada from '../assets/itemImages/masala-vada.jpg';
-import setDosa from '../assets/itemImages/set-dosa.png';
-import masalaDosa from '../assets/itemImages/masala-dosa.jpg';
-import uthappam from '../assets/itemImages/uthappam.png';
-import plainPongal from '../assets/itemImages/plain-pongal.png';
-import sweetPongal from '../assets/itemImages/sweet-pongal.png';
-import semiyaUpma from '../assets/itemImages/semiya-upma.png';
-import godhumaRavvaUpma from '../assets/itemImages/godhuma-ravva-upma.png';
-import tomatoBath from '../assets/itemImages/tomato-bath.png';
-import sambar from '../assets/itemImages/sambar.png';
-import palakPaneer from '../assets/itemImages/palak-paneer.jpg';
-import glasses from '../assets/itemImages/glasses.jpeg';
-import water from '../assets/itemImages/water.jpeg';
-import napkins from '../assets/itemImages/napkins.jpeg';
-import gulabJamun from '../assets/itemImages/gulab-jamun.png';
-import bottleGuardHalwa from '../assets/itemImages/bottle-guard-halwa.png';
-import kalaJamun from '../assets/itemImages/kala-jamun.png';
-import breadHalwa from '../assets/itemImages/bread-halwa.png';
-import kaajuBarfi from '../assets/itemImages/kaaju-barfi.png';
-import dryFruitsHalwa from '../assets/itemImages/dry-fruits-halwa.png';
-import maalPuri from '../assets/itemImages/maal-puri.png';
-import putaRekulu from '../assets/itemImages/puta-rekulu.png';
-import jilebi from '../assets/itemImages/jilebi.jpeg';
-import bobbatlu from '../assets/itemImages/bobbatlu.png';
-import malaiSandwich from '../assets/itemImages/malai-sandwich.png';
-import miniSweetpuff from '../assets/itemImages/mini-sweetpuff.png';
-import kaajuRoll from '../assets/itemImages/kaaju-roll.png';
-import kaajuPistaRoll from '../assets/itemImages/kaaju-pista-roll.png';
-import pineAppleKesari from '../assets/itemImages/pine-apple-kesari.png';
-import halwaPuri from '../assets/itemImages/halwa-puri.png';
-import vegCutlet from '../assets/itemImages/veg-cutlet.png';
-import paneerCutlet from '../assets/itemImages/paneer-cutlet.png';
-import vegPakoda from '../assets/itemImages/veg-pakoda.jpg';
-import aluBonda from '../assets/itemImages/alu-bonda.jpeg';
-import cornSamosa from '../assets/itemImages/corn-samosa.png';
-import mirchiBajji from '../assets/itemImages/mirchi-bajji.png';
-import cutBajjiBiryanii from '../assets/itemImages/cut-bajji-biryanii.png';
-import miniAluuSamosa from '../assets/itemImages/mini-aluu-samosa.png';
-import vegLallipop from '../assets/itemImages/veg-lallipop.png';
-import vegShangaiiRoll from '../assets/itemImages/veg-shangaii-roll.png';
-import gaarey from '../assets/itemImages/gaarey.png';
-import hotGreenStuffedKabab from '../assets/itemImages/hot-green-stuffed-kabab.png';
-import vegManchuriyan from '../assets/itemImages/veg-manchuriyan.png';
-import gobiManchuriyan from '../assets/itemImages/gobi-manchuriyan.png';
-import pulkaa from '../assets/itemImages/pulkaa.png';
-import rumaliRotii from '../assets/itemImages/rumali-rotii.png';
-import plainKulchaa from '../assets/itemImages/plain-kulchaa.png';
-import chapathii from '../assets/itemImages/chapathii.png';
-import jeeraBiryanii from '../assets/itemImages/jeera-biryanii.png';
-import vegFriedRice from '../assets/itemImages/veg-fried-rice.jpg';
-import noodles from '../assets/itemImages/noodles.jpeg';
-import mangoPulihora from '../assets/itemImages/mango-pulihora.jpeg';
-import lemonPulihopra from '../assets/itemImages/lemon-pulihopra.jpeg';
-import tamarindPulihora from '../assets/itemImages/tamarind-pulihora.jpeg';
-import tomatoRice from '../assets/itemImages/tomato-rice.png';
-import vegBiryani from '../assets/itemImages/veg-biryani.png';
-import podinaRice from '../assets/itemImages/podina-rice.png';
-import ulavaChaaruBiryani from '../assets/itemImages/ulava-chaaru-biryani.png';
-import kariveyPakuRice from '../assets/itemImages/karivey-paku-rice.png';
-import paneerButterMasala from '../assets/itemImages/paneer-butter-masala.jpg';
-import methiChamanCurry from '../assets/itemImages/methi-chaman-curry.jpg';
-import capsicumMasala from '../assets/itemImages/capsicum-masala.jpg';
-import babyCornMasala from '../assets/itemImages/baby-corn-masala.png';
-import mixedVegCurry from '../assets/itemImages/mixed-veg-curry.jpeg';
-import mushroomMasala from '../assets/itemImages/mushroom-masala.jpg';
-import aluGobiMasala from '../assets/itemImages/alu-gobi-masala.jpg';
-import aluuKurma from '../assets/itemImages/aluu-kurma.jpg';
-import phoolMakanaCurry from '../assets/itemImages/phool-makana-curry.jpg';
-import aluuCapsicumTamota from '../assets/itemImages/aluu-capsicum-tamota.png';
-import vegGreenBatanyKurmaa from '../assets/itemImages/veg-green-batany-kurmaa.jpg';
-import kadaiiVegitable from '../assets/itemImages/kadaii-vegitable.png';
-import navratnaaKurmaa from '../assets/itemImages/navratnaa-kurmaa.png';
-import millMakerKurma from '../assets/itemImages/mill-maker-kurma.png';
-import kaajuBhindiFry from '../assets/itemImages/kaaju-bhindi-fry.png';
-import dondaKaayaFry from '../assets/itemImages/donda-kaaya-fry.jpg';
-import cabbage65 from '../assets/itemImages/cabbage-65.jpg';
-import aluuFry from '../assets/itemImages/aluu-fry.png';
-import capsicum65 from '../assets/itemImages/capsicum-65.png';
-import kandhaFry from '../assets/itemImages/kandha-fry.jpg';
-import cabbageBeansCarrot from '../assets/itemImages/cabbage-beans-carrot.png';
-import thotaKuraFry from '../assets/itemImages/thota-kura-fry.png';
-import alu65 from '../assets/itemImages/alu-65.png';
-import gobi65 from '../assets/itemImages/gobi-65.png';
-import chamadumpalaFry from '../assets/itemImages/chamadumpala-fry.png';
-import taatiMunjalaCurry from '../assets/itemImages/taati-munjala-curry.png';
-import chamaDumpalaPulusu from '../assets/itemImages/chama-dumpala-pulusu.png';
-import gonguraPhoolMakani from '../assets/itemImages/gongura-phool-makani.jpg';
-import gravyCurry from '../assets/itemImages/gravy-curry.png';
-// import vankayaBajji from '../assets/itemImages/vankaya-bajji.png';
-import mangoIceCream from '../assets/itemImages/mango.png';
-import tootyFruity from '../assets/itemImages/tooty-fruity.png';
-import butterscotch from '../assets/itemImages/butterscotch.jpeg';
-import strawberry from '../assets/itemImages/strawberry.png';
-import paan from '../assets/itemImages/paan.png';
-import plates from '../assets/itemImages/plates.png';
-import junnu from '../assets/itemImages/junnu.png';
-import supply from '../assets/itemImages/supply.jpg';
-import transport from '../assets/itemImages/transport.jpg';
-import vanilla from '../assets/itemImages/vanilla.png';
+import plainIdly from '../assets/itemImages/plain-idly.webp';
+import masalaIdly from '../assets/itemImages/masala-idly.webp';
+import plainVada from '../assets/itemImages/plain-vada.webp';
+import masalaVada from '../assets/itemImages/masala-vada.webp';
+import setDosa from '../assets/itemImages/set-dosa.webp';
+import masalaDosa from '../assets/itemImages/masala-dosa.webp';
+import uthappam from '../assets/itemImages/uthappam.webp';
+import plainPongal from '../assets/itemImages/plain-pongal.webp';
+import sweetPongal from '../assets/itemImages/sweet-pongal.webp';
+import semiyaUpma from '../assets/itemImages/semiya-upma.webp';
+import godhumaRavvaUpma from '../assets/itemImages/godhuma-ravva-upma.webp';
+import tomatoBath from '../assets/itemImages/tomato-bath.webp';
+import sambar from '../assets/itemImages/sambar.webp';
+import palakPaneer from '../assets/itemImages/palak-paneer.webp';
+import glasses from '../assets/itemImages/glasses.webp';
+import water from '../assets/itemImages/water.webp';
+import napkins from '../assets/itemImages/napkins.webp';
+import gulabJamun from '../assets/itemImages/gulab-jamun.webp';
+import bottleGuardHalwa from '../assets/itemImages/bottle-guard-halwa.webp';
+import kalaJamun from '../assets/itemImages/kala-jamun.webp';
+import breadHalwa from '../assets/itemImages/bread-halwa.webp';
+import kaajuBarfi from '../assets/itemImages/kaaju-barfi.webp';
+import dryFruitsHalwa from '../assets/itemImages/dry-fruits-halwa.webp';
+import maalPuri from '../assets/itemImages/maal-puri.webp';
+import putaRekulu from '../assets/itemImages/puta-rekulu.webp';
+import jilebi from '../assets/itemImages/jilebi.webp';
+import bobbatlu from '../assets/itemImages/bobbatlu.webp';
+import malaiSandwich from '../assets/itemImages/malai-sandwich.webp';
+import miniSweetpuff from '../assets/itemImages/mini-sweetpuff.webp';
+import kaajuRoll from '../assets/itemImages/kaaju-roll.webp';
+import kaajuPistaRoll from '../assets/itemImages/kaaju-pista-roll.webp';
+import pineAppleKesari from '../assets/itemImages/pine-apple-kesari.webp';
+import halwaPuri from '../assets/itemImages/halwa-puri.webp';
+import vegCutlet from '../assets/itemImages/veg-cutlet.webp';
+import paneerCutlet from '../assets/itemImages/paneer-cutlet.webp';
+import vegPakoda from '../assets/itemImages/veg-pakoda.webp';
+import aluBonda from '../assets/itemImages/alu-bonda.webp';
+import cornSamosa from '../assets/itemImages/corn-samosa.webp';
+import mirchiBajji from '../assets/itemImages/mirchi-bajji.webp';
+import cutBajjiBiryanii from '../assets/itemImages/cut-bajji-biryanii.webp';
+import miniAluuSamosa from '../assets/itemImages/mini-aluu-samosa.webp';
+import vegLallipop from '../assets/itemImages/veg-lallipop.webp';
+import vegShangaiiRoll from '../assets/itemImages/veg-shangaii-roll.webp';
+import gaarey from '../assets/itemImages/gaarey.webp';
+import hotGreenStuffedKabab from '../assets/itemImages/hot-green-stuffed-kabab.webp';
+import vegManchuriyan from '../assets/itemImages/veg-manchuriyan.webp';
+import gobiManchuriyan from '../assets/itemImages/gobi-manchuriyan.webp';
+import pulkaa from '../assets/itemImages/pulkaa.webp';
+import rumaliRotii from '../assets/itemImages/rumali-rotii.webp';
+import plainKulchaa from '../assets/itemImages/plain-kulchaa.webp';
+import chapathii from '../assets/itemImages/chapathii.webp';
+import jeeraBiryanii from '../assets/itemImages/jeera-biryanii.webp';
+import vegFriedRice from '../assets/itemImages/veg-fried-rice.webp';
+import noodles from '../assets/itemImages/noodles.webp';
+import mangoPulihora from '../assets/itemImages/mango-pulihora.webp';
+import lemonPulihopra from '../assets/itemImages/lemon-pulihopra.webp';
+import tamarindPulihora from '../assets/itemImages/tamarind-pulihora.webp';
+import tomatoRice from '../assets/itemImages/tomato-rice.webp';
+import vegBiryani from '../assets/itemImages/veg-biryani.webp';
+import podinaRice from '../assets/itemImages/podina-rice.webp';
+import ulavaChaaruBiryani from '../assets/itemImages/ulava-chaaru-biryani.webp';
+import kariveyPakuRice from '../assets/itemImages/karivey-paku-rice.webp';
+import paneerButterMasala from '../assets/itemImages/paneer-butter-masala.webp';
+import methiChamanCurry from '../assets/itemImages/methi-chaman-curry.webp';
+import capsicumMasala from '../assets/itemImages/capsicum-masala.webp';
+import babyCornMasala from '../assets/itemImages/baby-corn-masala.webp';
+import mixedVegCurry from '../assets/itemImages/mixed-veg-curry.webp';
+import mushroomMasala from '../assets/itemImages/mushroom-masala.webp';
+import aluGobiMasala from '../assets/itemImages/alu-gobi-masala.webp';
+import aluuKurma from '../assets/itemImages/aluu-kurma.webp';
+import phoolMakanaCurry from '../assets/itemImages/phool-makana-curry.webp';
+import aluuCapsicumTamota from '../assets/itemImages/aluu-capsicum-tamota.webp';
+import vegGreenBatanyKurmaa from '../assets/itemImages/veg-green-batany-kurmaa.webp';
+import kadaiiVegitable from '../assets/itemImages/kadaii-vegitable.webp';
+import navratnaaKurmaa from '../assets/itemImages/navratnaa-kurmaa.webp';
+import millMakerKurma from '../assets/itemImages/mill-maker-kurma.webp';
+import kaajuBhindiFry from '../assets/itemImages/kaaju-bhindi-fry.webp';
+import dondaKaayaFry from '../assets/itemImages/donda-kaaya-fry.webp';
+import cabbage65 from '../assets/itemImages/cabbage-65.webp';
+import aluuFry from '../assets/itemImages/aluu-fry.webp';
+import capsicum65 from '../assets/itemImages/capsicum-65.webp';
+import kandhaFry from '../assets/itemImages/kandha-fry.webp';
+import cabbageBeansCarrot from '../assets/itemImages/cabbage-beans-carrot.webp';
+import thotaKuraFry from '../assets/itemImages/thota-kura-fry.webp';
+import alu65 from '../assets/itemImages/alu-65.webp';
+import gobi65 from '../assets/itemImages/gobi-65.webp';
+import chamadumpalaFry from '../assets/itemImages/chamadumpala-fry.webp';
+import taatiMunjalaCurry from '../assets/itemImages/taati-munjala-curry.webp';
+import chamaDumpalaPulusu from '../assets/itemImages/chama-dumpala-pulusu.webp';
+import gonguraPhoolMakani from '../assets/itemImages/gongura-phool-makani.webp';
+import gravyCurry from '../assets/itemImages/gravy-curry.webp';
+// import vankayaBajji from '../assets/itemImages/vankaya-bajji.webp';
+import mangoIceCream from '../assets/itemImages/mango.webp';
+import tootyFruity from '../assets/itemImages/tooty-fruity.webp';
+import butterscotch from '../assets/itemImages/butterscotch.webp';
+import strawberry from '../assets/itemImages/strawberry.webp';
+import paan from '../assets/itemImages/paan.webp';
+import plates from '../assets/itemImages/plates.webp';
+import junnu from '../assets/itemImages/junnu.webp';
+import supply from '../assets/itemImages/supply.webp';
+import transport from '../assets/itemImages/transport.webp';
+import vanilla from '../assets/itemImages/vanilla.webp';
 
 export const MENU = {
   "breakfast": {
@@ -240,7 +239,7 @@ export const MENU = {
           "Premium",
           "Luxury"
         ],
-        "image": null,
+        "image": junnu,
         "autoInclude": true,
       },
       {
@@ -252,7 +251,7 @@ export const MENU = {
           "Luxury"
         ],
         "autoInclude": true,
-        "image": null,
+        "image": junnu,
       },
       {
         "name": "Sambar",
@@ -271,7 +270,7 @@ export const MENU = {
           "Premium",
           "Luxury"
         ],
-        "image": null,
+        "image": junnu,
         "selectableGroup": "drink",
       },
       {
@@ -282,7 +281,7 @@ export const MENU = {
           "Premium",
           "Luxury"
         ],
-        "image": null,
+        "image": junnu,
         "selectableGroup": "drink",
       },
       {

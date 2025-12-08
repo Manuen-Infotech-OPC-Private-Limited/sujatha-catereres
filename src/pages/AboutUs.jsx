@@ -25,8 +25,8 @@ const About = () => {
                         <h1>About Us</h1>
                         <p>
                             At Sujatha Catering, we believe food is more than nourishment—it's a celebration of heritage, emotion, and experience.
-                            Founded in 2025, Sujatha Catering was born from a singular vision: to bring the soul of authentic South Indian vegetarian
-                            cuisine to life with elegance, precision, and unmatched care.
+                            With over <strong>23+ years of expertise</strong> in the catering industry, our team brings deep-rooted culinary knowledge
+                            and consistent excellence to every event.
                         </p>
 
                         <p>
@@ -35,7 +35,7 @@ const About = () => {
                             highest standards of hygiene and excellence.
                         </p>
 
-                        <h3 data-aos="fade-up">Where Tradition Meets Sophistication</h3>
+                        <h3 data-aos="fade-left">Where Tradition Meets Sophistication</h3>
                         <p>
                             Our team doesn't just serve food—we curate experiences. Whether it's a wedding, pooja, corporate gathering, or intimate
                             celebration, Sujatha Catering takes pride in delivering meals that not only satisfy the palate but create lasting impressions.
@@ -48,8 +48,9 @@ const About = () => {
                             the ease of professionalism with the warmth of home.
                         </p>
 
-                        <h3 data-aos="fade-up">Why Choose Sujatha Catering?</h3>
+                        <h3 data-aos="fade-left">Why Choose Sujatha Catering?</h3>
                         <div className="about-badges" data-aos="zoom-in-up">
+                            <span>23+ Years of Catering Expertise</span>
                             <span>100% Authentic South Indian Vegetarian Cuisine</span>
                             <span>Elegant Presentation & Customized Menus</span>
                             <span>White-Glove Service with Personal Attention</span>

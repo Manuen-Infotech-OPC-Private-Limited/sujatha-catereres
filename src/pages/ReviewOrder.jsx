@@ -318,14 +318,17 @@ const ReviewOrder = () => {
       toast.error('Please select delivery date');
       return;
     }
-
+    const fullCart = {
+      ...cart,
+      complimentary: complimentaryItems,
+    };
     try {
       const response = await fetch(`${API}/api/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
-          cart,
+          cart: fullCart,
           complimentaryItems,
           selectedPackage,
           selectedMealType,
