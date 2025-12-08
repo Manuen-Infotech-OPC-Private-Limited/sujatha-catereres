@@ -145,29 +145,33 @@ const JWT_SECRET = process.env.JWT_SECRET || "123456";
 router.post("/firebase-login", async (req, res) => {
   const { idToken } = req.body;
   if (!idToken) return res.status(400).json({ error: "Firebase ID token required" });
+  const isMobile = req.headers["x-client-type"] === "mobile";
 
   try {
     // 1️⃣ Verify the Firebase token
     const decoded = await verifyFirebaseToken(idToken);
     const phone = decoded.phone_number;
 
-    if (!phone) {
-      return res.status(400).json({ error: "Phone number missing in Firebase token" });
-    }
+    if (!phone) return res.status(400).json({ error: "Phone number missing" });
 
     // 2️⃣ Find or create the user in DB
     let user = await User.findOne({ phone });
-    if (!user) {
-      user = new User({ phone });
-      await user.save();
-    }
+    if (!user) { user = new User({ phone }); await user.save(); }
 
     // 3️⃣ Issue your own backend JWT (for sessions)
-    const token = jwt.sign(
-      { id: user._id, phone: user.phone },
-      JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRY || "30d" }
-    );
+    const token = jwt.sign({ id: user._id, phone: user.phone }, JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRY || "30d"
+    });
+    // --------------------------
+    // 🔹 MOBILE CLIENT
+    // --------------------------
+    if (isMobile) {
+      return res.json({
+        message: "Login successful",
+        token,
+        user
+      });
+    }
 
     // 4️⃣ Set cookie
     res.cookie("token", token, {
@@ -179,7 +183,7 @@ router.post("/firebase-login", async (req, res) => {
 
     res.json({ message: "Login successful", user });
   } catch (err) {
-    console.error("Firebase login failed:", err);
+    console.error("Firebase login error:", err);
     res.status(401).json({ error: "Invalid or expired Firebase token" });
   }
 });
@@ -191,6 +195,7 @@ router.post("/register", async (req, res) => {
   if (!idToken || !name || !email) {
     return res.status(400).json({ error: "Missing required fields" });
   }
+  const isMobile = req.headers["x-client-type"] === "mobile";
 
   try {
     // 1️⃣ Verify Firebase token
@@ -215,6 +220,16 @@ router.post("/register", async (req, res) => {
 
     // 3️⃣ Issue JWT
     const token = jwt.sign({ id: user._id, phone: user.phone }, JWT_SECRET, { expiresIn: "30d" });
+    // --------------------------
+    // 🔹 MOBILE CLIENT
+    // --------------------------
+    if (isMobile) {
+      return res.json({
+        message: "Registration successful",
+        token,
+        user
+      });
+    }
 
     // 4️⃣ Set cookie
     res.cookie("token", token, {
