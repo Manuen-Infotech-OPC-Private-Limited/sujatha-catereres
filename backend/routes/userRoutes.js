@@ -159,7 +159,7 @@ router.post("/firebase-login", async (req, res) => {
     if (!user) { isNewUser = true; user = new User({ phone }); await user.save(); }
 
     // 3️⃣ Issue your own backend JWT (for sessions)
-    const token = jwt.sign({ id: user._id, phone: user.phone, role:user.role }, JWT_SECRET, {
+    const token = jwt.sign({ id: user._id, phone: user.phone, role: user.role }, JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRY || "30d"
     });
     // --------------------------
@@ -188,6 +188,25 @@ router.post("/firebase-login", async (req, res) => {
     res.status(401).json({ error: "Invalid or expired Firebase token" });
   }
 });
+
+// Save or update FCM token for logged-in user
+router.post("/save-fcm-token", authenticateToken, async (req, res) => {
+  try {
+    const { fcmToken } = req.body;
+
+    if (!fcmToken) {
+      return res.status(400).json({ error: "FCM token is required" });
+    }
+
+    await User.findByIdAndUpdate(req.user.id, { fcmToken });
+
+    res.json({ message: "FCM token saved successfully" });
+  } catch (err) {
+    console.error("Error saving FCM token:", err);
+    res.status(500).json({ error: "Failed to save FCM token" });
+  }
+});
+
 
 // Registration route
 router.post("/register", async (req, res) => {
@@ -221,7 +240,7 @@ router.post("/register", async (req, res) => {
     }
 
     // 3️⃣ Issue JWT
-    const token = jwt.sign({ id: user._id, phone: user.phone, role:user.role }, JWT_SECRET, { expiresIn: "30d" });
+    const token = jwt.sign({ id: user._id, phone: user.phone, role: user.role }, JWT_SECRET, { expiresIn: "30d" });
     // --------------------------
     // 🔹 MOBILE CLIENT
     // --------------------------

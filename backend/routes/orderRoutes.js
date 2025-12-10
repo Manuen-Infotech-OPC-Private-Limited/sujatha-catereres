@@ -4,6 +4,9 @@ const isAdmin = require('../service/isAdmin');
 
 const Order = require('../models/Order');
 
+const { sendPush } = require("../service/sendPush");
+const { getFriendlyMessage } = require("../service/friendlyMessages");
+
 const router = express.Router();
 
 // POST /api/orders - Place order
@@ -102,6 +105,7 @@ router.get('/', authenticateToken, async (req, res) => {
 router.patch('/:id/status', authenticateToken, isAdmin, async (req, res) => {
   try {
     const { status } = req.body;
+
     if (!['pending', 'confirmed', 'preparing', 'delivered', 'cancelled'].includes(status)) {
       return res.status(400).json({ error: 'Invalid status' });
     }
@@ -110,28 +114,38 @@ router.patch('/:id/status', authenticateToken, isAdmin, async (req, res) => {
       req.params.id,
       { status },
       { new: true }
-    ).populate('user', 'name email');
+    ).populate('user', 'name email fcmToken');
 
-    if (!updated) return res.status(404).json({ error: 'Order not found' });
+    if (!updated) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
 
+    // SOCKET.IO notifications
     const io = req.app.get('io');
     if (io) {
-      // Notify all admins (update in dashboard)
       io.to('admins').emit('orderUpdated', updated);
+      if (updated.user?._id) io.to(String(updated.user._id)).emit('orderUpdated', updated);
+      else if (updated.user) io.to(String(updated.user)).emit('orderUpdated', updated);
+    }
 
-      // Notify specific user as well (for user app/web)
-      if (updated.user?._id) {
-        io.to(String(updated.user._id)).emit('orderUpdated', updated);
-      } else if (updated.user) {
-        io.to(String(updated.user)).emit('orderUpdated', updated);
-      }
+    // FRIENDLY FCM notification
+    if (updated.user?.fcmToken) {
+      const friendlyBody = getFriendlyMessage(status);
+
+      sendPush(
+        updated.user.fcmToken,
+        "Order Update",
+        friendlyBody,
+        updated._id,
+        { status }
+      );
     }
 
     res.json({ message: 'Order status updated', order: updated });
   } catch (err) {
-    console.error('Error updating order status:', err);
     res.status(500).json({ error: 'Failed to update order status' });
   }
 });
+
 
 module.exports = router;
