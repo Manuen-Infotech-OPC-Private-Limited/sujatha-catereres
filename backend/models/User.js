@@ -5,6 +5,11 @@ const userSchema = new mongoose.Schema({
   name: { type: String },
   email: { type: String },
   address: { type: String }, // ✅ make sure this is included
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user',
+  }
 
   // other fields...
 });

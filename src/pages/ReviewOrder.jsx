@@ -297,6 +297,15 @@ const ReviewOrder = () => {
   const [orderPlaced, setOrderPlaced] = useState(false);
 
   const API = process.env.REACT_APP_API_URL;
+  // 🔔 Send system notification
+  const sendOrderPlacedNotification = () => {
+    if (Notification.permission === "granted") {
+      new Notification("Sujatha Caterers • Order Placed", {
+        body: "Thank you! Your order has been placed successfully.",
+        icon: "/logo192.png",
+      });
+    }
+  };
 
   useEffect(() => {
     if (location.state?.selectedPackage && location.state?.selectedMealType) {
@@ -335,11 +344,15 @@ const ReviewOrder = () => {
           guests,
           deliveryDate,
           pricePerPerson,
+          status: 'pending', // <- default status
+
         }),
       });
 
       const data = await response.json();
       if (response.ok) {
+        // 🔔 Send professional browser notification
+        sendOrderPlacedNotification();
         resetCart();
         setOrderPlaced(true); // Show animation
       } else {

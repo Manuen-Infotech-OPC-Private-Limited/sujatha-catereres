@@ -120,3 +120,29 @@
 .invoice-btn:hover {
   background-color: #b71c1c
 }
+
+.status-label.pending {
+  color: orange;
+  font-weight: bold;
+}
+
+.status-label.confirmed {
+  color: blue;
+  font-weight: bold;
+}
+
+.status-label.preparing {
+  color: purple;
+  font-weight: bold;
+}
+
+.status-label.delivered {
+  color: green;
+  font-weight: bold;
+}
+
+
+.status-label.cancelled {
+  color: red;
+  font-weight: bold;
+}

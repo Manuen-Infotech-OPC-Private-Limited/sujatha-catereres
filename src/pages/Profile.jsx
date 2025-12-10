@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { io } from 'socket.io-client';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import './Profile.css';
@@ -15,6 +16,24 @@ const Profile = () => {
     const navigate = useNavigate();
     const API = process.env.REACT_APP_API_URL;
 
+    // 🔔 Request Notification Permission on page load
+    useEffect(() => {
+        if (Notification.permission !== "granted") {
+            Notification.requestPermission();
+        }
+    }, []);
+
+    // 🔔 Browser notification helper
+    const sendBrowserNotification = (title, body) => {
+        if (Notification.permission === "granted") {
+            new Notification(title, {
+                body,
+                icon: "/logo192.png" // optional icon
+            });
+        }
+    };
+
+    // Load user + orders
     useEffect(() => {
         AOS.init({ duration: 800 });
 
@@ -35,7 +54,6 @@ const Profile = () => {
                 if (Array.isArray(res.data.orders)) {
                     setOrders(res.data.orders);
                 } else {
-                    console.error('Expected an array from /api/orders, got:', res.data);
                     setOrders([]);
                 }
             } catch (err) {
@@ -47,6 +65,52 @@ const Profile = () => {
         fetchUser();
         fetchOrders();
     }, [API, navigate]);
+
+    // SOCKET.IO: Real-time updates
+    useEffect(() => {
+        if (!user?._id) return; // Wait until user is loaded
+
+        const socket = io(API, {
+            withCredentials: true,
+            transports: ["polling", "websocket"],
+            reconnection: true,
+        });
+
+        socket.on("connect", () => {
+            console.log("Connected to Socket.IO server");
+            socket.emit("register", { userId: user._id });
+        });
+
+        // 📌 Real-time STATUS UPDATE
+        socket.on('orderUpdated', (updatedOrder) => {
+            console.log("Order updated:", updatedOrder);
+
+            if (String(updatedOrder.user?._id) === String(user._id)) {
+                setOrders((prevOrders) =>
+                    prevOrders.map((order) =>
+                        order._id === updatedOrder._id ? updatedOrder : order
+                    )
+                );
+
+                // 🔔 SEND SYSTEM NOTIFICATION
+                sendBrowserNotification(
+                    "Sujatha Caterers • Order Update",
+                    `Your order ${updatedOrder._id} is now "${updatedOrder.status}".`
+                );
+            }
+        });
+
+        // 📌 Real-time NEW ORDER created by this user
+        socket.on('orderCreated', (newOrder) => {
+            if (String(newOrder.user?._id) === String(user._id)) {
+                setOrders((prevOrders) => [newOrder, ...prevOrders]);
+            }
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, [API, user?._id]);
 
     const handleSave = async () => {
         try {
@@ -67,19 +131,23 @@ const Profile = () => {
         }
     };
 
-
     return (
         <div className="home">
             <Header />
+
             <div className="profile-container" data-aos="fade-up">
                 <h2>Profile</h2>
+
                 {user && (
                     <>
                         <p><strong>Name:</strong> {user.name}</p>
                         <p><strong>Phone:</strong> {user.phone || 'N/A'}</p>
                         <p><strong>Email:</strong> {user.email}</p>
+
+                        {/* Address Section */}
                         <div className="address-section" data-aos="fade-up">
                             <strong>Address</strong>
+
                             {editing ? (
                                 <>
                                     <textarea
@@ -87,6 +155,7 @@ const Profile = () => {
                                         onChange={(e) => setAddress(e.target.value)}
                                         rows={3}
                                     />
+
                                     <div className="button-group">
                                         <button onClick={handleSave}>Save</button>
                                         <button
@@ -110,8 +179,10 @@ const Profile = () => {
                             )}
                         </div>
 
+                        {/* Order History */}
                         <div className="order-history" data-aos="fade-up">
                             <h3>Order History</h3>
+
                             {orders.length === 0 ? (
                                 <p>No orders yet.</p>
                             ) : (
@@ -120,20 +191,31 @@ const Profile = () => {
                                         <li key={order._id} className="order-item" data-aos="fade">
                                             <p><strong>Order ID:</strong> {order._id}</p>
                                             <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleDateString()}</p>
-                                            <p><strong>Total:</strong> ₹{order.guests * order.pricePerPerson}</p>
-                                            <p><strong>Status:</strong> {order.status || 'Confirmed'}</p>
-                                            <p><strong>Items:</strong> {
-                                                Object.entries(order.cart || {})
-                                                    .flatMap(([_, items]) => items.map(item => item.name))
-                                                    .join(', ')
-                                            }</p>
+                                            <p><strong>Total:</strong> ₹{order.total}</p>
+
+                                            <p>
+                                                <strong>Status:</strong>
+                                                <span className={`status-label ${order.status}`}>
+                                                    {order.status}
+                                                </span>
+                                            </p>
+
+                                            <p>
+                                                <strong>Items:</strong>{" "}
+                                                {Object.values(order.cart || {})
+                                                    .flat()
+                                                    .map((item) => item.name)
+                                                    .join(", ")}
+                                            </p>
+
                                             <button
                                                 className="invoice-btn"
-                                                onClick={() => navigate(`/invoice/${order._id}`, { state: { order, user } })}
+                                                onClick={() =>
+                                                    navigate(`/invoice/${order._id}`, { state: { order, user } })
+                                                }
                                             >
                                                 Show Invoice
                                             </button>
-
                                         </li>
                                     ))}
                                 </ul>
@@ -141,8 +223,6 @@ const Profile = () => {
                         </div>
                     </>
                 )}
-
-
             </div>
         </div>
     );

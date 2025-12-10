@@ -16,7 +16,11 @@ const Home = () => {
 
   const API = process.env.REACT_APP_API_URL;
   // console.log(`API url is: ${API}`);
-
+  useEffect(() => {
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+  }, []);
   useEffect(() => {
     const alreadyVisited = Cookies.get('already_visited');
     if (!alreadyVisited) {

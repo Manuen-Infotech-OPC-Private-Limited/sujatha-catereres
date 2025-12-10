@@ -146,7 +146,7 @@ router.post("/firebase-login", async (req, res) => {
   const { idToken } = req.body;
   if (!idToken) return res.status(400).json({ error: "Firebase ID token required" });
   const isMobile = req.headers["x-client-type"] === "mobile";
-
+  let isNewUser = false;
   try {
     // 1️⃣ Verify the Firebase token
     const decoded = await verifyFirebaseToken(idToken);
@@ -156,10 +156,10 @@ router.post("/firebase-login", async (req, res) => {
 
     // 2️⃣ Find or create the user in DB
     let user = await User.findOne({ phone });
-    if (!user) { user = new User({ phone }); await user.save(); }
+    if (!user) { isNewUser = true; user = new User({ phone }); await user.save(); }
 
     // 3️⃣ Issue your own backend JWT (for sessions)
-    const token = jwt.sign({ id: user._id, phone: user.phone }, JWT_SECRET, {
+    const token = jwt.sign({ id: user._id, phone: user.phone, role:user.role }, JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRY || "30d"
     });
     // --------------------------
@@ -169,7 +169,8 @@ router.post("/firebase-login", async (req, res) => {
       return res.json({
         message: "Login successful",
         token,
-        user
+        user,
+        isNewUser,
       });
     }
 
@@ -215,11 +216,12 @@ router.post("/register", async (req, res) => {
       user.name = name;
       user.email = email;
       if (address) user.address = address;
+      console.log(`updating existing user details with: ${name} - ${email} -${address}`);
       await user.save();
     }
 
     // 3️⃣ Issue JWT
-    const token = jwt.sign({ id: user._id, phone: user.phone }, JWT_SECRET, { expiresIn: "30d" });
+    const token = jwt.sign({ id: user._id, phone: user.phone, role:user.role }, JWT_SECRET, { expiresIn: "30d" });
     // --------------------------
     // 🔹 MOBILE CLIENT
     // --------------------------
