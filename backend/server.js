@@ -51,6 +51,7 @@ const limiter = rateLimit({
   max: 200, // allow 200 requests per window per IP
 });
 app.use(limiter);
+app.set('trust proxy', 1);
 
 // ----- CORS FOR REST API -----
 // app.use(cors({
