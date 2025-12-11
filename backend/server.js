@@ -112,6 +112,9 @@ app.use('/api/visit', visitRoute);
 const orderRoutes = require('./routes/orderRoutes');
 app.use('/api/orders', orderRoutes);
 
+const consultationRoutes = require('./routes/consultationRoutes');
+app.use('/api/consultations', consultationRoutes);
+
 const adminAuthRoutes = require('./routes/adminAuth');
 app.use('/api/admin', adminAuthRoutes);
 
