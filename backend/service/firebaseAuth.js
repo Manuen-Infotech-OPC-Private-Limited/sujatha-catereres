@@ -5,11 +5,11 @@ if (!admin.apps.length) {
   try {
     let serviceAccount;
 
-    if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY_PATH) {
-      const keyPath = process.env.FIREBASE_SERVICE_ACCOUNT_KEY_PATH;
+    if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+      const keyPath = process.env.FIREBASE_SERVICE_ACCOUNT;
       serviceAccount = JSON.parse(fs.readFileSync(keyPath, "utf8"));
-    } else if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
-      serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+    } else if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+      serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
     } else {
       throw new Error("Firebase service account key not provided");
     }
