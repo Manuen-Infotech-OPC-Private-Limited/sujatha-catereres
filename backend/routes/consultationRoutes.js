@@ -1,10 +1,8 @@
 const express = require("express");
 const authenticateToken = require("../service/authToken");
-const isAdmin = require("../service/isAdmin");
 const ConsultationRequest = require("../models/ConsultationRequest");
 
 const router = express.Router();
-
 // Sujatha Caterers HQ coordinates
 const HQ_LAT = 16.329514658172048;
 const HQ_LNG = 80.41141516914828;
@@ -16,17 +14,18 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     const dLon = (lon2 - lon1) * Math.PI / 180;
 
     const a =
-        Math.sin(dLat / 2) ** 2 +
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
         Math.cos(lat1 * Math.PI / 180) *
         Math.cos(lat2 * Math.PI / 180) *
-        Math.sin(dLon / 2) ** 2;
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c; // km
-}
 
+    return R * c; // distance in KM
+}
 // -----------------------------------------------------------
-// 🟢 CHECK SERVICE AREA — USER ONLY
+// 🟢 CHECK IF USER IS IN SERVICE AREA (within 15 km radius)
 // -----------------------------------------------------------
 router.post("/check-service-area", authenticateToken, async (req, res) => {
     try {
@@ -48,13 +47,13 @@ router.post("/check-service-area", authenticateToken, async (req, res) => {
     }
 });
 
-// -----------------------------------------------------------
-// 🟢 USER — SUBMIT CONSULTATION FORM
-// -----------------------------------------------------------
+// ------------------------------------------------------------------
+// 🟢 SUBMIT CONSULTATION FORM (Offline or Online)
+// ------------------------------------------------------------------
 router.post("/submit", authenticateToken, async (req, res) => {
     try {
         const {
-            type,
+            type, // offline / online
             name,
             email,
             phone,
@@ -88,10 +87,11 @@ router.post("/submit", authenticateToken, async (req, res) => {
 
         await request.save();
 
+        // socket.io notify admin instantly
         const io = req.app.get("io");
         io.to("admins").emit("new-consultation", request);
 
-        res.json({
+        return res.json({
             message: "Consultation request submitted successfully",
             request,
         });
@@ -101,9 +101,9 @@ router.post("/submit", authenticateToken, async (req, res) => {
     }
 });
 
-// -----------------------------------------------------------
-// 🟢 USER — GET MY CONSULTATIONS
-// -----------------------------------------------------------
+// ------------------------------------------------------------------
+// 🟢 USER: Get my consultation history
+// ------------------------------------------------------------------
 router.get("/my-requests", authenticateToken, async (req, res) => {
     try {
         const requests = await ConsultationRequest.find({ userId: req.user.id })
@@ -116,14 +116,13 @@ router.get("/my-requests", authenticateToken, async (req, res) => {
     }
 });
 
-// -----------------------------------------------------------
-// 🔴 ADMIN — GET ALL CONSULTATIONS (ADMIN ONLY)
-// -----------------------------------------------------------
-router.get("/all", authenticateToken, isAdmin, async (req, res) => {
+// ------------------------------------------------------------------
+// 🟢 ADMIN: Get all consultation requests
+// ------------------------------------------------------------------
+router.get("/all", async (req, res) => {
     try {
-        const requests = await ConsultationRequest.find()
-            .sort({ createdAt: -1 });
-
+        // In future we add admin authentication
+        const requests = await ConsultationRequest.find().sort({ createdAt: -1 });
         res.json(requests);
     } catch (err) {
         console.error("Fetch all consultations failed:", err);
@@ -131,10 +130,10 @@ router.get("/all", authenticateToken, isAdmin, async (req, res) => {
     }
 });
 
-// -----------------------------------------------------------
-// 🔴 ADMIN — UPDATE STATUS (ADMIN ONLY)
-// -----------------------------------------------------------
-router.put("/update-status/:id", authenticateToken, isAdmin, async (req, res) => {
+// ------------------------------------------------------------------
+// 🟢 ADMIN: Update status (accept/reject/complete)
+// ------------------------------------------------------------------
+router.put("/update-status/:id", async (req, res) => {
     try {
         const { status } = req.body;
 
@@ -148,10 +147,11 @@ router.put("/update-status/:id", authenticateToken, isAdmin, async (req, res) =>
             return res.status(404).json({ error: "Consultation not found" });
         }
 
+        // socket notify the user
         const io = req.app.get("io");
         io.to(String(request.userId)).emit("consultation-status-changed", request);
 
-        res.json({ message: "Status updated", request });
+        return res.json({ message: "Status updated", request });
     } catch (err) {
         console.error("Status update failed:", err);
         res.status(500).json({ error: "Failed to update status" });

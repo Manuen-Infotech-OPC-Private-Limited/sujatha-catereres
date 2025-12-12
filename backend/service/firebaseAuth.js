@@ -6,11 +6,9 @@ if (!admin.apps.length) {
     let serviceAccount;
 
     if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY_PATH) {
-      // ✅ Load from a JSON file path
       const keyPath = process.env.FIREBASE_SERVICE_ACCOUNT_KEY_PATH;
       serviceAccount = JSON.parse(fs.readFileSync(keyPath, "utf8"));
     } else if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
-      // ✅ Parse inline JSON string
       serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
     } else {
       throw new Error("Firebase service account key not provided");
@@ -18,13 +16,16 @@ if (!admin.apps.length) {
 
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
+      storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
     });
 
-    console.log("✅ Firebase Admin initialized successfully");
+    console.log("✅ Firebase Admin initialized (Auth + Storage)");
   } catch (err) {
     console.error("❌ Failed to initialize Firebase Admin:", err);
   }
 }
+
+const bucket = admin.storage().bucket();
 
 /**
  * Verifies a Firebase ID token
@@ -39,4 +40,8 @@ const verifyFirebaseToken = async (idToken) => {
   }
 };
 
-module.exports = { verifyFirebaseToken };
+module.exports = {
+  verifyFirebaseToken,
+  bucket,       // ⭐ now exporting bucket
+  admin
+};

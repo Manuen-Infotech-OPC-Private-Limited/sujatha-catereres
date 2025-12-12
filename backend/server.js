@@ -121,6 +121,9 @@ app.use('/api/admin', adminAuthRoutes);
 const adminAnalytics = require('./routes/adminAnalytics');
 app.use('/api/admin', adminAnalytics);
 
+const galleryRoutes = require('./routes/galleryRoutes');
+app.use('/api/gallery', galleryRoutes);
+
 // ----- FIREBASE (optional) -----
 if (process.env.FIREBASE_SERVICE_ACCOUNT) {
   try {
