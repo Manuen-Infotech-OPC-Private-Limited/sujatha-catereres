@@ -112,6 +112,9 @@ app.use('/api/visit', visitRoute);
 const orderRoutes = require('./routes/orderRoutes');
 app.use('/api/orders', orderRoutes);
 
+const notificationRoutes = require('./routes/notificationRoutes');
+app.use('/api/notifications', notificationRoutes);
+
 const consultationRoutes = require('./routes/consultationRoutes');
 app.use('/api/consultations', consultationRoutes);
 
@@ -124,20 +127,6 @@ app.use('/api/admin', adminAnalytics);
 const galleryRoutes = require('./routes/galleryRoutes');
 app.use('/api/gallery', galleryRoutes);
 
-// ----- FIREBASE (optional) -----
-if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-  try {
-    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
-    });
-    console.log('Firebase admin initialized from env.');
-  } catch (err) {
-    console.error('Failed to parse FIREBASE_SERVICE_ACCOUNT:', err);
-  }
-} else {
-  console.log('No FIREBASE_SERVICE_ACCOUNT env var provided.');
-}
 
 // Create HTTP server and Socket.IO for real-time
 const server = http.createServer(app);
@@ -187,7 +176,7 @@ mongoose
   .then(() => {
     console.log('Connected to MongoDB');
 
-    server.listen(PORT, "0.0.0.0",() => {
+    server.listen(PORT, "0.0.0.0", () => {
       console.log(`Server running on port ${PORT}`);
     });
 
@@ -209,5 +198,5 @@ mongoose
     process.exit(1);
   });
 
-  
+
 module.exports = app;
