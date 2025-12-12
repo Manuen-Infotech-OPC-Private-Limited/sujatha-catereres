@@ -5,8 +5,8 @@ if (!admin.apps.length) {
   try {
     let serviceAccount;
 
-    if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-      const keyPath = process.env.FIREBASE_SERVICE_ACCOUNT;
+    if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY_PATH) {
+      const keyPath = process.env.FIREBASE_SERVICE_ACCOUNT_KEY_PATH;
       serviceAccount = JSON.parse(fs.readFileSync(keyPath, "utf8"));
     } else if (process.env.FIREBASE_SERVICE_ACCOUNT) {
       serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
