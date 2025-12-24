@@ -138,13 +138,14 @@ const Home = () => {
         </button>
       </section>
 
-      <p className="visit-counter">
+      <div className="visit-counter">
         {visitCount !== null ? (
           <p>Look who’s hungry! We’ve had <strong>{visitCount}</strong> food-loving visitors.</p>
         ) : (
           <p>Loading visit count...</p>
         )}
-      </p>
+      </div>
+
 
       {/* Cookie consent prompt */}
       {showCookiePrompt && (

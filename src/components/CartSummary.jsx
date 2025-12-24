@@ -158,7 +158,7 @@ const CartSummary = ({ selectedPackage, selectedMealType }) => {
               <ul className="cart-items">
                 {items.map((item) => (
                   <li key={item.name} className="cart-item modern-item">
-                    {item.image && <img src={item.image} alt={item.name} className="cart-item-img" />}
+                    {item.image && <img src={`${process.env.REACT_APP_API_URL}${item.image}`} alt={item.name} className="cart-item-img" />}
                     <span>{item.name}</span>
                     <button
                       className="remove-item-btn"

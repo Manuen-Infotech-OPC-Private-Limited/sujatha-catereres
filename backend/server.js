@@ -5,9 +5,10 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 // const helmet = require('helmet'); // optional but recommended
 const rateLimit = require('express-rate-limit'); // optional but recommended
-const admin = require('firebase-admin');
+// const admin = require('firebase-admin');
 const http = require('http');
 const { Server } = require('socket.io');
+const path = require('path');
 
 require('dotenv').config();
 
@@ -32,6 +33,11 @@ if (!allowedOrigins.length) {
   allowedOrigins = ['http://localhost:5173', 'http://localhost:3000'];
 }
 console.log('Allowed origins:', allowedOrigins);
+
+app.use(
+  '/assets',
+  express.static(path.join(__dirname, 'public'))
+);
 
 // const isProd = process.env.NODE_ENV === 'production';
 console.log('NODE_ENV:', process.env.NODE_ENV);
@@ -124,20 +130,24 @@ app.use('/api/admin', adminAnalytics);
 const galleryRoutes = require('./routes/galleryRoutes');
 app.use('/api/gallery', galleryRoutes);
 
+const menuRoutes = require("./routes/menuRoutes")
+app.use("/api/menu", menuRoutes);
+
+
 // ----- FIREBASE (optional) -----
-if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-  try {
-    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
-    });
-    console.log('Firebase admin initialized from env.');
-  } catch (err) {
-    console.error('Failed to parse FIREBASE_SERVICE_ACCOUNT:', err);
-  }
-} else {
-  console.log('No FIREBASE_SERVICE_ACCOUNT env var provided.');
-}
+// if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+//   try {
+//     const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+//     admin.initializeApp({
+//       credential: admin.credential.cert(serviceAccount),
+//     });
+//     console.log('Firebase admin initialized from env.');
+//   } catch (err) {
+//     console.error('Failed to parse FIREBASE_SERVICE_ACCOUNT:', err);
+//   }
+// } else {
+//   console.log('No FIREBASE_SERVICE_ACCOUNT env var provided.');
+// }
 
 // Create HTTP server and Socket.IO for real-time
 const server = http.createServer(app);

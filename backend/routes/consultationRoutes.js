@@ -121,14 +121,33 @@ router.get("/my-requests", authenticateToken, async (req, res) => {
 // ------------------------------------------------------------------
 router.get("/all", async (req, res) => {
     try {
-        // In future we add admin authentication
-        const requests = await ConsultationRequest.find().sort({ createdAt: -1 });
-        res.json(requests);
+        let { page = 1, limit = 10 } = req.query; // default 10 per page
+        page = parseInt(page);
+        limit = parseInt(limit);
+
+        const total = await ConsultationRequest.countDocuments();
+        const totalPages = Math.ceil(total / limit);
+
+        const requests = await ConsultationRequest.find()
+            .sort({ createdAt: -1 })
+            .skip((page - 1) * limit)
+            .limit(limit);
+
+        res.json({
+            data: requests,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages
+            }
+        });
     } catch (err) {
         console.error("Fetch all consultations failed:", err);
         res.status(500).json({ error: "Failed to fetch consultations" });
     }
 });
+
 
 // ------------------------------------------------------------------
 // 🟢 ADMIN: Update status (accept/reject/complete)

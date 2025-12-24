@@ -19,7 +19,8 @@ const LunchDinnerMenu = ({ menuData, selectedMealType, selectedPackage }) => {
                 name={dish.name}
                 packages={dish.packages}
                 selectedPackage={selectedPackage}
-                image={dish.image}
+                // image={dish.image}
+                image={`${process.env.REACT_APP_API_URL}${dish.image}`}
               />
             ))}
           </div>

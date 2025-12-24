@@ -12,9 +12,9 @@ const router = express.Router();
 // POST /api/orders - Place order
 router.post('/', authenticateToken, async (req, res) => {
   try {
-    const { cart, selectedPackage, selectedMealType, guests, deliveryDate, pricePerPerson } = req.body;
+    const { cart, selectedPackage, selectedMealType, guests, deliveryDate, pricePerPerson, deliveryLocation } = req.body;
 
-    if (!cart || !guests || !pricePerPerson) {
+    if (!cart || !guests || !pricePerPerson || !deliveryLocation?.address) {
       return res.status(400).json({ error: 'Missing required order details' });
     }
     // Convert deliveryDate to Date object
@@ -44,6 +44,7 @@ router.post('/', authenticateToken, async (req, res) => {
       guests,
       deliveryDate: date,
       pricePerPerson,
+      deliveryLocation,
       total: pricePerPerson * guests,
     });
 
@@ -74,18 +75,23 @@ router.get('/', authenticateToken, async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = 10;
     const statusFilter = req.query.status;
+    const mealTypeFilter = req.query.mealType;
+    const packageFilter = req.query.package;
     const query = req.user.role === 'admin' ? {} : { user: req.user.id };
-
+    // console.log(`Meal type: ${req.query.mealType}, Package: ${req.query.package}`);
     if (statusFilter) query.status = statusFilter;
+    if (mealTypeFilter) query.selectedMealType = mealTypeFilter;
+    if (packageFilter) query.selectedPackage = packageFilter;
+
 
     const orders = await Order.find(query)
       .populate('user', 'name email')
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
-      .limit(limit);
+      .limit(limit).lean();
 
     const total = await Order.countDocuments(query);
-
+    // console.log(`Order are: ${orders}`);
     res.json({
       orders,
       pagination: {
@@ -96,7 +102,7 @@ router.get('/', authenticateToken, async (req, res) => {
       },
     });
   } catch (err) {
-    console.error('Error fetching orders:', err);
+    console.error('Error fetching orders:', err.stack);
     res.status(500).json({ error: 'Failed to fetch orders' });
   }
 });

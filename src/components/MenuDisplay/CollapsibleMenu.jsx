@@ -115,7 +115,8 @@ const CollapsibleMenu = ({ menuData, selectedPackage, selectedMealType }) => {
                                                 name={dish.name}
                                                 packages={dish.packages}
                                                 selectedPackage={selectedPackage}
-                                                image={dish.image}
+                                                // image={dish.image}
+                                                image={`${process.env.REACT_APP_API_URL}${dish.image}`}
                                                 isSelected={(cart[category] || []).some(i => i.name === dish.name)}
                                             />
 

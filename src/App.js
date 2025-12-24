@@ -18,6 +18,7 @@ import InvoicePage from "./pages/InvoicePage";
 import { CartProvider } from './utils/cartContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
+
 function App() {
   return (
     <CartProvider>

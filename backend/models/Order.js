@@ -18,6 +18,15 @@ const orderSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  deliveryLocation: {
+    address: {
+      type: String,
+      required: true,
+    },
+    landmark: String,
+    city: String,
+    pincode: String,
+  },
   total: Number,
   status: {
     type: String,
