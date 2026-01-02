@@ -32,6 +32,71 @@ const Profile = () => {
             });
         }
     };
+    const handlePayRemaining = async (order, amount) => {
+        if (!window.Razorpay) {
+            alert("Razorpay SDK not loaded");
+            return;
+        }
+
+        try {
+            // 1️⃣ Create a Razorpay order for remaining amount
+            const res = await axios.post(
+                `${API}/api/payments/create-razorpay-order`,
+                { amount },
+                { withCredentials: true }
+            );
+
+            const orderData = res.data;
+
+            if (!orderData?.orderId) throw new Error("Failed to create Razorpay order");
+
+            const options = {
+                key: orderData.key,
+                amount: orderData.amount,
+                currency: "INR",
+                name: "Sujatha Caterers",
+                order_id: orderData.orderId,
+                handler: async (response) => {
+                    // 2️⃣ Finalize partial payment
+                    try {
+                        const finalizeRes = await axios.post(
+                            `${API}/api/orders/${order._id}/repay`,
+                            {
+                                payment: {
+                                    orderId: orderData.orderId,
+                                    paymentId: response.razorpay_payment_id,
+                                    signature: response.razorpay_signature,
+                                    amount,
+                                },
+                            },
+                            { withCredentials: true }
+                        );
+
+                        // 3️⃣ Update orders in state
+                        const updatedOrder = finalizeRes.data.order;
+                        setOrders((prev) =>
+                            prev.map((o) => (o._id === updatedOrder._id ? updatedOrder : o))
+                        );
+
+                        // 🔔 Send notification
+                        sendBrowserNotification(
+                            "Sujatha Caterers • Payment Successful",
+                            `Your remaining amount of ₹${amount} has been paid successfully.`
+                        );
+                    } catch (err) {
+                        console.error("Error finalizing payment:", err);
+                        alert("Payment succeeded, but updating order failed.");
+                    }
+                },
+                theme: { color: "#0f766e" },
+            };
+
+            new window.Razorpay(options).open();
+        } catch (err) {
+            console.error("Error creating Razorpay order:", err);
+            alert("Failed to initiate payment");
+        }
+    };
 
     // Load user + orders
     useEffect(() => {
@@ -187,37 +252,69 @@ const Profile = () => {
                                 <p>No orders yet.</p>
                             ) : (
                                 <ul>
-                                    {orders.map((order) => (
-                                        <li key={order._id} className="order-item" data-aos="fade">
-                                            <p><strong>Order ID:</strong> {order._id}</p>
-                                            <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleDateString()}</p>
-                                            <p><strong>Total:</strong> ₹{order.total}</p>
+                                    {orders.map((order) => {
+                                        const remainingAmount =
+                                            order.total - (order.payment?.amount || 0);
 
-                                            <p>
-                                                <strong>Status:</strong>
-                                                <span className={`status-label ${order.status}`}>
-                                                    {order.status}
-                                                </span>
-                                            </p>
+                                        return (
+                                            <li key={order._id} className="order-item" data-aos="fade">
+                                                <p><strong>Order ID:</strong> {order._id}</p>
+                                                <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleDateString()}</p>
+                                                <p><strong>Total:</strong> ₹{order.total}</p>
 
-                                            <p>
-                                                <strong>Items:</strong>{" "}
-                                                {Object.values(order.cart || {})
-                                                    .flat()
-                                                    .map((item) => item.name)
-                                                    .join(", ")}
-                                            </p>
+                                                {/* Payment Details */}
+                                                {order.payment && (
+                                                    <div className="payment-card">
+                                                        <h4>Payment Details</h4>
+                                                        <p><strong>Provider:</strong> {order.payment.provider}</p>
+                                                        <p>
+                                                            <strong>Status:</strong>{" "}
+                                                            {order.payment.status === "paid" && "Paid in full"}
+                                                            {order.payment.status === "partial" && "Partially paid"}
+                                                            {order.payment.status === "failed" && "Payment failed"}
+                                                        </p>
+                                                        <p><strong>Amount Paid:</strong> ₹{order.payment.amount}</p>
+                                                        <p><strong>Paid On:</strong> {new Date(order.payment.paidAt).toLocaleString()}</p>
 
-                                            <button
-                                                className="invoice-btn"
-                                                onClick={() =>
-                                                    navigate(`/invoice/${order._id}`, { state: { order, user } })
-                                                }
-                                            >
-                                                Show Invoice
-                                            </button>
-                                        </li>
-                                    ))}
+                                                        {/* Pay Remaining Button */}
+                                                        {order.payment.status === "partial" && remainingAmount > 0 && (
+                                                            <button
+                                                                className="repay-btn"
+                                                                onClick={() => handlePayRemaining(order, remainingAmount)}
+                                                            >
+                                                                Pay Remaining ₹{remainingAmount}
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                )}
+
+                                                <p>
+                                                    <strong>Order Status:</strong>{" "}
+                                                    <span className={`status-label ${order.status}`}>
+                                                        {order.status}
+                                                    </span>
+                                                </p>
+
+                                                <p>
+                                                    <strong>Items:</strong>{" "}
+                                                    {Object.values(order.cart || {})
+                                                        .flat()
+                                                        .map((item) => item.name)
+                                                        .join(", ")}
+                                                </p>
+
+                                                <button
+                                                    className="invoice-btn"
+                                                    onClick={() =>
+                                                        navigate(`/invoice/${order._id}`, { state: { order, user } })
+                                                    }
+                                                >
+                                                    Show Invoice
+                                                </button>
+                                            </li>
+                                        );
+                                    })}
+
                                 </ul>
                             )}
                         </div>

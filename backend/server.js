@@ -133,6 +133,9 @@ app.use('/api/gallery', galleryRoutes);
 const menuRoutes = require("./routes/menuRoutes")
 app.use("/api/menu", menuRoutes);
 
+const paymentRoutes = require("./routes/payments")
+app.use("/api/payments", paymentRoutes);
+
 
 // ----- FIREBASE (optional) -----
 // if (process.env.FIREBASE_SERVICE_ACCOUNT) {

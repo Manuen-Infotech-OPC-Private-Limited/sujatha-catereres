@@ -13,12 +13,14 @@ const InvoicePage = () => {
   }
 
   const { order, user } = state;
-  const totalAmount = order.guests * order.pricePerPerson;
+  const totalAmount = order.total || order.guests * order.pricePerPerson;
+  const paidAmount = order.payment?.amount || 0;
+  const remainingAmount = totalAmount - paidAmount;
 
   const handleDownload = () => {
     const opt = {
       margin: 0.5,
-      filename: `${user.name}-${order._id}.pdf`,
+      filename: `${user.name}-invoice.pdf`,
       image: { type: "jpeg", quality: 0.98 },
       html2canvas: { scale: 2, scrollY: 0 },
       jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
@@ -26,7 +28,6 @@ const InvoicePage = () => {
     html2pdf().set(opt).from(invoiceRef.current).save();
   };
 
-  // Helper: split items into pairs for two-column layout
   const chunkArray = (arr, size = 2) => {
     const result = [];
     for (let i = 0; i < arr.length; i += size) {
@@ -77,25 +78,78 @@ const InvoicePage = () => {
             <p><strong>Package:</strong> {order.selectedPackage}</p>
             <p><strong>No. of Guests:</strong> {order.guests}</p>
             <p><strong>Price / Person:</strong> ₹{order.pricePerPerson}</p>
-            <p><strong>Status:</strong> {order.status}</p>
+            <p><strong>Order Status:</strong> {order.status}</p>
           </div>
         </div>
 
-        {/* Items Table Grouped by Category - Two Columns */}
+        {/* Payment Details Table */}
+        {order.payment && (
+          <div style={{ marginBottom: "1rem" }}>
+            <h3>Payment Details</h3>
+            <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "0.5rem" }}>
+              <tbody>
+                <tr style={{ backgroundColor: "#e8f0fe" }}>
+                  <td style={{ border: "1px solid #ddd", padding: "8px", fontWeight: "bold" }}>Field</td>
+                  <td style={{ border: "1px solid #ddd", padding: "8px", fontWeight: "bold" }}>Value</td>
+                </tr>
+                <tr>
+                  <td style={{ border: "1px solid #ddd", padding: "8px" }}>Provider</td>
+                  <td style={{ border: "1px solid #ddd", padding: "8px" }}>{order.payment.provider}</td>
+                </tr>
+                <tr>
+                  <td style={{ border: "1px solid #ddd", padding: "8px" }}>Payment ID</td>
+                  <td style={{ border: "1px solid #ddd", padding: "8px" }}>{order.payment.paymentId}</td>
+                </tr>
+                <tr>
+                  <td style={{ border: "1px solid #ddd", padding: "8px" }}>Order ID (Gateway)</td>
+                  <td style={{ border: "1px solid #ddd", padding: "8px" }}>{order.payment.orderId}</td>
+                </tr>
+                <tr>
+                  <td style={{ border: "1px solid #ddd", padding: "8px" }}>Signature</td>
+                  <td style={{ border: "1px solid #ddd", padding: "8px" }}>{order.payment.signature}</td>
+                </tr>
+                <tr>
+                  <td style={{ border: "1px solid #ddd", padding: "8px" }}>Amount Paid</td>
+                  <td style={{ border: "1px solid #ddd", padding: "8px" }}>₹{paidAmount}</td>
+                </tr>
+                <tr>
+                  <td style={{ border: "1px solid #ddd", padding: "8px" }}>Currency</td>
+                  <td style={{ border: "1px solid #ddd", padding: "8px" }}>{order.payment.currency}</td>
+                </tr>
+                <tr>
+                  <td style={{ border: "1px solid #ddd", padding: "8px" }}>Payment Status</td>
+                  <td style={{ border: "1px solid #ddd", padding: "8px" }}>{order.payment.status}</td>
+                </tr>
+                <tr>
+                  <td style={{ border: "1px solid #ddd", padding: "8px" }}>Paid On</td>
+                  <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                    {new Date(order.payment.paidAt).toLocaleString("en-IN")}
+                  </td>
+                </tr>
+                {remainingAmount > 0 && (
+                  <tr>
+                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>Remaining Amount</td>
+                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>₹{remainingAmount}</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Items Table */}
         <h3 style={{ marginTop: "1rem" }}>Package Items:</h3>
         <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "0.5rem" }}>
           <tbody>
-            {Object.entries(order.cart).map(([category, items], catIdx) => {
+            {Object.entries(order.cart).map(([category, items]) => {
               const chunks = chunkArray(items, 2);
               return (
                 <React.Fragment key={category}>
-                  {/* Category Header */}
                   <tr style={{ backgroundColor: "#e8f0fe" }}>
                     <td colSpan={2} style={{ border: "1px solid #ddd", padding: "8px", fontWeight: "bold" }}>
                       {category.charAt(0).toUpperCase() + category.slice(1)}
                     </td>
                   </tr>
-                  {/* Items Rows */}
                   {chunks.map((pair, rowIdx) => (
                     <tr key={rowIdx} style={{ backgroundColor: rowIdx % 2 === 0 ? "#fafafa" : "#fff" }}>
                       <td style={{ border: "1px solid #ddd", padding: "8px" }}>{pair[0]?.name || ""}</td>
@@ -110,10 +164,10 @@ const InvoicePage = () => {
 
         {/* Total */}
         <div style={{ textAlign: "right", marginTop: "1rem", fontSize: "1.2rem", fontWeight: "bold" }}>
-          Package Total: ₹{totalAmount}
+          Total: ₹{totalAmount}
         </div>
 
-        {/* Footer - Download Date */}
+        {/* Footer */}
         <div style={{ marginTop: "2rem", fontSize: "0.75rem", color: "#555", textAlign: "right" }}>
           Invoice Download Date: {new Date().toLocaleString("en-IN", {
             day: "2-digit",
@@ -133,7 +187,7 @@ const InvoicePage = () => {
         </button>
         <button
           onClick={handleDownload}
-          style={{ background: "#d32f2f", color: "#fff", padding: "0.6rem 1.2rem", border: "none", borderRadius: "6px" }}
+          style={{ background: "#0f766e", color: "#fff", padding: "0.6rem 1.2rem", border: "none", borderRadius: "6px" }}
         >
           Share / Download PDF
         </button>

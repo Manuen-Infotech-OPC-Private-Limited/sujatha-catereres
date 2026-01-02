@@ -146,3 +146,61 @@
   color: red;
   font-weight: bold;
 }
+
+.payment-card {
+  background: #f9fafb;
+  /* light neutral background */
+  border-left: 4px solid #0f766e;
+  /* accent color */
+  padding: 12px 16px;
+  margin: 10px 0;
+  border-radius: 6px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.payment-card h4 {
+  margin-bottom: 6px;
+  color: #0f766e;
+  font-size: 1rem;
+}
+
+.payment-card p {
+  margin: 3px 0;
+  font-size: 0.95rem;
+  color: #1f2937;
+}
+
+.payment-card strong {
+  color: #0f766e;
+}
+
+.status-label.paid {
+  color: green;
+  font-weight: bold;
+}
+
+.status-label.partial {
+  color: orange;
+  font-weight: bold;
+}
+
+.status-label.failed {
+  color: red;
+  font-weight: bold;
+}
+
+.repay-btn {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background-color: #0f766e;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.repay-btn:hover {
+  background-color: #075f52;
+}
