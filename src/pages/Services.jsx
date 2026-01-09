@@ -1,5 +1,5 @@
 import './Services.css';
-import mealboximg from '../assets/logos/mealbox.png';
+import mealboximg from '../assets/logos/new_mealbox.png';
 import cateringImg from '../assets/logos/catering.png';
 import Header from '../components/Header';
 import axios from 'axios';
@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
-const ServiceCard = ({ imgSrc, title, tagline, description, badge, showButton }) => {
+const ServiceCard = ({ imgSrc, title, tagline, description, badge, showButton, navigateTo }) => {
   const [loaded, setLoaded] = useState(false);
   const navigate = useNavigate();
 
@@ -25,10 +25,10 @@ const ServiceCard = ({ imgSrc, title, tagline, description, badge, showButton })
         />
       </div>
       <div className="service-item-description">
-        <h3 className="service-item-title">{title}</h3>
+        <h1 className="service-item-title">{title}</h1>
         <p className="service-item-tagline">{tagline}</p>
         {showButton && (
-          <button className="order-button" onClick={() => navigate('/order')}>
+          <button className="order-button" onClick={() => navigate(navigateTo)}>
             Order Now
           </button>
         )}
@@ -74,7 +74,9 @@ const Services = () => {
             our South Indian vegetarian meal boxes bring you the same Sujatha Catering quality
             in a convenient, ready-to-eat format. Each meal box is carefully packed with balanced
             portions, freshly prepared items, and authentic flavors that reflect our culinary heritage."
-            badge="Coming Soon"
+            showButton={user}
+            navigateTo="/mealbox"
+
           />
 
           <ServiceCard
@@ -87,6 +89,8 @@ const Services = () => {
             we tailor our service to match your needs—combining traditional South Indian flavors
             with elegant presentation, impeccable hygiene, and seamless execution."
             showButton={user}
+            navigateTo="/catering/order"
+
           />
         </div>
       </section>

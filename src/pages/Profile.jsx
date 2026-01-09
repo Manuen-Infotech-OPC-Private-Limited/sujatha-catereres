@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { io } from 'socket.io-client';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import './Profile.css';
 import Header from '../components/Header';
+import { useSocket } from '../utils/SocketContext'; // ✅ Import global socket
 
 const Profile = () => {
     const [user, setUser] = useState(null);
@@ -15,6 +15,7 @@ const Profile = () => {
 
     const navigate = useNavigate();
     const API = process.env.REACT_APP_API_URL;
+    const { socket } = useSocket(); // ✅ Destructure socket from context
 
     // 🔔 Request Notification Permission on page load
     useEffect(() => {
@@ -28,10 +29,12 @@ const Profile = () => {
         if (Notification.permission === "granted") {
             new Notification(title, {
                 body,
-                icon: "/logo192.png" // optional icon
+                icon: "/logo192.png"
             });
         }
     };
+
+    // Handle partial payments
     const handlePayRemaining = async (order, amount) => {
         if (!window.Razorpay) {
             alert("Razorpay SDK not loaded");
@@ -39,7 +42,6 @@ const Profile = () => {
         }
 
         try {
-            // 1️⃣ Create a Razorpay order for remaining amount
             const res = await axios.post(
                 `${API}/api/payments/create-razorpay-order`,
                 { amount },
@@ -47,7 +49,6 @@ const Profile = () => {
             );
 
             const orderData = res.data;
-
             if (!orderData?.orderId) throw new Error("Failed to create Razorpay order");
 
             const options = {
@@ -57,7 +58,6 @@ const Profile = () => {
                 name: "Sujatha Caterers",
                 order_id: orderData.orderId,
                 handler: async (response) => {
-                    // 2️⃣ Finalize partial payment
                     try {
                         const finalizeRes = await axios.post(
                             `${API}/api/orders/${order._id}/repay`,
@@ -72,13 +72,11 @@ const Profile = () => {
                             { withCredentials: true }
                         );
 
-                        // 3️⃣ Update orders in state
                         const updatedOrder = finalizeRes.data.order;
                         setOrders((prev) =>
                             prev.map((o) => (o._id === updatedOrder._id ? updatedOrder : o))
                         );
 
-                        // 🔔 Send notification
                         sendBrowserNotification(
                             "Sujatha Caterers • Payment Successful",
                             `Your remaining amount of ₹${amount} has been paid successfully.`
@@ -131,25 +129,11 @@ const Profile = () => {
         fetchOrders();
     }, [API, navigate]);
 
-    // SOCKET.IO: Real-time updates
+    // ✅ Listen to global socket events
     useEffect(() => {
-        if (!user?._id) return; // Wait until user is loaded
+        if (!socket || !user?._id) return;
 
-        const socket = io(API, {
-            withCredentials: true,
-            transports: ["polling", "websocket"],
-            reconnection: true,
-        });
-
-        socket.on("connect", () => {
-            console.log("Connected to Socket.IO server");
-            socket.emit("register", { userId: user._id });
-        });
-
-        // 📌 Real-time STATUS UPDATE
-        socket.on('orderUpdated', (updatedOrder) => {
-            console.log("Order updated:", updatedOrder);
-
+        const handleOrderUpdate = (updatedOrder) => {
             if (String(updatedOrder.user?._id) === String(user._id)) {
                 setOrders((prevOrders) =>
                     prevOrders.map((order) =>
@@ -157,26 +141,29 @@ const Profile = () => {
                     )
                 );
 
-                // 🔔 SEND SYSTEM NOTIFICATION
                 sendBrowserNotification(
                     "Sujatha Caterers • Order Update",
                     `Your order ${updatedOrder._id} is now "${updatedOrder.status}".`
                 );
             }
-        });
+        };
 
-        // 📌 Real-time NEW ORDER created by this user
-        socket.on('orderCreated', (newOrder) => {
+        const handleNewOrder = (newOrder) => {
             if (String(newOrder.user?._id) === String(user._id)) {
                 setOrders((prevOrders) => [newOrder, ...prevOrders]);
             }
-        });
+        };
+
+        socket.on('orderUpdated', handleOrderUpdate);
+        socket.on('orderCreated', handleNewOrder);
 
         return () => {
-            socket.disconnect();
+            socket.off('orderUpdated', handleOrderUpdate);
+            socket.off('orderCreated', handleNewOrder);
         };
-    }, [API, user?._id]);
+    }, [socket, user?._id]);
 
+    // Save profile changes
     const handleSave = async () => {
         try {
             const updatedUser = {

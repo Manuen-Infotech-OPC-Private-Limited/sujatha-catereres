@@ -18,24 +18,42 @@ const orderSchema = new mongoose.Schema(
 
     guests: {
       type: Number,
+      required: function () { return this.orderType === 'catering'; },
+    },
+
+    orderType: {
+      type: String,
+      enum: ["catering", "mealbox"],
       required: true,
     },
 
     pricePerPerson: {
       type: Number,
-      required: true,
+      required: function () { return this.orderType === "catering"; },
     },
 
+    // MealBox-only
+    mealBox: {
+      quantity: {
+        type: Number,
+        required: function () {
+          return this.orderType === "mealbox";
+        },
+      },
+      pricePerBox: Number,
+      items: [String],
+      taxes: {
+        cgst: Number,
+        sgst: Number,
+      },
+    },
     deliveryDate: {
       type: Date,
       required: true,
     },
 
     deliveryLocation: {
-      address: {
-        type: String,
-        required: true,
-      },
+      address: { type: String, required: true },
       landmark: String,
       city: String,
       pincode: String,

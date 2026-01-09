@@ -151,7 +151,7 @@ const MenuPage = () => {
             {user ? (
               <button
                 className="order-now-btn"
-                onClick={() => navigate('/order')}
+                onClick={() => navigate('/catering/order')}
               >
                 Order Now
               </button>

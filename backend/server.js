@@ -14,9 +14,6 @@ require('dotenv').config();
 
 const app = express();
 
-// Allowed origins: take from env or fallback to localhost for local dev
-// const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
-
 // ----- ALLOWED ORIGINS -----
 let allowedOrigins = [];
 if (process.env.ALLOWED_ORIGINS) {
@@ -44,13 +41,6 @@ console.log('NODE_ENV:', process.env.NODE_ENV);
 
 console.log('Time to initialize server...');
 
-// Security middleware (optional but recommended)
-// app.use(helmet({
-//   crossOriginOpenerPolicy: false,
-//   crossOriginResourcePolicy: false,
-//   crossOriginEmbedderPolicy: false
-// }));
-
 // Basic rate limiter (adjust as needed)
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -59,37 +49,6 @@ const limiter = rateLimit({
 app.use(limiter);
 app.set('trust proxy', 1);
 
-// ----- CORS FOR REST API -----
-// app.use(cors({
-//   origin: function (origin, callback) {
-//     if (isProd) {
-//       if (!origin) return callback(null, true);
-//       if (allowedOrigins.includes(origin)) return callback(null, true);
-//       return callback(new Error('Not allowed by CORS'));
-//     }
-
-//     // Dev mode
-//     if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
-//     callback(new Error('Not allowed by CORS'));
-//   },
-//   credentials: true,
-// }));
-
-// ----- CORS FOR REST API -----
-// app.use(cors({
-//   origin: function (origin, callback) {
-//     // Allow non-browser clients or same-origin
-//     if (!origin) return callback(null, true);
-
-//     if (allowedOrigins.includes(origin)) {
-//       return callback(null, true);
-//     }
-
-//     console.error('Blocked by CORS:', origin);
-//     return callback(new Error('Not allowed by CORS'));
-//   },
-//   credentials: true,
-// }));
 
 app.use(cors({
   origin: allowedOrigins,   // array of allowed origins
@@ -135,22 +94,6 @@ app.use("/api/menu", menuRoutes);
 
 const paymentRoutes = require("./routes/payments")
 app.use("/api/payments", paymentRoutes);
-
-
-// ----- FIREBASE (optional) -----
-// if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-//   try {
-//     const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-//     admin.initializeApp({
-//       credential: admin.credential.cert(serviceAccount),
-//     });
-//     console.log('Firebase admin initialized from env.');
-//   } catch (err) {
-//     console.error('Failed to parse FIREBASE_SERVICE_ACCOUNT:', err);
-//   }
-// } else {
-//   console.log('No FIREBASE_SERVICE_ACCOUNT env var provided.');
-// }
 
 // Create HTTP server and Socket.IO for real-time
 const server = http.createServer(app);

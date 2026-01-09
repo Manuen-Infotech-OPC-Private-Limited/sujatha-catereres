@@ -134,7 +134,11 @@ const CartSummary = ({ selectedPackage, selectedMealType }) => {
       return;
     }
     navigate('/review-order', {
-      state: { selectedPackage, selectedMealType, complimentaryItems },
+
+      state: {
+        orderType: 'catering',
+        selectedPackage, selectedMealType, complimentaryItems
+      },
     });
   };
 
