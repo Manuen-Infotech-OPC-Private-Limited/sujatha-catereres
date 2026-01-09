@@ -22,7 +22,12 @@ if (process.env.ALLOWED_ORIGINS) {
     allowedOrigins = JSON.parse(process.env.ALLOWED_ORIGINS);
   } catch (e) {
     // Fallback: comma-separated string
-    allowedOrigins = process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim());
+    // allowedOrigins = process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim());
+    allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
+      .split(',')
+      .map(o => o.trim())
+      .filter(Boolean);
+
   }
 }
 if (!allowedOrigins.length) {
@@ -46,21 +51,30 @@ const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 200, // allow 200 requests per window per IP
 });
-app.use(limiter);
 app.set('trust proxy', 1);
 
-
-app.use(cors({
-  origin: allowedOrigins,   // array of allowed origins
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"]
-}));
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+};
 
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // 🔥 REQUIRED
 
 
 // ----- COMMON MIDDLEWARE -----
 app.use(express.json({ limit: '10mb' }));
 app.use(cookieParser());
+app.use(limiter);
 console.log('Middleware configured');
 
 // Health check
