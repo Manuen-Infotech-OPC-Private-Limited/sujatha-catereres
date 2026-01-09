@@ -55,16 +55,28 @@ app.set('trust proxy', 1);
 
 const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    console.log('Incoming origin:', origin); // DEBUG
+    if (!origin) {
+      // Allow requests from server or curl (no origin)
+      callback(null, true);
+      return;
+    }
+
+    // Normalize: remove trailing slash
+    const normalizedOrigin = origin.replace(/\/$/, '');
+
+    if (allowedOrigins.includes(normalizedOrigin)) {
       callback(null, true);
     } else {
+      console.log('Blocked CORS origin:', origin);
       callback(new Error('CORS blocked: ' + origin));
     }
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  allowedHeaders: ["Content-Type", "Authorization"],
 };
+
 
 
 app.use(cors(corsOptions));
