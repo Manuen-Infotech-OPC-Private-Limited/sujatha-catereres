@@ -58,7 +58,7 @@ const corsOptions = {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error('CORS blocked: ' + origin));
     }
   },
   credentials: true,
@@ -68,7 +68,6 @@ const corsOptions = {
 
 
 app.use(cors(corsOptions));
-app.options('/*', cors(corsOptions)); // 🔥 REQUIRED
 
 
 // ----- COMMON MIDDLEWARE -----
