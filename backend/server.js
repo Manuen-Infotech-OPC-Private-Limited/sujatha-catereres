@@ -15,26 +15,46 @@ require('dotenv').config();
 const app = express();
 
 // ----- ALLOWED ORIGINS -----
-let allowedOrigins = [];
-if (process.env.ALLOWED_ORIGINS) {
-  try {
-    // ALLOWED_ORIGINS='["http://localhost:3000","http://localhost:5173"]'
-    allowedOrigins = JSON.parse(process.env.ALLOWED_ORIGINS);
-  } catch (e) {
-    // Fallback: comma-separated string
-    // allowedOrigins = process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim());
-    allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
-      .split(',')
-      .map(o => o.trim())
-      .filter(Boolean);
+// const cors = require("cors");
 
-  }
-}
-if (!allowedOrigins.length) {
-  // Safe defaults
-  allowedOrigins = ['http://localhost:5173', 'http://localhost:3000'];
-}
-console.log('Allowed origins:', allowedOrigins);
+// Hardcoded allowed origins
+const allowedOrigins = [
+  "https://sujathacaterers.com",
+  "https://www.sujathacaterers.com"
+];
+
+console.log("Allowed origins:", allowedOrigins);
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    console.log("Incoming origin:", origin);
+
+    // Allow requests with no origin (server-side, curl, old browsers)
+    if (!origin) {
+      callback(null, true);
+      return;
+    }
+
+    // Normalize origin: remove trailing slash
+    const normalizedOrigin = origin.replace(/\/$/, "");
+
+    if (allowedOrigins.includes(normalizedOrigin)) {
+      callback(null, true);
+    } else {
+      console.log("Blocked CORS origin:", origin);
+      callback(new Error("CORS blocked: " + origin));
+    }
+  },
+  credentials: true, // needed for cookies / JWTs
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+};
+
+// Apply CORS middleware
+app.use(cors(corsOptions));
+
+// Handle preflight requests for all routes
+app.options("*", cors(corsOptions));
 
 app.use(
   '/assets',
@@ -53,33 +73,33 @@ const limiter = rateLimit({
 });
 app.set('trust proxy', 1);
 
-const corsOptions = {
-  origin: function (origin, callback) {
-    console.log('Incoming origin:', origin); // DEBUG
-    if (!origin) {
-      // Allow requests from server or curl (no origin)
-      callback(null, true);
-      return;
-    }
+// const corsOptions = {
+//   origin: function (origin, callback) {
+//     console.log('Incoming origin:', origin); // DEBUG
+//     if (!origin) {
+//       // Allow requests from server or curl (no origin)
+//       callback(null, true);
+//       return;
+//     }
 
-    // Normalize: remove trailing slash
-    const normalizedOrigin = origin.replace(/\/$/, '');
+//     // Normalize: remove trailing slash
+//     const normalizedOrigin = origin.replace(/\/$/, '');
 
-    if (allowedOrigins.includes(normalizedOrigin)) {
-      callback(null, true);
-    } else {
-      console.log('Blocked CORS origin:', origin);
-      callback(new Error('CORS blocked: ' + origin));
-    }
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-};
+//     if (allowedOrigins.includes(normalizedOrigin)) {
+//       callback(null, true);
+//     } else {
+//       console.log('Blocked CORS origin:', origin);
+//       callback(new Error('CORS blocked: ' + origin));
+//     }
+//   },
+//   credentials: true,
+//   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+//   allowedHeaders: ["Content-Type", "Authorization"],
+// };
 
 
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 
 
 // ----- COMMON MIDDLEWARE -----
