@@ -17,6 +17,8 @@ import InvoicePage from "./pages/InvoicePage";
 
 import { CartProvider } from './utils/cartContext';
 import { SocketProvider } from './utils/SocketContext';
+import { MenuProvider } from './utils/MenuContext';
+import { AuthProvider } from './utils/AuthContext';
 
 import ProtectedRoute from './components/ProtectedRoute';
 import MealBox from './pages/MealBox';
@@ -24,73 +26,79 @@ import MealBox from './pages/MealBox';
 
 function App() {
   return (
-    <CartProvider>
-      <SocketProvider>
 
-        <Router>
-          <div className="App">
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/" element={<Landing />} />
-              <Route path="/services" element={<Services />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<ContactUs />} />
-              <Route path="/menu" element={<MenuPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
+    <AuthProvider>
+      <CartProvider>
+        <MenuProvider>
 
-              {/* Protected Routes */}
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                }
-              />
+          <SocketProvider>
+            <Router>
 
-              <Route
-                path="/catering/order"
-                element={
-                  <ProtectedRoute>
-                    <OrderPage />
-                  </ProtectedRoute>
-                }
-              />
+              <div className="App">
+                <Routes>
+                  {/* Public Routes */}
+                  <Route path="/" element={<Landing />} />
+                  <Route path="/services" element={<Services />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/contact" element={<ContactUs />} />
+                  <Route path="/menu" element={<MenuPage />} />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/register" element={<RegisterPage />} />
 
-              <Route
-                path="/review-order"
-                element={
-                  <ProtectedRoute>
-                    <ReviewOrder />
-                  </ProtectedRoute>
-                }
-              />
+                  {/* Protected Routes */}
+                  <Route
+                    path="/profile"
+                    element={
+                      <ProtectedRoute>
+                        <Profile />
+                      </ProtectedRoute>
+                    }
+                  />
 
-              <Route
-                path="/invoice/:orderId"
-                element={
-                  <ProtectedRoute>
-                    <InvoicePage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/mealbox"
-                element={
-                  <ProtectedRoute>
-                    <MealBox />
-                  </ProtectedRoute>
-                }
-              />
+                  <Route
+                    path="/catering/order"
+                    element={
+                      <ProtectedRoute>
+                        <OrderPage />
+                      </ProtectedRoute>
+                    }
+                  />
 
-            </Routes>
+                  <Route
+                    path="/review-order"
+                    element={
+                      <ProtectedRoute>
+                        <ReviewOrder />
+                      </ProtectedRoute>
+                    }
+                  />
 
-            <ToastContainer position="top-right" autoClose={2000} />
-          </div>
-        </Router>
-      </SocketProvider>
-    </CartProvider>
+                  <Route
+                    path="/invoice/:orderId"
+                    element={
+                      <ProtectedRoute>
+                        <InvoicePage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/mealbox"
+                    element={
+                      <ProtectedRoute>
+                        <MealBox />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                </Routes>
+
+                <ToastContainer position="top-right" autoClose={2000} />
+              </div>
+            </Router>
+          </SocketProvider>
+        </MenuProvider>
+      </CartProvider>
+    </AuthProvider>
   );
 }
 

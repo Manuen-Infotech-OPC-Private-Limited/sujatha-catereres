@@ -144,6 +144,17 @@ button:disabled {
   gap: 15px;
 }
 
+.form-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.form-group input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .grid-form .form-group {
   flex: 1;
 }
@@ -153,4 +164,28 @@ button:disabled {
   .grid-form .form-row {
     flex-direction: column;
   }
+}
+
+
+/* Ensure all input types look the same */
+.login-form input,
+.login-form input[type="email"],
+.login-form input[type="tel"],
+.login-form input[type="text"] {
+  padding: 10px;
+  border-radius: 5px;
+  border: 2px solid #333;
+  font-size: 16px;
+  background-color: #f5eaea;
+  color: #000;
+}
+
+/* Fix Chrome autofill overriding styles */
+.login-form input:-webkit-autofill,
+.login-form input:-webkit-autofill:hover,
+.login-form input:-webkit-autofill:focus,
+.login-form input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #f5eaea inset !important;
+  -webkit-text-fill-color: #000 !important;
+  transition: background-color 9999s ease-in-out 0s;
 }

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Player } from '@lottiefiles/react-lottie-player';
 import orderSuccessAnimation from '../assets/lottie/order-placed.json';
-import './OrderPlacedAnimation.css';
+import '../css/OrderPlacedAnimation.css';
 
 const OrderPlacedAnimation = ({ duration = 3000, soundUrl }) => {
   const navigate = useNavigate();

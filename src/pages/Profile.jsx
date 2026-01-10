@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import './Profile.css';
+import '../css/Profile.css';
 import Header from '../components/Header';
 import { useSocket } from '../utils/SocketContext'; // ✅ Import global socket
 
@@ -238,18 +238,26 @@ const Profile = () => {
                             {orders.length === 0 ? (
                                 <p>No orders yet.</p>
                             ) : (
-                                <ul>
+                                <div className="orders-list">
                                     {orders.map((order) => {
-                                        const remainingAmount =
-                                            order.total - (order.payment?.amount || 0);
+                                        const remainingAmount = order.total - (order.payment?.amount || 0);
+
+                                        let itemList = [];
+                                        if (order.orderType === "catering") {
+                                            itemList = Object.values(order.cart || {})
+                                                .flat()
+                                                .map((item) => item.name);
+                                        } else if (order.orderType === "mealbox") {
+                                            itemList = order.mealBox?.items || [];
+                                        }
 
                                         return (
-                                            <li key={order._id} className="order-item" data-aos="fade">
+                                            <div key={order._id} className="order-item">
                                                 <p><strong>Order ID:</strong> {order._id}</p>
+                                                <p><strong>Type:</strong> {order.orderType}</p>
                                                 <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleDateString()}</p>
                                                 <p><strong>Total:</strong> ₹{order.total}</p>
 
-                                                {/* Payment Details */}
                                                 {order.payment && (
                                                     <div className="payment-card">
                                                         <h4>Payment Details</h4>
@@ -263,7 +271,6 @@ const Profile = () => {
                                                         <p><strong>Amount Paid:</strong> ₹{order.payment.amount}</p>
                                                         <p><strong>Paid On:</strong> {new Date(order.payment.paidAt).toLocaleString()}</p>
 
-                                                        {/* Pay Remaining Button */}
                                                         {order.payment.status === "partial" && remainingAmount > 0 && (
                                                             <button
                                                                 className="repay-btn"
@@ -283,11 +290,7 @@ const Profile = () => {
                                                 </p>
 
                                                 <p>
-                                                    <strong>Items:</strong>{" "}
-                                                    {Object.values(order.cart || {})
-                                                        .flat()
-                                                        .map((item) => item.name)
-                                                        .join(", ")}
+                                                    <strong>Items:</strong> {itemList.join(", ")}
                                                 </p>
 
                                                 <button
@@ -298,11 +301,11 @@ const Profile = () => {
                                                 >
                                                     Show Invoice
                                                 </button>
-                                            </li>
+                                            </div>
                                         );
                                     })}
+                                </div>
 
-                                </ul>
                             )}
                         </div>
                     </>

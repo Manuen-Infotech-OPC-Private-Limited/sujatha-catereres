@@ -11,7 +11,7 @@ import {
 } from "../firebase";
 import loginBg from "../assets/logos/loginbg.webp";
 import logonoBg from "../assets/logos/logo-nobg.png";
-import "./Login.css";
+import "../css/Login.css";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -51,12 +51,14 @@ const RegisterPage = () => {
   const sendOtp = async () => {
     const normalizedPhone = normalizePhone(userData.phone);
     if (!isValidIndianPhone(normalizedPhone)) {
-      toast.error("Please enter a valid 10-digit Indian phone number.");
+      toast.error("Please enter a valid 10-digit phone number.");
       return;
     }
 
     try {
       setIsSending(true);
+
+      // Optional: Check if phone already exists in your backend
       await axios.post(`${process.env.REACT_APP_API_URL}/api/users/check-phone?for=register`, { phone: normalizedPhone });
 
       setupRecaptcha();
@@ -67,12 +69,39 @@ const RegisterPage = () => {
       toast.success("OTP sent to your phone!");
     } catch (err) {
       console.error("Error sending OTP:", err);
-      toast.error(err.response?.data?.error || "Failed to send OTP");
+
+      // Firebase specific error handling
+      let errorMessage = "Failed to send OTP. Please try again.";
+
+      if (err.code) {
+        switch (err.code) {
+          case "auth/invalid-phone-number":
+            errorMessage = "The phone number entered is invalid. Please check and try again.";
+            break;
+          case "auth/too-many-requests":
+            errorMessage = "Too many OTP requests. Please wait around 15 minutes before trying again.";
+            break;
+          case "auth/quota-exceeded":
+            errorMessage = "OTP quota exceeded. Please try again later.";
+            break;
+          case "auth/user-disabled":
+            errorMessage = "This phone number is blocked. Contact support.";
+            break;
+          default:
+            errorMessage = err.message || errorMessage;
+        }
+      } else if (err.response?.data?.error) {
+        // Backend errors (e.g., phone already registered)
+        errorMessage = err.response.data.error;
+      }
+
+      toast.error(errorMessage);
       setIsOtpSent(false);
     } finally {
       setIsSending(false);
     }
   };
+
 
   const verifyOtpAndRegister = async () => {
     if (!confirmationResult) {

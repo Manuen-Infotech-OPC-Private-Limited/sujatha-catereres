@@ -511,11 +511,12 @@
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../utils/cartContext';
 import { useNavigate, useLocation } from 'react-router-dom';
-import './ReviewOrder.css';
+import '../css/ReviewOrder.css';
 import { PRICES } from '../utils/pricing';
 import { toast } from 'react-toastify';
 import OrderPlacedAnimation from '../components/OrderPlacedAnimation';
 import soundSuccess from '../assets/sounds/order-placed.mp3';
+import  useAuth  from '../hooks/useAuth';
 
 const GST_PERCENT = 5;
 const PLATFORM_CHARGE = 50;
@@ -524,11 +525,12 @@ const ReviewOrder = () => {
   const { cart, resetCart } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth(); // ✅ get logged-in user
 
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [selectedMealType, setSelectedMealType] = useState(null);
   const [deliveryDate, setDeliveryDate] = useState('');
-  const [guests, setGuests] = useState('');
+  const [guests, setGuests] = useState(10);
   const [complimentaryItems, setComplimentaryItems] = useState([]);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [deliveryLocation, setDeliveryLocation] = useState({
@@ -542,6 +544,12 @@ const ReviewOrder = () => {
   const [loadingPayment, setLoadingPayment] = useState(false);
 
   const API = process.env.REACT_APP_API_URL;
+  const today = new Date();
+  const minDate = today.toISOString().split('T')[0];
+
+  const maxDateObj = new Date();
+  maxDateObj.setMonth(maxDateObj.getMonth() + 3);
+  const maxDate = maxDateObj.toISOString().split('T')[0];
 
   // 🔔 Send system notification
   const sendOrderPlacedNotification = () => {
@@ -553,6 +561,15 @@ const ReviewOrder = () => {
     }
   };
 
+  useEffect(() => {
+    if (user) {
+      setDeliveryLocation((prev) => ({
+        ...prev,
+        address: user.address || '',
+        // Optionally, you can prefill city or landmark if you store it
+      }));
+    }
+  }, [user]);
   useEffect(() => {
     if (location.state?.selectedPackage && location.state?.selectedMealType) {
       setSelectedPackage(location.state.selectedPackage);
@@ -573,6 +590,7 @@ const ReviewOrder = () => {
 
   // ---------------- PAYMENT ----------------
   const handlePayAndPlaceOrder = async () => {
+
     if (!guests || guests < 10) {
       toast.error('Minimum 10 guests are required to place an order');
       return;
@@ -583,6 +601,26 @@ const ReviewOrder = () => {
     }
     if (!deliveryLocation.address) {
       toast.error('Please enter delivery address');
+      return;
+    }
+    if (!/^\d{6}$/.test(deliveryLocation.pincode)) {
+      toast.error('Please enter a valid 6-digit pincode');
+      return;
+    }
+    const selectedDate = new Date(deliveryDate);
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    const maxAllowedDate = new Date();
+    maxAllowedDate.setMonth(maxAllowedDate.getMonth() + 3);
+
+    if (selectedDate < now) {
+      toast.error('Delivery date cannot be in the past');
+      return;
+    }
+
+    if (selectedDate > maxAllowedDate) {
+      toast.error('Delivery date cannot be more than 3 months from today');
       return;
     }
 
@@ -610,6 +648,11 @@ const ReviewOrder = () => {
         },
         theme: { color: '#0f766e' },
       };
+      options.modal = {
+        ondismiss: () => {
+          setLoadingPayment(false);
+        },
+      };
 
       new window.Razorpay(options).open();
     } catch (err) {
@@ -630,6 +673,7 @@ const ReviewOrder = () => {
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
+          orderType: 'catering', // or 'mealbox'
           cart: fullCart,
           selectedPackage,
           selectedMealType,
@@ -652,7 +696,7 @@ const ReviewOrder = () => {
       sendOrderPlacedNotification();
       resetCart();
       setOrderPlaced(true);
-    } catch(err) {
+    } catch (err) {
       console.log(err);
       toast.error('Order placement failed');
       setLoadingPayment(false);
@@ -711,20 +755,30 @@ const ReviewOrder = () => {
             <input
               type="number"
               placeholder="Minimum 10 guests are required to place an order"
-              value={guests}
-              onChange={(e) => setGuests(e.target.value === '' ? '' : Number(e.target.value))}
+              value={guests} min="10"
+              step="1"
+              onKeyDown={(e) => ['e', 'E', '+', '-', '.'].includes(e.key) && e.preventDefault()}
+              onChange={(e) => {
+                const value = Number(e.target.value);
+                setGuests(Number.isNaN(value) ? null : value);
+
+              }}
+              onBlur={() => document.getElementById('delivery-date')?.focus()}
+
             />
           </label>
 
           <label>
-            Delivery Date:
+            Delivery Date
+
             <input
               type="date"
+              min={minDate}
+              max={maxDate}
               value={deliveryDate}
               onChange={(e) => setDeliveryDate(e.target.value)}
             />
           </label>
-
           <label>Delivery Location</label>
           <input
             type="text"
@@ -751,15 +805,21 @@ const ReviewOrder = () => {
             }
           />
           <input
-            type="text"
+            type="tel"
             placeholder="Pincode"
+            maxLength={6}
             value={deliveryLocation.pincode}
-            onChange={(e) =>
-              setDeliveryLocation({ ...deliveryLocation, pincode: e.target.value })
-            }
+            onChange={(e) => {
+              const value = e.target.value.replace(/\D/g, ''); // digits only
+              if (value.length <= 6) {
+                setDeliveryLocation({ ...deliveryLocation, pincode: value });
+              }
+            }}
           />
 
+
           <h4>Payment</h4>
+          <p>You are paying <strong>{paymentOption}%</strong> advance.</p>
           {[25, 50, 100].map((p) => (
             <label key={p}>
               <input
@@ -785,7 +845,14 @@ const ReviewOrder = () => {
             <button
               className="place-order-btn"
               onClick={handlePayAndPlaceOrder}
-              disabled={loadingPayment || total === 0}
+              disabled={
+                loadingPayment ||
+                total === 0 ||
+                !deliveryDate ||
+                !deliveryLocation.address ||
+                !deliveryLocation.city ||
+                !/^\d{6}$/.test(deliveryLocation.pincode)
+              }
             >
               {loadingPayment ? 'Processing...' : `Pay ₹${payableNow}`}
             </button>

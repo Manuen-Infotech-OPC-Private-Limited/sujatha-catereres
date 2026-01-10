@@ -81,7 +81,7 @@
 
 // export default CartSummary;
 import React from 'react';
-import './CartSummary.css';
+import '../css/CartSummary.css';
 import { useCart } from '../utils/cartContext';
 import { useNavigate } from 'react-router-dom';
 import { MENU } from '../data/menuData';

@@ -1,15 +1,32 @@
 export const testimonials = [
   {
-    quote: "The authentic flavors and warm service made our event unforgettable!",
-    author: "Ramesh K.",
+    name: 'Ganesh & Family',
+    location: 'Vizag',
+    message:
+      'Our wedding catering was flawless. Delicious meals, perfect timing, and exceptional service. Truly made our day special!',
   },
   {
-    quote: "Best South Indian caterers in town, highly recommended.",
-    author: "Anjali S.",
+    name: 'Bhanu & Family',
+    location: 'Hyderabad',
+    message:
+      'The housewarming feast was incredible! Every dish was flavorful and served with care. Guests couldn’t stop praising the spread.',
   },
   {
-    quote: "Exceptional quality and taste — our family loved it!",
-    author: "Vijay M.",
+    name: 'Corporate Team',
+    location: 'Vijayawada',
+    message:
+      'Professional service and consistent quality. Highly recommended for large gatherings.',
+  },
+  {
+    name: 'Ramesh & Family',
+    location: 'Guntur',
+    message:
+      'Food was authentic, hygienic, and served with warmth. Every guest appreciated the taste.',
+  },
+  {
+    name: 'Lakshmi Narayana',
+    location: 'Tenali',
+    message:
+      'Perfect planning and smooth execution. The banana leaf meals were exceptional.',
   },
 ];
-

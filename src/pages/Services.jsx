@@ -1,4 +1,4 @@
-import './Services.css';
+import '../css/Services.css';
 import mealboximg from '../assets/logos/new_mealbox.png';
 import cateringImg from '../assets/logos/catering.png';
 import Header from '../components/Header';

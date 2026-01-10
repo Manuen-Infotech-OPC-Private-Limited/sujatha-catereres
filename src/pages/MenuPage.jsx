@@ -1,143 +1,40 @@
-// import React, { useState } from 'react';
-// import { useNavigate } from 'react-router-dom';
-// import './MenuPage.css';
-// import PackageSelector from '../components/PackageSelector';
-// import MealTypeSelector from '../components/MealTypeSelector';
-// import BreakfastMenu from '../components/MenuDisplay/BreakfastMenu';
-// import LunchDinnerMenu from '../components/MenuDisplay/LunchDinnerMenu';
-// import { MENU } from '../data/menuData';
-// import Header from '../components/Header';
-// import useAuth from '../hooks/useAuth';
-
-// const MenuPage = () => {
-//   const [selectedPackage, setSelectedPackage] = useState('Basic');
-//   const [selectedMealType, setSelectedMealType] = useState('Breakfast');
-//   const navigate = useNavigate();
-
-//   const { user, loading } = useAuth();
-
-//   return (
-//     <div className="home">
-//       <Header />
-
-//       <section className="menu-content">
-//         <h1>Our Menu</h1>
-
-//         {/* Show nothing until auth is loaded */}
-//         {!loading && (
-//           <>
-//             {user ? (
-//               <button
-//                 className="order-now-btn"
-//                 onClick={() => navigate('/order')}
-//               >
-//                 Order Now
-//               </button>
-//             ) : (
-//               <button
-//                 className="order-now-btn login-required-btn"
-//                 onClick={() => navigate('/login')}
-//               >
-//                 Please login to place an order
-//               </button>
-//             )}
-//           </>
-//         )}
-
-//         <div>
-//           <MealTypeSelector
-//             selectedMealType={selectedMealType}
-//             onSelect={setSelectedMealType}
-//           />
-
-//           <PackageSelector
-//             selectedPackage={selectedPackage}
-//             onSelect={setSelectedPackage}
-//           />
-//         </div>
-
-//         <div>
-//           {selectedMealType === 'Breakfast' ? (
-//             MENU.breakfast ? (
-//               <BreakfastMenu
-//                 menuData={MENU.breakfast}
-//                 selectedPackage={selectedPackage}
-//               />
-//             ) : (
-//               <p>Breakfast menu is not available at the moment.</p>
-//             )
-//           ) : selectedMealType === 'Lunch' ? (
-//             MENU.lunchDinner ? (
-//               <LunchDinnerMenu
-//                 menuData={MENU.lunchDinner}
-//                 selectedMealType={selectedMealType}
-//                 selectedPackage={selectedPackage}
-//               />
-//             ) : (
-//               <p>Lunch menu is not available at the moment.</p>
-//             )
-//           ) : selectedMealType === 'Dinner' ? (
-//             MENU.lunchDinner ? (
-//               <LunchDinnerMenu
-//                 menuData={MENU.lunchDinner}
-//                 selectedMealType={selectedMealType}
-//                 selectedPackage={selectedPackage}
-//               />
-//             ) : (
-//               <p>Dinner menu is not available at the moment.</p>
-//             )
-//           ) : (
-//             <p>Please select a valid meal type.</p>
-//           )}
-//         </div>
-//       </section>
-//     </div>
-//   );
-// };
-
-// export default MenuPage;
-
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './MenuPage.css';
+import '../css/MenuPage.css';
 import PackageSelector from '../components/PackageSelector';
 import MealTypeSelector from '../components/MealTypeSelector';
 import BreakfastMenu from '../components/MenuDisplay/BreakfastMenu';
 import LunchDinnerMenu from '../components/MenuDisplay/LunchDinnerMenu';
 import Header from '../components/Header';
 import useAuth from '../hooks/useAuth';
+import { useMenu } from '../utils/MenuContext';
 
 const MenuPage = () => {
   const [selectedPackage, setSelectedPackage] = useState('Basic');
   const [selectedMealType, setSelectedMealType] = useState('Breakfast');
   const [menuData, setMenuData] = useState({});
-  const [loadingMenu, setLoadingMenu] = useState(false);
-  const [menuError, setMenuError] = useState('');
+
   const navigate = useNavigate();
-  const { user, loading } = useAuth();
-  const API = process.env.REACT_APP_API_URL;
+  const { user, loading: authLoading } = useAuth();
 
-  // Fetch menu from backend
+  const { getMenu, loading: loadingMenu, error: menuError } = useMenu();
+
+  // Fetch menu via shared cache
   useEffect(() => {
-    const fetchMenu = async () => {
-      setLoadingMenu(true);
-      setMenuError('');
-      try {
-        const res = await fetch(`${API}/api/menu?mealType=${selectedMealType}`, { credentials: 'include' });
-        if (!res.ok) throw new Error('Failed to fetch menu');
-        const data = await res.json();
-        setMenuData(data);
-      } catch (err) {
-        console.error(err);
-        setMenuError(`Failed to load menu. Please try again later. ${err}`);
-      } finally {
-        setLoadingMenu(false);
-      }
-    };
+    let isMounted = true;
 
-    fetchMenu();
-  }, [selectedMealType]);
+    getMenu(selectedMealType)
+      .then((data) => {
+        if (isMounted) setMenuData(data);
+      })
+      .catch(() => {
+        // error already handled in context
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedMealType, getMenu]);
 
   return (
     <div className="home">
@@ -146,7 +43,7 @@ const MenuPage = () => {
       <section className="menu-content">
         <h1>Our Menu</h1>
 
-        {!loading && (
+        {!authLoading && (
           <>
             {user ? (
               <button

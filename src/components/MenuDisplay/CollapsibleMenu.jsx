@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import DishCard from './DishCard';
-import './CollapsibleMenu.css';
+import '../../css/CollapsibleMenu.css';
 import { useCart } from '../../utils/cartContext';
 import { getCategoryLimit } from '../../utils/cartRules';
 import { toast } from 'react-toastify';

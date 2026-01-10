@@ -1,21 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import logo from '../assets/logos/logo-nobg.png';
-import './Header.css';
-import axios from 'axios';
+import '../css/Header.css';
 import { toast } from 'react-toastify';
-import useAuth from '../hooks/useAuth';
+import { useAuthContext } from '../utils/AuthContext';
 
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const { user } = useAuth();
+  const { user, logout } = useAuthContext();
 
-  // const isActive = (path) => location.pathname === path;
-  const isActive = (path) => location.pathname === path ? 'active' : '';
-
+  const isActive = (path) => (location.pathname === path ? 'active' : '');
 
   const handleNavigate = (path) => {
     navigate(path);
@@ -24,15 +21,10 @@ const Header = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/users/logout`,
-        {},
-        { withCredentials: true }
-      );
+      await logout();
       toast.success('Logged out successfully');
       window.location.href = '/';
-    } catch (err) {
-      console.log(`error while logout is: ${err}`);
+    } catch {
       toast.error('Logout failed');
     }
   };
@@ -60,21 +52,18 @@ const Header = () => {
         <button className={isActive('/')} onClick={() => handleNavigate('/')}>
           Home
         </button>
-
         <button
           className={isActive('/services')}
           onClick={() => handleNavigate('/services')}
         >
           Services
         </button>
-
         <button
           className={isActive('/about')}
           onClick={() => handleNavigate('/about')}
         >
           About Us
         </button>
-
         <button
           className={isActive('/contact')}
           onClick={() => handleNavigate('/contact')}
@@ -90,7 +79,6 @@ const Header = () => {
             >
               Profile
             </button>
-
             <button onClick={handleLogout}>Logout</button>
           </>
         ) : (

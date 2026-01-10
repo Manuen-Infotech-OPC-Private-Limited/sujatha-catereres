@@ -1,5 +1,5 @@
 import React from 'react';
-import './MealTypeSelector.css'; // Optional styles
+import '../css/MealTypeSelector.css'; // Optional styles
 
 const mealTypes = ['Breakfast', 'Lunch', 'Dinner'];
 

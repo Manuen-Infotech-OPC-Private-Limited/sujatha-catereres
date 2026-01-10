@@ -20,14 +20,15 @@ const app = express();
 // Hardcoded allowed origins
 const allowedOrigins = [
   "https://sujathacaterers.com",
-  "https://www.sujathacaterers.com"
+  "https://www.sujathacaterers.com",
+  "http://localhost:3000", "http://localhost:5173", 'http://127.0.0.1:3000',
 ];
 
 console.log("Allowed origins:", allowedOrigins);
 
 const corsOptions = {
   origin: function (origin, callback) {
-    console.log("Incoming origin:", origin);
+    // console.log("Incoming origin:", origin);
 
     // Allow requests with no origin (server-side, curl, old browsers)
     if (!origin) {
@@ -54,7 +55,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // Handle preflight requests for all routes
-app.options(/.*/, cors(corsOptions)); 
+app.options(/.*/, cors(corsOptions));
 app.use(
   '/assets',
   express.static(path.join(__dirname, 'public'))
@@ -138,6 +139,9 @@ app.use("/api/menu", menuRoutes);
 
 const paymentRoutes = require("./routes/payments")
 app.use("/api/payments", paymentRoutes);
+
+const complaintRoutes = require("./routes/complaintRoutes")
+app.use("/api/complaints", complaintRoutes);
 
 // Create HTTP server and Socket.IO for real-time
 const server = http.createServer(app);

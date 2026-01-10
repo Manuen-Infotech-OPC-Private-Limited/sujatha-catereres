@@ -1,5 +1,5 @@
 import React from 'react';
-import './PackageSelector.css'; // Optional for styling
+import '../css/PackageSelector.css';
 
 const packages = ['Basic', 'Classic', 'Premium', 'Luxury'];
 

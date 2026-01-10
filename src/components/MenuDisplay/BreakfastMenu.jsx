@@ -1,6 +1,6 @@
 import React from 'react';
 import DishCard from './DishCard';
-import './BreakfastMenu.css'; // Import the CSS file
+import '../../css/BreakfastMenu.css'; // Import the CSS file
 
 const BreakfastMenu = ({ menuData, selectedPackage }) => {
   return (

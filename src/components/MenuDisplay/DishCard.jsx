@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './DishCard.css';
+import '../../css/DishCard.css';
 
 const DishCard = ({ name, packages, selectedPackage, image, isSelected }) => {
   const [loaded, setLoaded] = useState(false); // Track image load

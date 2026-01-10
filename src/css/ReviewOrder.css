@@ -15,6 +15,14 @@
   color: #333;
 }
 
+.selected-items {
+  max-height: 90vh;
+  /* adjust as needed */
+  overflow-y: auto;
+  padding-right: 6px;
+  /* space for scrollbar */
+}
+
 .review-order h2 {
   text-align: center;
   margin-bottom: 2rem;
@@ -51,13 +59,17 @@
   margin-bottom: 1rem;
 }
 
+.selected-items > div {
+    margin-bottom: 1.2rem;
+}
 .item-list {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
   gap: 16px;
 }
 
 .item-card {
+  width: 100%;
   background: #fff4f4;
   border-left: 5px solid var(--primary-red);
   border-radius: 10px;
@@ -91,6 +103,7 @@
 
 /* Inputs */
 input[type="number"],
+input[type="tel"],
 input[type="text"],
 input[type="date"] {
   padding: 0.75rem 1rem;

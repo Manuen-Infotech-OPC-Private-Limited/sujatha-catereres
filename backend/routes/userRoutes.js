@@ -212,38 +212,66 @@ router.post("/save-fcm-token", authenticateToken, async (req, res) => {
 router.post("/register", async (req, res) => {
   const { name, email, address, idToken } = req.body;
 
+  // Error codes dictionary (for API consumers)
+  const ERROR_CODES = {
+    MISSING_FIELDS: "ERR_MISSING_FIELDS",
+    INVALID_TOKEN: "ERR_INVALID_TOKEN",
+    PHONE_MISSING: "ERR_PHONE_MISSING",
+    DUPLICATE_EMAIL: "ERR_DUPLICATE_EMAIL",
+    DUPLICATE_PHONE: "ERR_DUPLICATE_PHONE",
+    REGISTRATION_FAILED: "ERR_REGISTRATION_FAILED"
+  };
+
   if (!idToken || !name || !email) {
-    return res.status(400).json({ error: "Missing required fields" });
+    return res.status(400).json({
+      error: "Missing required fields: name, email, or idToken",
+      code: ERROR_CODES.MISSING_FIELDS
+    });
   }
+
   const isMobile = req.headers["x-client-type"] === "mobile";
 
   try {
     // 1️⃣ Verify Firebase token
-    const decoded = await verifyFirebaseToken(idToken);
+    const decoded = await verifyFirebaseToken(idToken).catch(() => null);
+    if (!decoded) {
+      return res.status(401).json({
+        error: "Invalid Firebase token",
+        code: ERROR_CODES.INVALID_TOKEN
+      });
+    }
+
     const phone = decoded.phone_number;
+    if (!phone) {
+      return res.status(400).json({
+        error: "Phone number missing in Firebase token",
+        code: ERROR_CODES.PHONE_MISSING
+      });
+    }
 
-    if (!phone) return res.status(400).json({ error: "Phone number missing in Firebase token" });
-
-    // 2️⃣ Check if user exists
+    // 2️⃣ Check if user exists by phone
     let user = await User.findOne({ phone });
     if (!user) {
       // Create new user
       user = new User({ name, email, phone, address });
       await user.save();
     } else {
-      // Update existing user (optional)
+      // Update existing user
       user.name = name;
       user.email = email;
       if (address) user.address = address;
-      console.log(`updating existing user details with: ${name} - ${email} -${address}`);
+      console.log(`Updating existing user: ${name} - ${email} - ${address}`);
       await user.save();
     }
 
     // 3️⃣ Issue JWT
-    const token = jwt.sign({ id: user._id, phone: user.phone, role: user.role }, JWT_SECRET, { expiresIn: "30d" });
-    // --------------------------
-    // 🔹 MOBILE CLIENT
-    // --------------------------
+    const token = jwt.sign(
+      { id: user._id, phone: user.phone, role: user.role },
+      JWT_SECRET,
+      { expiresIn: "30d" }
+    );
+
+    // Mobile response
     if (isMobile) {
       return res.json({
         message: "Registration successful",
@@ -252,7 +280,7 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    // 4️⃣ Set cookie
+    // Web response with cookie
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -263,9 +291,31 @@ router.post("/register", async (req, res) => {
     res.json({ message: "Registration successful", user });
   } catch (err) {
     console.error("Registration failed:", err);
-    res.status(500).json({ error: "Registration failed" });
+
+    // Handle duplicate key errors
+    if (err.code === 11000) {
+      if (err.keyPattern?.email) {
+        return res.status(400).json({
+          error: `Email "${err.keyValue.email}" is already registered. Please use a different email.`,
+          code: ERROR_CODES.DUPLICATE_EMAIL
+        });
+      }
+      if (err.keyPattern?.phone) {
+        return res.status(400).json({
+          error: `Phone number "${err.keyValue.phone}" is already registered.`,
+          code: ERROR_CODES.DUPLICATE_PHONE
+        });
+      }
+    }
+
+    // Generic registration failure
+    res.status(500).json({
+      error: "Registration failed. Please try again.",
+      code: ERROR_CODES.REGISTRATION_FAILED
+    });
   }
 });
+
 
 
 // =============================

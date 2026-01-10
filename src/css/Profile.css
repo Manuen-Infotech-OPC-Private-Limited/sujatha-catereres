@@ -5,7 +5,7 @@
 
 .profile-container {
   padding: 2rem;
-  max-width: 600px;
+  /* max-width: 600px; */
   margin: 0 auto;
   font-family: var(--font-main);
   color: #333
@@ -86,6 +86,7 @@
 .order-item {
   margin-bottom: 1.5rem;
   padding: 1rem;
+  max-width: 40%;
   background-color: #fff4f4;
   border-left: 5px solid var(--primary-red);
   border-radius: 6px;
@@ -104,6 +105,31 @@
 .order-item p {
   margin: 0.3rem 0;
 }
+
+.orders-list {
+  display: flex;
+  /* flex-direction: column; */
+  flex-wrap: wrap;
+  gap: 1.5rem; /* space between order cards */
+}
+
+.order-item {
+  padding: 1rem;
+  background-color: #fff4f4;
+  max-width: 40%;
+  border-left: 5px solid var(--primary-red);
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer; /* makes hover more obvious */
+}
+.order-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  background-color: #ffecec;
+}
+
+
 
 .invoice-btn {
   margin-top: .75rem;

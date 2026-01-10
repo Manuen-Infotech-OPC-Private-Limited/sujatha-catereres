@@ -1,16 +1,21 @@
 import React, { useState } from 'react';
 import Header from '../components/Header';
-import './MealBox.css';
+import '../css/MealBox.css';
 import mealBoxImg from '../assets/logos/new_mealbox.png';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import { useAuthContext } from '../utils/AuthContext'; // ✅ new import
 
 const MealBox = () => {
+  const { user } = useAuthContext(); // ✅ get logged-in user
+
   const PRICE_PER_BOX = 179;
   const TAX_RATE = 0.09; // 9% CGST + 9% SGST
   const MIN_QTY = 5;
   const MAX_QTY = 15;
 
   const API = process.env.REACT_APP_API_URL;
+  const navigate = useNavigate();
 
   const [quantity, setQuantity] = useState(MIN_QTY);
   const [loading, setLoading] = useState(false);
@@ -131,7 +136,7 @@ const MealBox = () => {
             taxes: { cgst, sgst },
           },
           deliveryLocation: {
-            address: '<user addr>',
+            address: user?.address || '', // ✅ fallback if address not set,
           },
           payment: {
             orderId: razorpayOrderId,
@@ -143,7 +148,9 @@ const MealBox = () => {
       });
 
       if (!res.ok) throw new Error();
-
+      setTimeout(() => {
+        navigate('/');
+      }, 500);
       toast.success('Meal Box order placed successfully!');
     } catch (err) {
       console.error(err);
