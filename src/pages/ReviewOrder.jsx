@@ -652,7 +652,8 @@ const ReviewOrder = () => {
       sendOrderPlacedNotification();
       resetCart();
       setOrderPlaced(true);
-    } catch {
+    } catch(err) {
+      console.log(err);
       toast.error('Order placement failed');
       setLoadingPayment(false);
     }
