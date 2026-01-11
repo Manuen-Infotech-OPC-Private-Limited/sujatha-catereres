@@ -238,6 +238,8 @@ const allowedOrigins = [
   "http://127.0.0.1:3000",
 ];
 
+console.log("Allowed origins:", allowedOrigins);
+
 const corsOptions = {
   origin(origin, cb) {
     if (!origin) return cb(null, true);
