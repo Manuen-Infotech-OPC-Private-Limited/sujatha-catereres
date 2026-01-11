@@ -23,7 +23,7 @@ const Header = () => {
     try {
       await logout();
       toast.success('Logged out successfully');
-      window.location.href = '/';
+      navigate('/')
     } catch {
       toast.error('Logout failed');
     }

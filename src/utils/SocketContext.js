@@ -1,88 +1,77 @@
-// src/utils/socketContext.js
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
-import axios from 'axios';
+// // src/utils/SocketContext.js
+// import React, { createContext, useContext, useEffect, useRef } from 'react';
+// import { io } from 'socket.io-client';
+// import { useAuthContext } from './AuthContext';
 
-const SocketContext = createContext();
+// const SocketContext = createContext(null);
 
-export const useSocket = () => useContext(SocketContext);
+// export const useSocket = () => useContext(SocketContext);
 
-export const SocketProvider = ({ children }) => {
-  const [socket, setSocket] = useState(null);
-  const [user, setUser] = useState(null); // store current user info
-  const API = process.env.REACT_APP_API_URL;
+// export const SocketProvider = ({ children }) => {
+//   const { user } = useAuthContext(); // ✅ single source of truth
+//   const socketRef = useRef(null);
+//   const API = process.env.REACT_APP_API_URL;
 
-  // 🔔 Request notification permission globally once
-  useEffect(() => {
-    if (Notification.permission !== 'granted') {
-      Notification.requestPermission();
-    }
-  }, []);
+//   // Request notification permission once
+//   useEffect(() => {
+//     if (Notification.permission !== 'granted') {
+//       Notification.requestPermission();
+//     }
+//   }, []);
 
-  // Fetch logged-in user for registering socket
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await axios.get(`${API}/api/users/me`, { withCredentials: true });
-        setUser(res.data.user);
-      } catch (err) {
-        console.error('Failed to fetch user for socket:', err);
-      }
-    };
-    fetchUser();
-  }, [API]);
+//   useEffect(() => {
+//     if (!user?._id) return;
 
-  // Connect socket and handle global events
-  useEffect(() => {
-    if (!user?._id) return;
+//     const socket = io(API, {
+//       withCredentials: true,
+//       transports: ['websocket', 'polling'],
+//       reconnection: true,
+//     });
 
-    const s = io(API, {
-      withCredentials: true,
-      transports: ['polling', 'websocket'],
-      reconnection: true,
-    });
+//     socketRef.current = socket;
 
-    // Helper: send browser notification
-    const sendBrowserNotification = (title, body) => {
-      if (Notification.permission === 'granted') {
-        new Notification(title, { body, icon: '/logo192.png' });
-      }
-    };
+//     const notify = (title, body) => {
+//       if (Notification.permission === 'granted') {
+//         new Notification(title, {
+//           body,
+//           icon: '/logo192.png',
+//         });
+//       }
+//     };
 
-    s.on('connect', () => {
-      console.log('Global socket connected');
-      s.emit('register', { userId: user._id });
-    });
+//     socket.on('connect', () => {
+//       console.log('Socket connected:', socket.id);
+//       socket.emit('register', { userId: user._id });
+//     });
 
-    // 🔔 Global notifications
-    s.on('orderUpdated', (updatedOrder) => {
-      if (String(updatedOrder.user?._id) === String(user._id)) {
-        sendBrowserNotification(
-          'Sujatha Caterers • Order Update',
-          `Your order ${updatedOrder._id} is now "${updatedOrder.status}".`
-        );
-      }
-    });
+//     socket.on('orderUpdated', (order) => {
+//       if (String(order.user?._id) === String(user._id)) {
+//         notify(
+//           'Sujatha Caterers • Order Update',
+//           `Your order ${order._id} is now "${order.status}".`
+//         );
+//       }
+//     });
 
-    s.on('orderCreated', (newOrder) => {
-      if (String(newOrder.user?._id) === String(user._id)) {
-        sendBrowserNotification(
-          'Sujatha Caterers • New Order',
-          `You just created a new order ${newOrder._id}.`
-        );
-      }
-    });
+//     socket.on('orderCreated', (order) => {
+//       if (String(order.user?._id) === String(user._id)) {
+//         notify(
+//           'Sujatha Caterers • New Order',
+//           `Order ${order._id} created successfully.`
+//         );
+//       }
+//     });
 
-    setSocket(s);
+//     return () => {
+//       console.log('Socket disconnected');
+//       socket.disconnect();
+//       socketRef.current = null;
+//     };
+//   }, [API, user?._id]);
 
-    return () => {
-      s.disconnect();
-    };
-  }, [API, user?._id]);
-
-  return (
-    <SocketContext.Provider value={{ socket, user }}>
-      {children}
-    </SocketContext.Provider>
-  );
-};
+//   return (
+//     <SocketContext.Provider value={{ socket: socketRef.current }}>
+//       {children}
+//     </SocketContext.Provider>
+//   );
+// };

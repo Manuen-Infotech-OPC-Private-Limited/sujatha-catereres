@@ -1,183 +1,3 @@
-// const express = require('express');
-// const authenticateToken = require('../service/authToken');
-// const isAdmin = require('../service/isAdmin');
-
-// const Order = require('../models/Order');
-// const crypto = require("crypto");
-
-// const { sendPush } = require("../service/sendPush");
-// const { getFriendlyMessage } = require("../service/friendlyMessages");
-
-// const router = express.Router();
-
-// // POST /api/orders - Place order
-// router.post('/', authenticateToken, async (req, res) => {
-//   try {
-//     const { cart, selectedPackage, selectedMealType, guests, deliveryDate, pricePerPerson, deliveryLocation, payment } = req.body;
-
-//     if (!cart || !guests || !pricePerPerson || !deliveryLocation?.address || !payment) {
-//       return res.status(400).json({ error: 'Missing required order details' });
-//     }
-//     // Convert deliveryDate to Date object
-//     const date = new Date(deliveryDate);
-
-//     const body = `${payment.orderId}|${payment.paymentId}`;
-//     const expectedSignature = crypto
-//       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-//       .update(body)
-//       .digest("hex");
-
-//     if (expectedSignature !== payment.signature) {
-//       return res.status(400).json({ error: "Invalid payment signature" });
-//     }
-
-//     // Apply delivery time based on selectedMealType
-//     switch (selectedMealType?.toLowerCase()) {
-//       case 'breakfast':
-//         date.setHours(7, 0, 0, 0);
-//         break;
-//       case 'lunch':
-//         date.setHours(11, 0, 0, 0);
-//         break;
-//       case 'dinner':
-//         date.setHours(19, 0, 0, 0);
-//         break;
-//       default:
-//         return res.status(400).json({ error: 'Invalid meal type' });
-//     }
-
-
-//     const newOrder = new Order({
-//       user: req.user.id,
-//       cart,
-//       selectedPackage,
-//       selectedMealType,
-//       guests,
-//       deliveryDate: date,
-//       pricePerPerson,
-//       deliveryLocation,
-
-//       total: pricePerPerson * guests,
-//       // ✅ PAYMENT INFO STORED
-//       payment: {
-//         provider: "razorpay",
-//         paymentId: payment.paymentId,
-//         orderId: payment.orderId,
-//         signature: payment.signature,
-//         status: "paid",
-//       },
-//     });
-
-//     const saved = await newOrder.save();
-//     const populated = await saved.populate("user", "name email");
-
-//     const io = req.app.get('io');
-//     if (io) {
-//       // Notify all admins that a new order has been created
-//       io.to('admins').emit('orderCreated', populated);
-
-//       // Also notify the specific user room (optional)
-//       io.to(String(saved.user)).emit('orderUpdated', populated);
-//     }
-
-//     res
-//       .status(201)
-//       .json({ message: 'Order placed successfully', order: saved });
-//   } catch (err) {
-//     console.error('Error placing order:', err);
-//     res.status(500).json({ error: 'Failed to place order' });
-//   }
-// });
-
-// // GET /api/orders - Get orders for logged-in user
-// router.get('/', authenticateToken, async (req, res) => {
-//   try {
-//     const page = parseInt(req.query.page) || 1;
-//     const limit = 10;
-//     const statusFilter = req.query.status;
-//     const mealTypeFilter = req.query.mealType;
-//     const packageFilter = req.query.package;
-//     const query = req.user.role === 'admin' ? {} : { user: req.user.id };
-//     // console.log(`Meal type: ${req.query.mealType}, Package: ${req.query.package}`);
-//     if (statusFilter) query.status = statusFilter;
-//     if (mealTypeFilter) query.selectedMealType = mealTypeFilter;
-//     if (packageFilter) query.selectedPackage = packageFilter;
-
-
-//     const orders = await Order.find(query)
-//       .populate('user', 'name email')
-//       .sort({ createdAt: -1 })
-//       .skip((page - 1) * limit)
-//       .limit(limit).lean();
-
-//     const total = await Order.countDocuments(query);
-//     // console.log(`Order are: ${orders}`);
-//     res.json({
-//       orders,
-//       pagination: {
-//         page,
-//         limit,
-//         totalPages: Math.ceil(total / limit),
-//         totalOrders: total,
-//       },
-//     });
-//   } catch (err) {
-//     console.error('Error fetching orders:', err.stack);
-//     res.status(500).json({ error: 'Failed to fetch orders' });
-//   }
-// });
-
-// // PATCH /api/orders/:id/status - Admin only: update order status
-// router.patch('/:id/status', authenticateToken, isAdmin, async (req, res) => {
-//   try {
-//     const { status } = req.body;
-
-//     if (!['pending', 'confirmed', 'preparing', 'delivered', 'cancelled'].includes(status)) {
-//       return res.status(400).json({ error: 'Invalid status' });
-//     }
-
-//     const updated = await Order.findByIdAndUpdate(
-//       req.params.id,
-//       { status },
-//       { new: true }
-//     ).populate('user', 'name email fcmToken');
-
-//     if (!updated) {
-//       return res.status(404).json({ error: 'Order not found' });
-//     }
-
-//     // SOCKET.IO notifications
-//     const io = req.app.get('io');
-//     if (io) {
-//       io.to('admins').emit('orderUpdated', updated);
-//       if (updated.user?._id) io.to(String(updated.user._id)).emit('orderUpdated', updated);
-//       else if (updated.user) io.to(String(updated.user)).emit('orderUpdated', updated);
-//     }
-
-//     // FRIENDLY FCM notification
-//     if (updated.user?.fcmToken) {
-//       const friendlyBody = getFriendlyMessage(status);
-
-//       sendPush(
-//         updated.user.fcmToken,
-//         "Order Update",
-//         friendlyBody,
-//         updated._id,
-//         { status }
-//       );
-//     }
-
-//     res.json({ message: 'Order status updated', order: updated });
-//   } catch (err) {
-//     res.status(500).json({ error: 'Failed to update order status' });
-//   }
-// });
-
-
-// module.exports = router;
-
-
-
 const express = require("express");
 const authenticateToken = require("../service/authToken");
 const isAdmin = require("../service/isAdmin");
@@ -186,121 +6,8 @@ const crypto = require("crypto");
 const Order = require("../models/Order");
 const { sendPush } = require("../service/sendPush");
 const { getFriendlyMessage } = require("../service/friendlyMessages");
-
+const { notifyAdmins, notifyUser } = require('../sseManager');
 const router = express.Router();
-
-// --------------------------------------------------
-// POST /api/orders — Place order (after Razorpay payment)
-// --------------------------------------------------
-// router.post("/", authenticateToken, async (req, res) => {
-//   try {
-//     const {
-//       cart,
-//       selectedPackage,
-//       selectedMealType,
-//       guests,
-//       deliveryDate,
-//       pricePerPerson,
-//       deliveryLocation,
-//       payment,
-//     } = req.body;
-//     const { orderType } = req.body;
-
-//     if (
-//       !cart ||
-//       !guests ||
-//       !pricePerPerson ||
-//       !deliveryLocation?.address ||
-//       !payment?.orderId ||
-//       !payment?.paymentId ||
-//       !payment?.signature ||
-//       !payment?.amount
-//     ) {
-//       return res.status(400).json({ error: "Missing required order details" });
-//     }
-
-//     // --------------------------------------------------
-//     // Razorpay signature verification
-//     // --------------------------------------------------
-//     const body = `${payment.orderId}|${payment.paymentId}`;
-
-//     const expectedSignature = crypto
-//       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-//       .update(body)
-//       .digest("hex");
-
-//     if (expectedSignature !== payment.signature) {
-//       return res.status(400).json({ error: "Invalid payment signature" });
-//     }
-
-//     // --------------------------------------------------
-//     // Delivery time mapping
-//     // --------------------------------------------------
-//     const date = new Date(deliveryDate);
-
-//     switch (selectedMealType?.toLowerCase()) {
-//       case "breakfast":
-//         date.setHours(7, 0, 0, 0);
-//         break;
-//       case "lunch":
-//         date.setHours(11, 0, 0, 0);
-//         break;
-//       case "dinner":
-//         date.setHours(19, 0, 0, 0);
-//         break;
-//       default:
-//         return res.status(400).json({ error: "Invalid meal type" });
-//     }
-
-//     // --------------------------------------------------
-//     // Save order
-//     // --------------------------------------------------
-//     const newOrder = new Order({
-//       user: req.user.id,
-//       cart,
-//       selectedPackage,
-//       selectedMealType,
-//       guests,
-//       deliveryDate: date,
-//       pricePerPerson,
-//       deliveryLocation,
-
-//       // full bill amount (not just paid now)
-//       total: payment.totalAmount || pricePerPerson * guests,
-
-//       payment: {
-//         provider: "razorpay",
-//         paymentId: payment.paymentId,
-//         orderId: payment.orderId,
-//         signature: payment.signature,
-//         amount: payment.amount, // paid now
-//         currency: "INR",
-//         status: payment.paidPercentage === 100 ? "paid" : "partial",
-//         paidAt: new Date(),
-//       },
-//     });
-
-//     const saved = await newOrder.save();
-//     const populated = await saved.populate("user", "name email");
-
-//     // --------------------------------------------------
-//     // SOCKET.IO notifications
-//     // --------------------------------------------------
-//     const io = req.app.get("io");
-//     if (io) {
-//       io.to("admins").emit("orderCreated", populated);
-//       io.to(String(saved.user)).emit("orderUpdated", populated);
-//     }
-
-//     res.status(201).json({
-//       message: "Order placed successfully",
-//       order: saved,
-//     });
-//   } catch (err) {
-//     console.error("Error placing order:", err);
-//     res.status(500).json({ error: "Failed to place order" });
-//   }
-// });
 
 router.post("/", authenticateToken, async (req, res) => {
   try {
@@ -310,6 +17,7 @@ router.post("/", authenticateToken, async (req, res) => {
       selectedPackage,
       selectedMealType,
       guests,
+      total,
       deliveryDate,
       pricePerPerson,
       deliveryLocation,
@@ -388,7 +96,7 @@ router.post("/", authenticateToken, async (req, res) => {
           return res.status(400).json({ error: "Invalid meal type" });
       }
 
-      const total = pricePerPerson * guests;
+      // const total = pricePerPerson * guests;
 
       orderData = {
         ...orderData,
@@ -398,7 +106,7 @@ router.post("/", authenticateToken, async (req, res) => {
         guests,
         deliveryDate: date,
         pricePerPerson,
-        total,
+        total: total,
         payment: {
           ...orderData.payment,
           status: payment.amount >= total ? "paid" : "partial",
@@ -447,10 +155,20 @@ router.post("/", authenticateToken, async (req, res) => {
     // --------------------------------------------------
     // SOCKET.IO notifications
     // --------------------------------------------------
-    const io = req.app.get("io");
-    if (io) {
-      io.to("admins").emit("orderCreated", populated);
-      io.to(String(saved.user)).emit("orderUpdated", populated);
+    // const io = req.app.get("io");
+    // if (io) {
+    //   io.to("admins").emit("orderCreated", populated);
+    //   io.to(String(saved.user)).emit("orderUpdated", populated);
+    // }
+    notifyAdmins('orderCreated', populated);
+    const delivered = notifyUser(saved.user, 'order_updated', populated);
+    if (!delivered && populated.user?.fcmToken) {
+      sendPush(
+        populated.user.fcmToken,
+        "Order Placed",
+        "Your order has been placed successfully",
+        populated._id
+      );
     }
 
     res.status(201).json({
@@ -555,10 +273,21 @@ router.post("/:id/repay", authenticateToken, async (req, res) => {
 
     // --------------------------------------------------
     // Notify via socket
-    const io = req.app.get("io");
-    if (io) {
-      io.to("admins").emit("orderUpdated", populated);
-      io.to(String(saved.user)).emit("orderUpdated", populated);
+    // const io = req.app.get("io");
+    // if (io) {
+    //   io.to("admins").emit("orderUpdated", populated);
+    //   io.to(String(saved.user)).emit("orderUpdated", populated);
+    // }
+    notifyAdmins('orderUpdated', populated);
+
+    const sent = notifyUser(saved.user, 'order_updated', populated);
+    if (!sent && populated.user?.fcmToken) {
+      sendPush(
+        populated.user.fcmToken,
+        "Payment Update",
+        "Your payment has been updated",
+        populated._id
+      );
     }
 
     res.json({ message: "Payment updated successfully", order: populated });
@@ -589,21 +318,40 @@ router.patch("/:id/status", authenticateToken, isAdmin, async (req, res) => {
       return res.status(404).json({ error: "Order not found" });
     }
 
-    const io = req.app.get("io");
-    if (io) {
-      io.to("admins").emit("orderUpdated", updated);
-      io.to(String(updated.user._id)).emit("orderUpdated", updated);
+    // const io = req.app.get("io");
+    // if (io) {
+    //   io.to("admins").emit("orderUpdated", updated);
+    //   io.to(String(updated.user._id)).emit("orderUpdated", updated);
+    // }
+
+    notifyAdmins('orderUpdated', updated);
+
+    const delivered = notifyUser(updated.user._id, 'order_status_updated', {
+      orderId: updated._id,
+      status
+    });
+
+    if (!delivered && updated.user?.fcmToken) {
+      setTimeout(() => {
+        sendPush(
+          updated.user.fcmToken,
+          "Order Update",
+          getFriendlyMessage(status),
+          updated._id,
+          { status }
+        );
+      }, 5000); // ⏱ delayed fallback (important)
     }
 
-    if (updated.user?.fcmToken) {
-      sendPush(
-        updated.user.fcmToken,
-        "Order Update",
-        getFriendlyMessage(status),
-        updated._id,
-        { status }
-      );
-    }
+    // if (updated.user?.fcmToken) {
+    //   sendPush(
+    //     updated.user.fcmToken,
+    //     "Order Update",
+    //     getFriendlyMessage(status),
+    //     updated._id,
+    //     { status }
+    //   );
+    // }
 
     res.json({ message: "Order status updated", order: updated });
   } catch (err) {

@@ -54,13 +54,13 @@ const Home = () => {
   const acceptAllCookies = () => {
     Cookies.set('cookie_consent', 'true', { expires: 365 });
     setShowCookiePrompt(false);
-    window.location.reload();
+    // window.location.reload();
   };
   const acceptEssentialCookies = () => {
     Cookies.set('cookie_consent', 'essential', { expires: 365 });
     toast.info('Only essential cookies will be used.');
     setShowCookiePrompt(false);
-    window.location.reload();
+    // window.location.reload();
   };
 
   const handleViewMenu = () => navigate('/menu');
@@ -110,10 +110,10 @@ const Home = () => {
       toast.error('Please enter a valid email');
       return;
     }
-    
+
     // Remove optional '+91' prefix if present
     let cleanedPhone = phone.replace(/^(\+91)?/, '');
-    
+
     // Phone validation (10 digits)
     if (!/^\d{10}$/.test(cleanedPhone)) {
       toast.error('Please enter a valid 10-digit phone number');
@@ -212,7 +212,7 @@ const Home = () => {
         onClick={openSupportDialog}
         title="Contact Support"
       >
-      Contact Support 👩‍💻
+        Contact Support 👩‍💻
       </button>
 
       {/* ---------------- SUPPORT DIALOG ---------------- */}

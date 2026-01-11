@@ -6,6 +6,8 @@ import axios from 'axios';
 import loginBg from '../assets/logos/loginbg.webp';
 import logonoBg from '../assets/logos/logo-nobg.png';
 import '../css/Login.css';
+import { useAuthContext } from '../utils/AuthContext';
+import { requestFCMToken } from '../utils/pushNotifications';
 
 const LoginPage = () => {
   const [phone, setPhone] = useState('');
@@ -16,6 +18,7 @@ const LoginPage = () => {
   const [confirmationResult, setConfirmationResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
+  const { setUser } = useAuthContext();
 
   const navigate = useNavigate();
   const API = process.env.REACT_APP_API_URL;
@@ -95,6 +98,20 @@ const LoginPage = () => {
 
       const idToken = await user.getIdToken();
       await axios.post(`${API}/api/users/firebase-login`, { idToken }, { withCredentials: true });
+      const me = await axios.get(`${API}/api/users/me`, {
+        withCredentials: true,
+      });
+
+      setUser(me.data.user);
+
+      const token = await requestFCMToken();
+      if (token) {
+        await axios.post(
+          `${API}/api/users/save-fcm-token`,
+          { fcmToken:token },
+          { withCredentials: true }
+        );
+      }
 
       if (analytics) logEvent(analytics, 'login_success', { method: 'phone' });
       toast.success('Phone verified successfully!');

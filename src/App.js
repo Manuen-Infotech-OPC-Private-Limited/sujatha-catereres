@@ -16,7 +16,7 @@ import ReviewOrder from './pages/ReviewOrder';
 import InvoicePage from "./pages/InvoicePage";
 
 import { CartProvider } from './utils/cartContext';
-import { SocketProvider } from './utils/SocketContext';
+import { SSEProvider } from './utils/SSEContext';
 import { MenuProvider } from './utils/MenuContext';
 import { AuthProvider } from './utils/AuthContext';
 
@@ -27,11 +27,11 @@ import MealBox from './pages/MealBox';
 function App() {
   return (
 
-    <AuthProvider>
-      <CartProvider>
+    <CartProvider>
+      <AuthProvider>
         <MenuProvider>
 
-          <SocketProvider>
+          <SSEProvider>
             <Router>
 
               <div className="App">
@@ -95,10 +95,10 @@ function App() {
                 <ToastContainer position="top-right" autoClose={2000} />
               </div>
             </Router>
-          </SocketProvider>
+          </SSEProvider>
         </MenuProvider>
-      </CartProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </CartProvider>
   );
 }
 

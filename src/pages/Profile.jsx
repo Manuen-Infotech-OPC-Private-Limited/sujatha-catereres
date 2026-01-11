@@ -5,7 +5,7 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import '../css/Profile.css';
 import Header from '../components/Header';
-import { useSocket } from '../utils/SocketContext'; // ✅ Import global socket
+// import { useSocket } from '../utils/SocketContext'; // ✅ Import global socket
 
 const Profile = () => {
     const [user, setUser] = useState(null);
@@ -15,7 +15,7 @@ const Profile = () => {
 
     const navigate = useNavigate();
     const API = process.env.REACT_APP_API_URL;
-    const { socket } = useSocket(); // ✅ Destructure socket from context
+    // const { socket } = useSocket(); // ✅ Destructure socket from context
 
     // 🔔 Request Notification Permission on page load
     useEffect(() => {
@@ -130,38 +130,38 @@ const Profile = () => {
     }, [API, navigate]);
 
     // ✅ Listen to global socket events
-    useEffect(() => {
-        if (!socket || !user?._id) return;
+    // useEffect(() => {
+    //     if (!socket || !user?._id) return;
 
-        const handleOrderUpdate = (updatedOrder) => {
-            if (String(updatedOrder.user?._id) === String(user._id)) {
-                setOrders((prevOrders) =>
-                    prevOrders.map((order) =>
-                        order._id === updatedOrder._id ? updatedOrder : order
-                    )
-                );
+    //     const handleOrderUpdate = (updatedOrder) => {
+    //         if (String(updatedOrder.user?._id) === String(user._id)) {
+    //             setOrders((prevOrders) =>
+    //                 prevOrders.map((order) =>
+    //                     order._id === updatedOrder._id ? updatedOrder : order
+    //                 )
+    //             );
 
-                sendBrowserNotification(
-                    "Sujatha Caterers • Order Update",
-                    `Your order ${updatedOrder._id} is now "${updatedOrder.status}".`
-                );
-            }
-        };
+    //             sendBrowserNotification(
+    //                 "Sujatha Caterers • Order Update",
+    //                 `Your order ${updatedOrder._id} is now "${updatedOrder.status}".`
+    //             );
+    //         }
+    //     };
 
-        const handleNewOrder = (newOrder) => {
-            if (String(newOrder.user?._id) === String(user._id)) {
-                setOrders((prevOrders) => [newOrder, ...prevOrders]);
-            }
-        };
+    //     const handleNewOrder = (newOrder) => {
+    //         if (String(newOrder.user?._id) === String(user._id)) {
+    //             setOrders((prevOrders) => [newOrder, ...prevOrders]);
+    //         }
+    //     };
 
-        socket.on('orderUpdated', handleOrderUpdate);
-        socket.on('orderCreated', handleNewOrder);
+    //     socket.on('orderUpdated', handleOrderUpdate);
+    //     socket.on('orderCreated', handleNewOrder);
 
-        return () => {
-            socket.off('orderUpdated', handleOrderUpdate);
-            socket.off('orderCreated', handleNewOrder);
-        };
-    }, [socket, user?._id]);
+    //     return () => {
+    //         socket.off('orderUpdated', handleOrderUpdate);
+    //         socket.off('orderCreated', handleNewOrder);
+    //     };
+    // }, [socket, user?._id]);
 
     // Save profile changes
     const handleSave = async () => {

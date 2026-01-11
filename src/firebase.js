@@ -1,7 +1,7 @@
-// src/firebase.js
 import { initializeApp } from "firebase/app";
 import { getAnalytics, logEvent } from "firebase/analytics";
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -15,13 +15,30 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-// Only initialize Analytics in browser (not SSR or Node)
+// Analytics
 let analytics;
 if (typeof window !== "undefined" && process.env.NODE_ENV !== "test") {
   analytics = getAnalytics(app);
 }
 
+// Auth
 const auth = getAuth(app);
 auth.useDeviceLanguage();
 
-export { app, analytics, logEvent, auth, RecaptchaVerifier, signInWithPhoneNumber };
+// Messaging
+let messaging;
+if (typeof window !== "undefined") {
+  messaging = getMessaging(app);
+}
+
+export {
+  app,
+  analytics,
+  logEvent,
+  auth,
+  messaging,
+  getToken,
+  onMessage,
+  RecaptchaVerifier,
+  signInWithPhoneNumber
+};

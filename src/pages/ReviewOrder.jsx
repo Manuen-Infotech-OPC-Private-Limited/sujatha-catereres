@@ -518,8 +518,8 @@ import OrderPlacedAnimation from '../components/OrderPlacedAnimation';
 import soundSuccess from '../assets/sounds/order-placed.mp3';
 import  useAuth  from '../hooks/useAuth';
 
-const GST_PERCENT = 5;
-const PLATFORM_CHARGE = 50;
+const GST_PERCENT = 8;
+const PLATFORM_CHARGE = 15;
 
 const ReviewOrder = () => {
   const { cart, resetCart } = useCart();
@@ -673,11 +673,12 @@ const ReviewOrder = () => {
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
-          orderType: 'catering', // or 'mealbox'
+          orderType: 'catering',
           cart: fullCart,
           selectedPackage,
           selectedMealType,
           guests,
+          total: payableNow,
           deliveryDate,
           pricePerPerson,
           deliveryLocation,
@@ -738,7 +739,7 @@ const ReviewOrder = () => {
                 <ul className="item-list">
                   {complimentaryItems.map((item) => (
                     <li key={item.name} className="item-card">
-                      {item.image && <img src={item.image} alt={item.name} className="item-image" />}
+                      {item.image && <img src={`${API}${item.image}`} alt={item.name} className="item-image" />}
                       <span className="item-name">{item.name}</span>
                     </li>
                   ))}
