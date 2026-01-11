@@ -21,10 +21,11 @@ const app = express();
 const allowedOrigins = [
   "https://sujathacaterers.com",
   "https://www.sujathacaterers.com",
-  "http://localhost:3000", "http://localhost:5173", 'http://127.0.0.1:3000',
+  "https://admin.sujathacaterers.com",
+  "http://localhost:3000", "http://localhost:5173",
 ];
 
-console.log("Allowed origins:", allowedOrigins);
+// console.log("Allowed origins:", allowedOrigins);
 
 const corsOptions = {
   origin: function (origin, callback) {
