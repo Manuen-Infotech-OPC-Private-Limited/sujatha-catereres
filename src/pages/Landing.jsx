@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../css//Landing.css';
+import '../css/Landing.css';
 import Header from '../components/Header';
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
@@ -26,8 +26,8 @@ const Home = () => {
 
   // ---------------- INIT ----------------
   useEffect(() => {
-    if (Notification.permission !== "granted") {
-      Notification.requestPermission();
+    if ('Notification' in window && Notification.permission !== "granted") {
+      // Notification.requestPermission(); // Only request on user gesture usually, but safely checking existence now.
     }
   }, []);
 
@@ -208,7 +208,7 @@ const Home = () => {
 
       {/* ---------------- FLOATING ACTION BUTTON ---------------- */}
       <button
-        className="fab-contact-support"
+        className={`fab-contact-support ${showCookiePrompt ? 'with-cookie-banner' : ''}`}
         onClick={openSupportDialog}
         title="Contact Support"
       >

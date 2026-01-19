@@ -14,6 +14,7 @@ import Profile from './pages/Profile';
 import OrderPage from './pages/OrderPage';
 import ReviewOrder from './pages/ReviewOrder';
 import InvoicePage from "./pages/InvoicePage";
+import NotFound from './pages/NotFound';
 
 import { CartProvider } from './utils/cartContext';
 import { SSEProvider } from './utils/SSEContext';
@@ -89,6 +90,9 @@ function App() {
                       </ProtectedRoute>
                     }
                   />
+
+                  {/* 404 Route */}
+                  <Route path="*" element={<NotFound />} />
 
                 </Routes>
 

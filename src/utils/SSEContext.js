@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useRef } from 'react';
+import React, { createContext, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 import useAuth from '../hooks/useAuth';
 
@@ -21,6 +21,9 @@ export const SSEProvider = ({ children }) => {
     const es = new EventSource(url, { withCredentials: true });
     esRef.current = es;
 
+    // ✅ capture ref value once per effect
+    const seenIdsSet = seenIds.current;
+
     es.onopen = () => {
       console.log('[SSE] connected');
     };
@@ -31,18 +34,20 @@ export const SSEProvider = ({ children }) => {
 
     const handle = (event, cb) => {
       es.addEventListener(event, e => {
-        if (seenIds.current.has(e.lastEventId)) return;
-        seenIds.current.add(e.lastEventId);
+        const id = e.lastEventId;
+        if (id && seenIdsSet.has(id)) return;
+        if (id) seenIdsSet.add(id);
+
         cb(JSON.parse(e.data));
       });
     };
 
-    handle('order_created', data => {
-      toast.info(`🆕 New order received`);
+    handle('order_created', () => {
+      toast.info('🆕 New order received');
     });
 
-    handle('order_updated', data => {
-      toast.info(`📦 Order updated`);
+    handle('order_updated', () => {
+      toast.info('📦 Order updated');
     });
 
     handle('order_status_updated', data => {
@@ -52,7 +57,7 @@ export const SSEProvider = ({ children }) => {
     return () => {
       es.close();
       esRef.current = null;
-      seenIds.current.clear();
+      seenIdsSet.clear(); // ✅ safe cleanup
     };
   }, [user, token]);
 

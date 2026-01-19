@@ -436,3 +436,12 @@ body {
     text-align: center
   }
 }
+.fab-contact-support.with-cookie-banner {
+  bottom: 200px;
+}
+
+@media (max-width: 768px) {
+  .fab-contact-support.with-cookie-banner {
+    bottom: 240px;
+  }
+}
