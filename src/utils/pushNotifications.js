@@ -24,10 +24,14 @@ export const listenForegroundMessages = () => {
     console.log('Foreground push:', payload);
 
     if ('Notification' in window) {
-      new Notification(payload.notification.title, {
-        body: payload.notification.body,
-        icon: '/logo192.png',
-      });
+      try {
+        new Notification(payload.notification.title, {
+          body: payload.notification.body,
+          icon: '/logo192.png',
+        });
+      } catch (e) {
+        console.warn('Notification API failed:', e);
+      }
     }
   });
 };

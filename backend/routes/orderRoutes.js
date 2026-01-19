@@ -136,7 +136,7 @@ router.post("/", authenticateToken, async (req, res) => {
         ...orderData,
         cart: { items: mealBox.items || [] },
         mealBox,
-        deliveryDate: new Date(), // or future slot if you add later
+        deliveryDate: deliveryDate ? new Date(deliveryDate) : new Date(),
         total,
         payment: {
           ...orderData.payment,
@@ -150,7 +150,7 @@ router.post("/", authenticateToken, async (req, res) => {
     // --------------------------------------------------
     const order = new Order(orderData);
     const saved = await order.save();
-    const populated = await saved.populate("user", "name email");
+    const populated = await saved.populate("user", "name email fcmToken");
 
     // --------------------------------------------------
     // SOCKET.IO notifications
@@ -269,7 +269,7 @@ router.post("/:id/repay", authenticateToken, async (req, res) => {
     // }
 
     const saved = await order.save();
-    const populated = await saved.populate("user", "name email");
+    const populated = await saved.populate("user", "name email fcmToken");
 
     // --------------------------------------------------
     // Notify via socket

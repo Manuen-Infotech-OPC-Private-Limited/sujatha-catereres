@@ -101,10 +101,6 @@ const InvoicePage = () => {
                   <td style={{ border: "1px solid #ddd", padding: "8px" }}>{order.payment.paymentId}</td>
                 </tr>
                 <tr>
-                  <td style={{ border: "1px solid #ddd", padding: "8px" }}>Order ID (Gateway)</td>
-                  <td style={{ border: "1px solid #ddd", padding: "8px" }}>{order.payment.orderId}</td>
-                </tr>
-                <tr>
                   <td style={{ border: "1px solid #ddd", padding: "8px" }}>Signature</td>
                   <td style={{ border: "1px solid #ddd", padding: "8px" }}>{order.payment.signature}</td>
                 </tr>

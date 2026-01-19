@@ -230,3 +230,18 @@
 .repay-btn:hover {
   background-color: #075f52;
 }
+
+@media (max-width: 768px) {
+  .orders-list {
+    justify-content: center; /* centers cards nicely on small screens */
+  }
+
+  .order-item {
+    max-width: 80%;
+  }
+}
+@media (max-width: 480px) {
+  .order-item {
+    max-width: 100%;
+  }
+}

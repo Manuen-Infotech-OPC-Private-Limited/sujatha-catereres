@@ -9,12 +9,15 @@ import {
   RecaptchaVerifier,
   signInWithPhoneNumber,
 } from "../firebase";
+import { requestFCMToken } from '../utils/pushNotifications';
 import loginBg from "../assets/logos/loginbg.webp";
 import logonoBg from "../assets/logos/logo-nobg.png";
 import "../css/Login.css";
+import { useAuthContext } from '../utils/AuthContext';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
+  const { setUser } = useAuthContext();
 
   const [userData, setUserData] = useState({
     name: "",
@@ -115,12 +118,15 @@ const RegisterPage = () => {
       const user = res.user;
 
       const idToken = await user.getIdToken();
+      const fcmToken = await requestFCMToken();
 
-      await axios.post(
+      const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/api/users/register`,
-        { ...userData, idToken },
+        { ...userData, idToken, fcmToken },
         { withCredentials: true }
       );
+
+      setUser(response.data.user);
 
       toast.success("Registration successful!");
       if (analytics) logEvent(analytics, "registration_complete", { method: "phone" });

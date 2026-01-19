@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import '../css/MealBox.css';
 import mealBoxImg from '../assets/logos/new_mealbox.png';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import { useAuthContext } from '../utils/AuthContext'; // ✅ new import
+import { useAuthContext } from '../utils/AuthContext'; // ✅ get logged-in user
 
 const MealBox = () => {
   const { user } = useAuthContext(); // ✅ get logged-in user
@@ -20,6 +20,31 @@ const MealBox = () => {
   const [quantity, setQuantity] = useState(MIN_QTY);
   const [loading, setLoading] = useState(false);
   const [showOrderDetails, setShowOrderDetails] = useState(false);
+
+  // New State for Delivery
+  const [deliveryDate, setDeliveryDate] = useState('');
+  const [deliveryLocation, setDeliveryLocation] = useState({
+    address: '',
+    landmark: '',
+    city: '',
+    pincode: '',
+  });
+
+  const today = new Date();
+  const minDate = today.toISOString().split('T')[0];
+  const maxDateObj = new Date();
+  maxDateObj.setMonth(maxDateObj.getMonth() + 3);
+  const maxDate = maxDateObj.toISOString().split('T')[0];
+
+
+  useEffect(() => {
+    if (user) {
+      setDeliveryLocation((prev) => ({
+        ...prev,
+        address: user.address || '',
+      }));
+    }
+  }, [user]);
 
   const menuItems = [
     'Sweet', 'Veg Roll', 'Veg Biryani', 'Veg Kurma', 'Raitha',
@@ -39,11 +64,15 @@ const MealBox = () => {
   const sendBrowserNotification = (title, body) => {
     if (!("Notification" in window)) return;
 
-    if (Notification.permission === "granted") {
-      new Notification(title, {
-        body,
-        icon: "/logo192.png",
-      });
+    try {
+      if (Notification.permission === "granted") {
+        new Notification(title, {
+          body,
+          icon: "/logo192.png",
+        });
+      }
+    } catch (e) {
+      console.warn("Notification API failed:", e);
     }
   };
 
@@ -51,6 +80,34 @@ const MealBox = () => {
   // PAYMENT + ORDER
   // --------------------------------------------------
   const handleOrder = async () => {
+    // Validations
+    if (!deliveryDate) {
+      toast.error('Please select a delivery date');
+      return;
+    }
+
+    const selectedDate = new Date(deliveryDate);
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    if (selectedDate < now) {
+      toast.error('Delivery date cannot be in the past');
+      return;
+    }
+
+    if (!deliveryLocation.address) {
+      toast.error('Please enter delivery address');
+      return;
+    }
+    if (!deliveryLocation.city) {
+      toast.error('Please enter city');
+      return;
+    }
+    if (!/^\d{6}$/.test(deliveryLocation.pincode)) {
+      toast.error('Please enter a valid 6-digit pincode');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -135,9 +192,8 @@ const MealBox = () => {
             items: menuItems,
             taxes: { cgst, sgst },
           },
-          deliveryLocation: {
-            address: user?.address || '', // ✅ fallback if address not set,
-          },
+          deliveryDate, // ✅ Send delivery date
+          deliveryLocation, // ✅ Send full delivery location
           payment: {
             orderId: razorpayOrderId,
             paymentId: paymentResponse.razorpay_payment_id,
@@ -235,6 +291,64 @@ const MealBox = () => {
                   <button onClick={decrement} disabled={quantity === MIN_QTY}>−</button>
                   <span>{quantity}</span>
                   <button onClick={increment} disabled={quantity === MAX_QTY}>+</button>
+                </div>
+
+                {/* Delivery Date */}
+                <div className="">
+                  <label>Delivery Date</label>
+                  <input
+                    type="date"
+                    min={minDate}
+                    max={maxDate}
+                    value={deliveryDate}
+                    onChange={(e) => setDeliveryDate(e.target.value)}
+                  />
+                </div>
+
+                {/* Delivery Location Inputs */}
+                <div className="input-group">
+                  <label>Delivery Location</label>
+                  <input
+                    type="text"
+                    placeholder="Full Address"
+                    value={deliveryLocation.address}
+                    onChange={(e) =>
+                      setDeliveryLocation({ ...deliveryLocation, address: e.target.value })
+                    }
+                  />
+                  <input
+                    type="text"
+                    placeholder="Landmark (optional)"
+                    value={deliveryLocation.landmark}
+                    onChange={(e) =>
+                      setDeliveryLocation({ ...deliveryLocation, landmark: e.target.value })
+                    }
+                    style={{ marginTop: '0.5rem' }}
+                  />
+                  <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                    <input
+                      type="text"
+                      placeholder="City"
+                      value={deliveryLocation.city}
+                      onChange={(e) =>
+                        setDeliveryLocation({ ...deliveryLocation, city: e.target.value })
+                      }
+                      style={{ flex: 1 }}
+                    />
+                    <input
+                      type="tel"
+                      placeholder="Pincode"
+                      maxLength={6}
+                      value={deliveryLocation.pincode}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, '');
+                        if (val.length <= 6) {
+                          setDeliveryLocation({ ...deliveryLocation, pincode: val });
+                        }
+                      }}
+                      style={{ flex: 1 }}
+                    />
+                  </div>
                 </div>
 
                 <button

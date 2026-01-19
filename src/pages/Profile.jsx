@@ -26,11 +26,16 @@ const Profile = () => {
 
     // 🔔 Browser notification helper
     const sendBrowserNotification = (title, body) => {
-        if (Notification.permission === "granted") {
-            new Notification(title, {
-                body,
-                icon: "/logo192.png"
-            });
+        if (!("Notification" in window)) return;
+        try {
+            if (Notification.permission === "granted") {
+                new Notification(title, {
+                    body,
+                    icon: "/logo192.png"
+                });
+            }
+        } catch (e) {
+            console.warn("Notification API failed:", e);
         }
     };
 
@@ -255,21 +260,44 @@ const Profile = () => {
                                             <div key={order._id} className="order-item">
                                                 <p><strong>Order ID:</strong> {order._id}</p>
                                                 <p><strong>Type:</strong> {order.orderType}</p>
-                                                <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleDateString()}</p>
+                                                {order.orderType === "mealbox" ? <p><strong>Quantity: {order.mealBox.quantity}</strong></p> :
+                                                    <p><strong>No of Guests:</strong> {order.guests}</p>
+                                                }
+                                                <p><strong>Ordered Date:</strong> {new Date(order.createdAt).toLocaleDateString()}</p>
                                                 <p><strong>Total:</strong> ₹{order.total}</p>
+                                                <p><strong>Delivery Date:</strong> {new Date(order.deliveryDate).toLocaleDateString()}</p>
+                                                <p><strong>Delivery Addr:</strong> {order.deliveryLocation.address}</p>
 
                                                 {order.payment && (
                                                     <div className="payment-card">
                                                         <h4>Payment Details</h4>
-                                                        <p><strong>Provider:</strong> {order.payment.provider}</p>
+
                                                         <p>
-                                                            <strong>Status:</strong>{" "}
-                                                            {order.payment.status === "paid" && "Paid in full"}
-                                                            {order.payment.status === "partial" && "Partially paid"}
-                                                            {order.payment.status === "failed" && "Payment failed"}
+                                                            Your payment was made using <strong>{order.payment.provider}</strong>.{" "}
+                                                            {order.payment.status === "paid" && (
+                                                                <>
+                                                                    The payment has been <strong>successfully completed</strong>, and an amount
+                                                                    of <strong>₹{order.payment.amount}</strong> was received on{" "}
+                                                                    <strong>{new Date(order.payment.paidAt).toLocaleString()}</strong>.
+                                                                </>
+                                                            )}
+
+                                                            {order.payment.status === "partial" && (
+                                                                <>
+                                                                    A <strong>partial payment</strong> of{" "}
+                                                                    <strong>₹{order.payment.amount}</strong> was received on{" "}
+                                                                    <strong>{new Date(order.payment.paidAt).toLocaleString()}</strong>.{" "}
+                                                                    The remaining balance can be paid at your convenience.
+                                                                </>
+                                                            )}
+
+                                                            {order.payment.status === "failed" && (
+                                                                <>
+                                                                    Unfortunately, the payment attempt was <strong>unsuccessful</strong>. Please
+                                                                    try again to complete your order.
+                                                                </>
+                                                            )}
                                                         </p>
-                                                        <p><strong>Amount Paid:</strong> ₹{order.payment.amount}</p>
-                                                        <p><strong>Paid On:</strong> {new Date(order.payment.paidAt).toLocaleString()}</p>
 
                                                         {order.payment.status === "partial" && remainingAmount > 0 && (
                                                             <button
@@ -280,6 +308,7 @@ const Profile = () => {
                                                             </button>
                                                         )}
                                                     </div>
+
                                                 )}
 
                                                 <p>

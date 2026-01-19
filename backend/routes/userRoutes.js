@@ -210,7 +210,7 @@ router.post("/save-fcm-token", authenticateToken, async (req, res) => {
 
 // Registration route
 router.post("/register", async (req, res) => {
-  const { name, email, address, idToken } = req.body;
+  const { name, email, address, idToken, fcmToken } = req.body;
 
   // Error codes dictionary (for API consumers)
   const ERROR_CODES = {
@@ -253,13 +253,14 @@ router.post("/register", async (req, res) => {
     let user = await User.findOne({ phone });
     if (!user) {
       // Create new user
-      user = new User({ name, email, phone, address });
+      user = new User({ name, email, phone, address, fcmToken });
       await user.save();
     } else {
       // Update existing user
       user.name = name;
       user.email = email;
       if (address) user.address = address;
+      if (fcmToken) user.fcmToken = fcmToken;
       console.log(`Updating existing user: ${name} - ${email} - ${address}`);
       await user.save();
     }

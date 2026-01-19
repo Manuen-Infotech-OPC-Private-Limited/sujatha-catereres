@@ -516,7 +516,7 @@ import { PRICES } from '../utils/pricing';
 import { toast } from 'react-toastify';
 import OrderPlacedAnimation from '../components/OrderPlacedAnimation';
 import soundSuccess from '../assets/sounds/order-placed.mp3';
-import  useAuth  from '../hooks/useAuth';
+import useAuth from '../hooks/useAuth';
 
 const GST_PERCENT = 8;
 const PLATFORM_CHARGE = 15;
@@ -553,11 +553,16 @@ const ReviewOrder = () => {
 
   // 🔔 Send system notification
   const sendOrderPlacedNotification = () => {
-    if (Notification.permission === "granted") {
-      new Notification("Sujatha Caterers • Order Placed", {
-        body: "Thank you! Your order has been placed successfully.",
-        icon: "/logo192.png",
-      });
+    if (!("Notification" in window)) return;
+    try {
+      if (Notification.permission === "granted") {
+        new Notification("Sujatha Caterers • Order Placed", {
+          body: "Thank you! Your order has been placed successfully.",
+          icon: "/logo192.png",
+        });
+      }
+    } catch (e) {
+      console.warn("Notification API failed:", e);
     }
   };
 
@@ -678,7 +683,7 @@ const ReviewOrder = () => {
           selectedPackage,
           selectedMealType,
           guests,
-          total: payableNow,
+          total: finalAmount,
           deliveryDate,
           pricePerPerson,
           deliveryLocation,
@@ -760,9 +765,12 @@ const ReviewOrder = () => {
               step="1"
               onKeyDown={(e) => ['e', 'E', '+', '-', '.'].includes(e.key) && e.preventDefault()}
               onChange={(e) => {
-                const value = Number(e.target.value);
-                setGuests(Number.isNaN(value) ? null : value);
-
+                const value = e.target.value;
+                if (value === '') {
+                  setGuests('');
+                } else {
+                  setGuests(Number(value));
+                }
               }}
               onBlur={() => document.getElementById('delivery-date')?.focus()}
 
