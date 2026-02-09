@@ -24,13 +24,32 @@ export const listenForegroundMessages = () => {
     console.log('Foreground push:', payload);
 
     if ('Notification' in window) {
-      try {
-        new Notification(payload.notification.title, {
-          body: payload.notification.body,
-          icon: '/logo192.png',
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.ready.then(registration => {
+          registration.showNotification(payload.notification.title, {
+            body: payload.notification.body,
+            icon: '/logo192.png',
+          });
+        }).catch(err => {
+          console.warn('SW notification failed:', err);
+          try {
+            new Notification(payload.notification.title, {
+              body: payload.notification.body,
+              icon: '/logo192.png',
+            });
+          } catch (e) {
+            console.warn('Notification API failed:', e);
+          }
         });
-      } catch (e) {
-        console.warn('Notification API failed:', e);
+      } else {
+        try {
+          new Notification(payload.notification.title, {
+            body: payload.notification.body,
+            icon: '/logo192.png',
+          });
+        } catch (e) {
+          console.warn('Notification API failed:', e);
+        }
       }
     }
   });

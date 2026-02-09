@@ -554,15 +554,38 @@ const ReviewOrder = () => {
   // 🔔 Send system notification
   const sendOrderPlacedNotification = () => {
     if (!("Notification" in window)) return;
-    try {
-      if (Notification.permission === "granted") {
-        new Notification("Sujatha Caterers • Order Placed", {
-          body: "Thank you! Your order has been placed successfully.",
-          icon: "/logo192.png",
+    
+    if (Notification.permission === "granted") {
+      // Try using Service Worker (required for Android Chrome)
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.ready.then((registration) => {
+          registration.showNotification("Sujatha Caterers • Order Placed", {
+            body: "Thank you! Your order has been placed successfully.",
+            icon: "/logo192.png",
+          });
+        }).catch((err) => {
+           console.warn("ServiceWorker notification failed:", err);
+           // Fallback to new Notification (Desktop)
+           try {
+             new Notification("Sujatha Caterers • Order Placed", {
+               body: "Thank you! Your order has been placed successfully.",
+               icon: "/logo192.png",
+             });
+           } catch (e) {
+             console.warn("Notification API failed:", e);
+           }
         });
+      } else {
+        // Fallback for browsers without Service Worker support
+        try {
+          new Notification("Sujatha Caterers • Order Placed", {
+            body: "Thank you! Your order has been placed successfully.",
+            icon: "/logo192.png",
+          });
+        } catch (e) {
+          console.warn("Notification API failed:", e);
+        }
       }
-    } catch (e) {
-      console.warn("Notification API failed:", e);
     }
   };
 

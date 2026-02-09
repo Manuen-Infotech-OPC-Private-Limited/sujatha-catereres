@@ -7,7 +7,7 @@ export function getCategoryLimit(mealType, selectedPackage, category) {
 
     // Allowed items per package
     const breakfastItems = {
-      Basic: ['idly', 'vada', 'upma'],
+      // Basic: ['idly', 'vada', 'upma'],
       Classic: ['idly', 'vada', 'pongal'],
       Premium: ['idly', 'vada', 'pongal', 'dosa'],
       Luxury: ['idly', 'vada', 'pongal', 'dosa', 'upma'],

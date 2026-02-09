@@ -140,7 +140,7 @@ import { useMenu } from '../utils/MenuContext';
 
 const OrderPage = () => {
   const [selectedPackage, setSelectedPackage] = useState(
-    () => localStorage.getItem('selectedPackage') || 'Basic'
+    () => localStorage.getItem('selectedPackage') || 'Classic'
   );
   const [selectedMealType, setSelectedMealType] = useState(
     () => localStorage.getItem('selectedMealType') || 'Breakfast'

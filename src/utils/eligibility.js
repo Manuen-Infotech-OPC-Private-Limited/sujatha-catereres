@@ -2,7 +2,7 @@
 export function getEligibleItems(mealType, selectedPackage, menuData) {
     if (mealType === "Breakfast") {
         const allowed = {
-            Basic: ["idly", "vada", "upma", "complimentary"],
+            // Basic: ["idly", "vada", "upma", "complimentary"],
             Classic: ["idly", "vada", "pongal", "complimentary"],
             Premium: ["idly", "vada", "dosa", "pongal", "complimentary"],
             Luxury: null, // Luxury = all items
