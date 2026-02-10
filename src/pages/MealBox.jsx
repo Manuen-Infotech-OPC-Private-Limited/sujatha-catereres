@@ -6,12 +6,22 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../utils/AuthContext'; // ✅ get logged-in user
 
+const PICKUP_LOCATIONS = [
+  "Taraka Rama Nagar - 10th Line",
+  "Tanvika Function Hall - Ala Hospital Backside",
+  "Sujatha Convention - Vidya Nagar Main Road",
+  "Near SBI Bank, Pattabhipuram",
+  "Sujatha Caterers Main Kitchen, Guntur"
+];
+
 const MealBox = () => {
   const { user } = useAuthContext(); // ✅ get logged-in user
 
-  const PRICE_PER_BOX = 179;
-  const TAX_RATE = 0.09; // 9% CGST + 9% SGST
-  const MIN_QTY = 5;
+  const [selectedVariant, setSelectedVariant] = useState(199);
+  const [deliveryMode, setDeliveryMode] = useState('pickup'); // 'pickup' | 'door'
+  
+  const TAX_RATE = 0.025; // 2.5% CGST + 2.5% SGST = 5% Total
+  const MIN_QTY = 1;
   const MAX_QTY = 15;
 
   const API = process.env.REACT_APP_API_URL;
@@ -38,24 +48,40 @@ const MealBox = () => {
 
 
   useEffect(() => {
-    if (user) {
+    if (user && deliveryMode === 'door') {
       setDeliveryLocation((prev) => ({
         ...prev,
         address: user.address || '',
       }));
+    } else if (deliveryMode === 'pickup') {
+       // Reset or set to default pickup? 
+       // We'll handle pickup selection separately
+       setDeliveryLocation({
+           address: PICKUP_LOCATIONS[0],
+           landmark: 'Pickup Point',
+           city: 'Guntur',
+           pincode: '522001' 
+       });
     }
-  }, [user]);
+  }, [user, deliveryMode]);
 
-  const menuItems = [
-    'Sweet', 'Veg Roll', 'Veg Biryani', 'Veg Kurma', 'Raitha',
+  // Variant Menu Logic
+  const baseItems = [
+    'Sweet', 'Veg Roll', 
     'Tomato Pappu', 'Fry', 'Curry', 'Rice', 'Ghee',
     'Pickle', 'Papad', 'Sambar', 'Curd', 'Salt', 'Water', 'Napkins'
   ];
 
+  const variantItems = selectedVariant === 199 
+    ? ['Veg Biryani', 'Veg Kurma', 'Raitha'] 
+    : ['Pulihora']; // 179 Variant replaces Biryani/Kurma/Raita with Pulihora
+
+  const menuItems = [...baseItems, ...variantItems];
+
   const increment = () => quantity < MAX_QTY && setQuantity(q => q + 1);
   const decrement = () => quantity > MIN_QTY && setQuantity(q => q - 1);
 
-  const subTotal = PRICE_PER_BOX * quantity;
+  const subTotal = selectedVariant * quantity;
   const cgst = Math.round(subTotal * TAX_RATE);
   const sgst = Math.round(subTotal * TAX_RATE);
   const totalPrice = subTotal + cgst + sgst;
@@ -95,17 +121,19 @@ const MealBox = () => {
       return;
     }
 
-    if (!deliveryLocation.address) {
-      toast.error('Please enter delivery address');
-      return;
-    }
-    if (!deliveryLocation.city) {
-      toast.error('Please enter city');
-      return;
-    }
-    if (!/^\d{6}$/.test(deliveryLocation.pincode)) {
-      toast.error('Please enter a valid 6-digit pincode');
-      return;
+    if (deliveryMode === 'door') {
+        if (!deliveryLocation.address) {
+            toast.error('Please enter delivery address');
+            return;
+        }
+        if (!deliveryLocation.city) {
+            toast.error('Please enter city');
+            return;
+        }
+        if (!/^\d{6}$/.test(deliveryLocation.pincode)) {
+            toast.error('Please enter a valid 6-digit pincode');
+            return;
+        }
     }
 
     setLoading(true);
@@ -188,9 +216,11 @@ const MealBox = () => {
           orderType: 'mealbox',
           mealBox: {
             quantity,
-            pricePerBox: PRICE_PER_BOX,
+            pricePerBox: selectedVariant,
             items: menuItems,
             taxes: { cgst, sgst },
+            variant: selectedVariant === 199 ? 'Premium (199)' : 'Classic (179)',
+            deliveryMode
           },
           deliveryDate, // ✅ Send delivery date
           deliveryLocation, // ✅ Send full delivery location
@@ -233,6 +263,36 @@ const MealBox = () => {
             Ideal for office lunches, poojas, and small events.
           </p>
 
+          {/* Variant Selector */}
+          <div className="variant-selector">
+              <label className={`variant-option ${selectedVariant === 199 ? 'selected' : ''}`}>
+                  <input 
+                    type="radio" 
+                    name="variant" 
+                    value={199} 
+                    checked={selectedVariant === 199}
+                    onChange={() => setSelectedVariant(199)}
+                  />
+                  <span>
+                      <strong>Premium (₹199)</strong>
+                      <small>Includes Veg Biryani, Kurma, Raita</small>
+                  </span>
+              </label>
+              <label className={`variant-option ${selectedVariant === 179 ? 'selected' : ''}`}>
+                  <input 
+                    type="radio" 
+                    name="variant" 
+                    value={179} 
+                    checked={selectedVariant === 179}
+                    onChange={() => setSelectedVariant(179)}
+                  />
+                  <span>
+                      <strong>Classic (₹179)</strong>
+                      <small>Replaces Biryani with Pulihora</small>
+                  </span>
+              </label>
+          </div>
+
           <div className="menu-items">
             <h2>What’s Inside</h2>
             <div className="chips">
@@ -263,7 +323,7 @@ const MealBox = () => {
                 <div className="price-breakdown">
                   <div className="row">
                     <span>Price per box:</span>
-                    <strong>₹{PRICE_PER_BOX}</strong>
+                    <strong>₹{selectedVariant}</strong>
                   </div>
                   <div className="row">
                     <span>Quantity:</span>
@@ -274,11 +334,11 @@ const MealBox = () => {
                     <strong>₹{subTotal}</strong>
                   </div>
                   <div className="row">
-                    <span>CGST (9%):</span>
+                    <span>CGST (2.5%):</span>
                     <strong>₹{cgst}</strong>
                   </div>
                   <div className="row">
-                    <span>SGST (9%):</span>
+                    <span>SGST (2.5%):</span>
                     <strong>₹{sgst}</strong>
                   </div>
                   <div className="row total">
@@ -305,51 +365,97 @@ const MealBox = () => {
                   />
                 </div>
 
-                {/* Delivery Location Inputs */}
-                <div className="input-group">
-                  <label>Delivery Location</label>
-                  <input
-                    type="text"
-                    placeholder="Full Address"
-                    value={deliveryLocation.address}
-                    onChange={(e) =>
-                      setDeliveryLocation({ ...deliveryLocation, address: e.target.value })
-                    }
-                  />
-                  <input
-                    type="text"
-                    placeholder="Landmark (optional)"
-                    value={deliveryLocation.landmark}
-                    onChange={(e) =>
-                      setDeliveryLocation({ ...deliveryLocation, landmark: e.target.value })
-                    }
-                    style={{ marginTop: '0.5rem' }}
-                  />
-                  <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
-                    <input
-                      type="text"
-                      placeholder="City"
-                      value={deliveryLocation.city}
-                      onChange={(e) =>
-                        setDeliveryLocation({ ...deliveryLocation, city: e.target.value })
-                      }
-                      style={{ flex: 1 }}
-                    />
-                    <input
-                      type="tel"
-                      placeholder="Pincode"
-                      maxLength={6}
-                      value={deliveryLocation.pincode}
-                      onChange={(e) => {
-                        const val = e.target.value.replace(/\D/g, '');
-                        if (val.length <= 6) {
-                          setDeliveryLocation({ ...deliveryLocation, pincode: val });
-                        }
-                      }}
-                      style={{ flex: 1 }}
-                    />
-                  </div>
+                {/* Delivery Mode Toggle */}
+                <div className="delivery-mode-toggle">
+                    <label>
+                        <input 
+                            type="radio" 
+                            name="deliveryMode" 
+                            value="pickup" 
+                            checked={deliveryMode === 'pickup'}
+                            onChange={() => setDeliveryMode('pickup')}
+                        />
+                        Pickup
+                    </label>
+                    <label>
+                        <input 
+                            type="radio" 
+                            name="deliveryMode" 
+                            value="door" 
+                            checked={deliveryMode === 'door'}
+                            onChange={() => setDeliveryMode('door')}
+                        />
+                        Door Delivery
+                    </label>
                 </div>
+
+                {/* Conditional Location Input */}
+                {deliveryMode === 'pickup' ? (
+                    <div className="pickup-locations">
+                        <label>Select Pickup Location:</label>
+                        <select 
+                            value={deliveryLocation.address} 
+                            onChange={(e) => setDeliveryLocation({
+                                ...deliveryLocation,
+                                address: e.target.value,
+                                landmark: 'Pickup Point',
+                                city: 'Guntur'
+                            })}
+                        >
+                            {PICKUP_LOCATIONS.map((loc, idx) => (
+                                <option key={idx} value={loc}>{loc}</option>
+                            ))}
+                        </select>
+                    </div>
+                ) : (
+                    <div className="input-group">
+                        <div className="info-banner" style={{background:'#e3f2fd', padding:'10px', borderRadius:'5px', marginBottom:'10px', fontSize:'0.9rem', color:'#0d47a1'}}>
+                            <i className="fas fa-info-circle"></i> Delivery will be done via Rapido Parcel. <strong>Delivery charges are to be paid by you directly to the rider.</strong>
+                        </div>
+                        <label>Delivery Location</label>
+                        <input
+                            type="text"
+                            placeholder="Full Address"
+                            value={deliveryLocation.address}
+                            onChange={(e) =>
+                            setDeliveryLocation({ ...deliveryLocation, address: e.target.value })
+                            }
+                        />
+                        <input
+                            type="text"
+                            placeholder="Landmark (optional)"
+                            value={deliveryLocation.landmark}
+                            onChange={(e) =>
+                            setDeliveryLocation({ ...deliveryLocation, landmark: e.target.value })
+                            }
+                            style={{ marginTop: '0.5rem' }}
+                        />
+                        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                            <input
+                            type="text"
+                            placeholder="City"
+                            value={deliveryLocation.city}
+                            onChange={(e) =>
+                                setDeliveryLocation({ ...deliveryLocation, city: e.target.value })
+                            }
+                            style={{ flex: 1 }}
+                            />
+                            <input
+                            type="tel"
+                            placeholder="Pincode"
+                            maxLength={6}
+                            value={deliveryLocation.pincode}
+                            onChange={(e) => {
+                                const val = e.target.value.replace(/\D/g, '');
+                                if (val.length <= 6) {
+                                setDeliveryLocation({ ...deliveryLocation, pincode: val });
+                                }
+                            }}
+                            style={{ flex: 1 }}
+                            />
+                        </div>
+                    </div>
+                )}
 
                 <button
                   className="cta-button"

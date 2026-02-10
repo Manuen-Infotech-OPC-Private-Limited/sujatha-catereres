@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../../css/DishCard.css';
 
-const DishCard = ({ name, packages, selectedPackage, image, isSelected }) => {
+const DishCard = ({ name, packages, selectedPackage, image, isSelected, tag }) => {
   const [loaded, setLoaded] = useState(false); // Track image load
   const isAvailable = packages.includes(selectedPackage);
   const restrictionNote = !isAvailable
@@ -32,6 +32,7 @@ const DishCard = ({ name, packages, selectedPackage, image, isSelected }) => {
       <div className="dish-info">
         <h4>{name}</h4>
         {restrictionNote && <span className="tag">{restrictionNote}</span>}
+        {tag && <span className="tag highlight-tag">{tag}</span>}
       </div>
 
       {isSelected && <div className="selected-badge">✓ Selected</div>}

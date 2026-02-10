@@ -106,7 +106,8 @@ const RegisterPage = () => {
   };
 
 
-  const verifyOtpAndRegister = async () => {
+  const verifyOtpAndRegister = async (providedOtp) => {
+    const otpToVerify = providedOtp || otp;
     if (!confirmationResult) {
       toast.error("No OTP request found. Please try registering again.");
       return;
@@ -114,7 +115,7 @@ const RegisterPage = () => {
 
     try {
       setIsVerifying(true);
-      const res = await confirmationResult.confirm(otp);
+      const res = await confirmationResult.confirm(otpToVerify);
       const user = res.user;
 
       const idToken = await user.getIdToken();
@@ -192,7 +193,13 @@ const RegisterPage = () => {
                   type="tel"
                   id="phone"
                   value={userData.phone}
-                  onChange={handleInputChange}
+                  maxLength={10}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, '');
+                    if (val.length <= 10) {
+                      setUserData({ ...userData, phone: val });
+                    }
+                  }}
                   placeholder="10-digit phone number"
                   required
                 />
@@ -228,7 +235,13 @@ const RegisterPage = () => {
               type="text"
               id="otp"
               value={otp}
-              onChange={(e) => setOtp(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setOtp(val);
+                if (val.length === 6) {
+                  verifyOtpAndRegister(val);
+                }
+              }}
               placeholder="Enter the OTP"
               required
             />

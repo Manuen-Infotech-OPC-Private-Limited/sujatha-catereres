@@ -1,513 +1,3 @@
-// import React, { useState, useEffect } from 'react';
-// import { useCart } from '../utils/cartContext';
-// import { useNavigate, useLocation } from 'react-router-dom';
-// import './ReviewOrder.css';
-// import { PRICES } from '../utils/pricing';
-// import { toast } from 'react-toastify';
-
-// const ReviewOrder = () => {
-//   const { cart, resetCart } = useCart();
-//   const navigate = useNavigate();
-//   const location = useLocation();
-
-//   const [selectedPackage, setSelectedPackage] = useState(null);
-//   const [selectedMealType, setSelectedMealType] = useState(null);
-//   const [deliveryDate, setDeliveryDate] = useState('');   // NEW STATE
-//   const [guests, setGuests] = useState(1);
-//   const API = process.env.REACT_APP_API_URL;
-
-//   useEffect(() => {
-//     if (location.state?.selectedPackage && location.state?.selectedMealType) {
-//       setSelectedPackage(location.state.selectedPackage);
-//       setSelectedMealType(location.state.selectedMealType);
-//     } else {
-//       navigate('/', { replace: true });
-//     }
-//   }, [location.state, navigate]);
-
-//   if (!selectedPackage || !selectedMealType) return null;
-
-//   const pricePerPerson = PRICES[selectedMealType]?.[selectedPackage] || 0;
-//   const total = guests * pricePerPerson;
-
-//   const handlePlaceOrder = async () => {
-//     if (!deliveryDate) {
-//       toast.error('Please select expected delivery date');
-//       return;
-//     }
-//     try {
-//       const response = await fetch(`${API}/api/orders`, {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         credentials: 'include',
-//         body: JSON.stringify({
-//           cart,
-//           selectedPackage,
-//           selectedMealType,
-//           guests,
-//           deliveryDate,
-//           pricePerPerson,
-//         }),
-//       });
-
-//       const data = await response.json();
-//       if (response.ok) {
-//         navigate('/');
-//         toast.success('Order placed successfully!', {
-//           autoClose: 2000,
-//           onClose: () => {
-//             resetCart();
-//           },
-//         });
-//       } else {
-//         toast.error(data.error || '❌ Order failed');
-//       }
-//     } catch (err) {
-//       console.error(err);
-//       toast.error('⚠️ Error placing order');
-//     }
-//   };
-
-//   return (
-//     <div className="review-order">
-//       <h2>Review Your Order</h2>
-//       <p><strong>Meal Type:</strong> {selectedMealType}</p>
-//       <p><strong>Package:</strong> {selectedPackage}</p>
-
-//       <div className="selected-items">
-//         {Object.entries(cart).map(([category, items]) => (
-//           <div key={category}>
-//             <h4>{category}</h4>
-//             <ul>
-//               {items.map((item) => (
-//                 <li key={item.name}>{item.name}</li>
-//               ))}
-//             </ul>
-//           </div>
-//         ))}
-//       </div>
-
-//       <label>
-//         Number of Guests:
-//         <input
-//           type="number"
-//           min="1"
-//           value={guests}
-//           onChange={(e) => setGuests(Number(e.target.value))}
-//         />
-//       </label>
-
-//       <label>
-//         Expected Delivery Date:
-//         <input
-//           type="date"
-//           value={deliveryDate}
-//           onChange={(e) => setDeliveryDate(e.target.value)}
-//         />
-//       </label>
-
-//       <p><strong>Price per person:</strong> ₹{pricePerPerson}</p>
-//       <p><strong>Total:</strong> ₹{total}</p>
-
-//       <button className="place-order-btn" onClick={handlePlaceOrder}>
-//         Place Order
-//       </button>
-//     </div>
-//   );
-// };
-
-// export default ReviewOrder;
-
-
-// import React, { useState, useEffect } from 'react';
-// import { useCart } from '../utils/cartContext';
-// import { useNavigate, useLocation } from 'react-router-dom';
-// import './ReviewOrder.css';
-// import { PRICES } from '../utils/pricing';
-// import { toast } from 'react-toastify';
-
-// const ReviewOrder = () => {
-//   const { cart, resetCart } = useCart();
-//   const navigate = useNavigate();
-//   const location = useLocation();
-
-//   const [selectedPackage, setSelectedPackage] = useState(null);
-//   const [selectedMealType, setSelectedMealType] = useState(null);
-//   const [deliveryDate, setDeliveryDate] = useState('');
-//   const [guests, setGuests] = useState(10);
-//   const [complimentaryItems, setComplimentaryItems] = useState([]); // NEW STATE
-
-//   const API = process.env.REACT_APP_API_URL;
-
-//   useEffect(() => {
-//     if (location.state?.selectedPackage && location.state?.selectedMealType) {
-//       setSelectedPackage(location.state.selectedPackage);
-//       setSelectedMealType(location.state.selectedMealType);
-//       setComplimentaryItems(location.state.complimentaryItems || []); // SET COMPLIMENTARY ITEMS
-//     } else {
-//       navigate('/', { replace: true });
-//     }
-//   }, [location.state, navigate]);
-
-//   if (!selectedPackage || !selectedMealType) return null;
-
-//   const pricePerPerson = PRICES[selectedMealType]?.[selectedPackage] || 0;
-//   const total = guests * pricePerPerson;
-
-//   const handlePlaceOrder = async () => {
-//     if (!deliveryDate) {
-//       toast.error('Please select delivery date');
-//       return;
-//     }
-//     try {
-//       const response = await fetch(`${API}/api/orders`, {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         credentials: 'include',
-//         body: JSON.stringify({
-//           cart,
-//           complimentaryItems, // INCLUDE COMPLIMENTARY ITEMS IN ORDER
-//           selectedPackage,
-//           selectedMealType,
-//           guests,
-//           deliveryDate,
-//           pricePerPerson,
-//         }),
-//       });
-
-//       const data = await response.json();
-//       if (response.ok) {
-//         navigate('/');
-//         toast.success('Order placed successfully!', {
-//           autoClose: 2000,
-//           onClose: () => {
-//             resetCart();
-//           },
-//         });
-//       } else {
-//         toast.error(data.error || '❌ Order failed');
-//       }
-//     } catch (err) {
-//       console.error(err);
-//       toast.error('⚠️ Error placing order');
-//     }
-//   };
-
-//   return (
-//     <div className="review-order">
-//       <h2>Review Your Order</h2>
-//       <p><strong>Meal Type:</strong> {selectedMealType}</p>
-//       <p><strong>Package:</strong> {selectedPackage}</p>
-
-//       <div className="selected-items">
-//         {Object.entries(cart).map(([category, items]) => (
-//           <div key={category}>
-//             <h4>{category}</h4>
-//             <ul>
-//               {items.map((item) => (
-//                 <li key={item.name}>{item.name}</li>
-//               ))}
-//             </ul>
-//           </div>
-//         ))}
-
-//         {complimentaryItems.length > 0 && (
-//           <div className="complimentary-items">
-//             <h4>Complimentary Items</h4>
-//             <ul>
-//               {complimentaryItems.map((item) => (
-//                 <li key={item.name}>{item.name}</li>
-//               ))}
-//             </ul>
-//           </div>
-//         )}
-//       </div>
-
-//       <label>
-//         Number of Guests:
-//         <input
-//           type="number"
-//           min="10"
-//           value={guests}
-//           onChange={(e) => setGuests(Number(e.target.value))}
-//         />
-//       </label>
-
-//       <label>
-//         Delivery Date:
-//         <input
-//           type="date"
-//           value={deliveryDate}
-//           onChange={(e) => setDeliveryDate(e.target.value)}
-//         />
-//       </label>
-
-//       <p><strong>Price per person:</strong> ₹{pricePerPerson}</p>
-//       <p><strong>Total:</strong> ₹{total}</p>
-//       <div className="button-row">
-//         <button
-//           className="adjust-order-btn"
-//           // onClick={() =>
-//           //   navigate('/', {
-//           //     state: {
-//           //       selectedMealType,
-//           //       selectedPackage
-//           //     }
-//           //   })
-//           // }
-//           onClick={() => navigate(-1)} // Go back to previous page
-
-//         >
-//           Go Back
-//         </button>
-
-//         <button className="place-order-btn" onClick={handlePlaceOrder}>
-//           Place Order
-//         </button>
-//       </div>
-
-//     </div>
-//   );
-// };
-
-// export default ReviewOrder;
-
-
-
-// import React, { useState, useEffect } from 'react';
-// import { useCart } from '../utils/cartContext';
-// import { useNavigate, useLocation } from 'react-router-dom';
-// import './ReviewOrder.css';
-// import { PRICES } from '../utils/pricing';
-// import { toast } from 'react-toastify';
-// // import OrderPlacedAnimation from '../components/OrderPlacedAnimation';
-// import OrderPlacedAnimation from '../components/OrderPlacedAnimation';
-// import soundSuccess from '../assets/sounds/order-placed.mp3';
-
-// const ReviewOrder = () => {
-//   const { cart, resetCart } = useCart();
-//   const navigate = useNavigate();
-//   const location = useLocation();
-
-//   const [selectedPackage, setSelectedPackage] = useState(null);
-//   const [selectedMealType, setSelectedMealType] = useState(null);
-//   const [deliveryDate, setDeliveryDate] = useState('');
-//   const [guests, setGuests] = useState('');
-//   const [complimentaryItems, setComplimentaryItems] = useState([]);
-//   const [orderPlaced, setOrderPlaced] = useState(false);
-//   const [deliveryLocation, setDeliveryLocation] = useState({
-//     address: '',
-//     landmark: '',
-//     city: '',
-//     pincode: '',
-//   });
-
-//   const API = process.env.REACT_APP_API_URL;
-//   // 🔔 Send system notification
-//   const sendOrderPlacedNotification = () => {
-//     if (Notification.permission === "granted") {
-//       new Notification("Sujatha Caterers • Order Placed", {
-//         body: "Thank you! Your order has been placed successfully.",
-//         icon: "/logo192.png",
-//       });
-//     }
-//   };
-
-//   useEffect(() => {
-//     if (location.state?.selectedPackage && location.state?.selectedMealType) {
-//       setSelectedPackage(location.state.selectedPackage);
-//       setSelectedMealType(location.state.selectedMealType);
-//       setComplimentaryItems(location.state.complimentaryItems || []);
-//     } else {
-//       navigate('/', { replace: true });
-//     }
-//   }, [location.state, navigate]);
-
-//   if (!selectedPackage || !selectedMealType) return null;
-
-//   const pricePerPerson = PRICES[selectedMealType]?.[selectedPackage] || 0;
-//   const total = guests * pricePerPerson;
-
-//   const handlePlaceOrder = async () => {
-//     if (!guests || guests < 10) {
-//       toast.error('Minimum 10 guests are required to place an order');
-//       return;
-//     }
-//     if (!deliveryDate) {
-//       toast.error('Please select delivery date');
-//       return;
-//     }
-//     if (!deliveryLocation.address) {
-//       toast.error('Please enter delivery address');
-//       return;
-//     }
-//     const fullCart = {
-//       ...cart,
-//       complimentary: complimentaryItems,
-//     };
-//     try {
-//       const response = await fetch(`${API}/api/orders`, {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         credentials: 'include',
-//         body: JSON.stringify({
-//           cart: fullCart,
-//           complimentaryItems,
-//           selectedPackage,
-//           selectedMealType,
-//           guests,
-//           deliveryDate,
-//           pricePerPerson,
-//           deliveryLocation,
-//           status: 'pending',
-
-//         }),
-//       });
-
-//       const data = await response.json();
-//       if (response.ok) {
-//         // 🔔 Send professional browser notification
-//         sendOrderPlacedNotification();
-//         resetCart();
-//         setOrderPlaced(true); // Show animation
-//       } else {
-//         toast.error(data.error || '❌ Order failed');
-//       }
-//     } catch (err) {
-//       console.error(err);
-//       toast.error('⚠️ Error placing order');
-//     }
-//   };
-
-//   // Show Lottie animation if order placed
-//   if (orderPlaced) {
-//     return <OrderPlacedAnimation duration={3000} soundUrl={soundSuccess} />;
-//   }
-
-//   return (
-//     <div className="review-order">
-//       <h2>Review Your Order</h2>
-//       <p><strong>Meal Type:</strong> {selectedMealType}</p>
-//       <p><strong>Package:</strong> {selectedPackage}</p>
-
-//       <div className="order-content">
-//         {/* Left Column */}
-//         <div className="column-left">
-//           <div className="selected-items">
-//             {Object.entries(cart).map(([category, items]) => (
-//               <div key={category}>
-//                 <h4>{category}</h4>
-//                 <ul className="item-list">
-//                   {items.map((item) => (
-//                     <li key={item.name} className="item-card">
-//                       {item.image && <img src={`${process.env.REACT_APP_API_URL}${item.image}`} alt={item.name} className="item-image" />}
-//                       <span className="item-name">{item.name}</span>
-//                     </li>
-//                   ))}
-//                 </ul>
-//               </div>
-//             ))}
-
-//             {complimentaryItems.length > 0 && (
-//               <div className="complimentary-items">
-//                 <h4>Complimentary Items</h4>
-//                 <ul className="item-list">
-//                   {complimentaryItems.map((item) => (
-//                     <li key={item.name} className="item-card">
-//                       {item.image && <img src={item.image} alt={item.name} className="item-image" />}
-//                       <span className="item-name">{item.name}</span>
-//                     </li>
-//                   ))}
-//                 </ul>
-//               </div>
-//             )}
-//           </div>
-//         </div>
-
-//         {/* Right Column */}
-//         <div className="column-right">
-//           <label>
-//             Number of Guests:
-//             <input
-//               type="number"
-//               placeholder='Minimum 10 guests are required to place an order'
-//               value={guests}
-//               onChange={(e) => {
-//                 const value = e.target.value;
-//                 if (value === '') {
-//                   setGuests('');
-//                 } else {
-//                   setGuests(Number(value));
-//                 }
-//               }}
-//             />
-//           </label>
-
-//           <label>
-//             Delivery Date:
-//             <input
-//               type="date"
-//               value={deliveryDate}
-//               onChange={(e) => setDeliveryDate(e.target.value)}
-//             />
-//           </label>
-
-//           <label>Delivery Location</label>
-//           <input
-//             type="text"
-//             placeholder="Full Address"
-//             value={deliveryLocation.address}
-//             onChange={(e) =>
-//               setDeliveryLocation({ ...deliveryLocation, address: e.target.value })
-//             }
-//           />
-//           <input
-//             type="text"
-//             placeholder="Landmark (optional)"
-//             value={deliveryLocation.landmark}
-//             onChange={(e) =>
-//               setDeliveryLocation({ ...deliveryLocation, landmark: e.target.value })
-//             }
-//           />
-//           <input
-//             type="text"
-//             placeholder="City"
-//             value={deliveryLocation.city}
-//             onChange={(e) =>
-//               setDeliveryLocation({ ...deliveryLocation, city: e.target.value })
-//             }
-//           />
-//           <input
-//             type="text"
-//             placeholder="Pincode"
-//             value={deliveryLocation.pincode}
-//             onChange={(e) =>
-//               setDeliveryLocation({ ...deliveryLocation, pincode: e.target.value })
-//             }
-//           />
-
-//           <p><strong>Price per person:</strong> ₹{pricePerPerson}</p>
-//           <p><strong>Total:</strong> ₹{total}</p>
-
-//           <div className="button-row">
-//             <button className="adjust-order-btn" onClick={() => navigate(-1)}>
-//               Go Back
-//             </button>
-//             <button className="place-order-btn" onClick={handlePlaceOrder} disabled={!guests || guests < 10}>
-//               Place Order
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-
-//   );
-// };
-
-// export default ReviewOrder;
-
-
-
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../utils/cartContext';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -518,8 +8,10 @@ import OrderPlacedAnimation from '../components/OrderPlacedAnimation';
 import soundSuccess from '../assets/sounds/order-placed.mp3';
 import useAuth from '../hooks/useAuth';
 
-const GST_PERCENT = 8;
+const CGST_PERCENT = 2.5;
+const SGST_PERCENT = 2.5;
 const PLATFORM_CHARGE = 15;
+const MIN_GUESTS = 30;
 
 const ReviewOrder = () => {
   const { cart, resetCart } = useCart();
@@ -530,7 +22,7 @@ const ReviewOrder = () => {
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [selectedMealType, setSelectedMealType] = useState(null);
   const [deliveryDate, setDeliveryDate] = useState('');
-  const [guests, setGuests] = useState(10);
+  const [guests, setGuests] = useState(MIN_GUESTS);
   const [complimentaryItems, setComplimentaryItems] = useState([]);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [deliveryLocation, setDeliveryLocation] = useState({
@@ -611,16 +103,20 @@ const ReviewOrder = () => {
   if (!selectedPackage || !selectedMealType) return null;
 
   const pricePerPerson = PRICES[selectedMealType]?.[selectedPackage] || 0;
-  const total = guests && guests >= 10 ? guests * pricePerPerson : 0;
-  const gstAmount = Math.round((total * GST_PERCENT) / 100);
-  const finalAmount = total + gstAmount + PLATFORM_CHARGE;
+  const total = guests && guests >= MIN_GUESTS ? guests * pricePerPerson : 0;
+  
+  const cgstAmount = Math.round((total * CGST_PERCENT) / 100);
+  const sgstAmount = Math.round((total * SGST_PERCENT) / 100);
+  const totalGst = cgstAmount + sgstAmount;
+  
+  const finalAmount = total + totalGst + PLATFORM_CHARGE;
   const payableNow = Math.round((finalAmount * paymentOption) / 100);
 
   // ---------------- PAYMENT ----------------
   const handlePayAndPlaceOrder = async () => {
 
-    if (!guests || guests < 10) {
-      toast.error('Minimum 10 guests are required to place an order');
+    if (!guests || guests < MIN_GUESTS) {
+      toast.error(`Minimum ${MIN_GUESTS} guests are required to place an order`);
       return;
     }
     if (!deliveryDate) {
@@ -749,7 +245,11 @@ const ReviewOrder = () => {
           <div className="selected-items">
             {Object.entries(cart).map(([category, items]) => (
               <div key={category}>
-                <h4>{category}</h4>
+                <h4>
+                  {category === 'Opted-drink' 
+                    ? 'Selected Drinks' 
+                    : category.replace(/([A-Z])/g, ' $1')}
+                </h4>
                 <ul className="item-list">
                   {items.map((item) => (
                     <li key={item.name} className="item-card">
@@ -783,8 +283,8 @@ const ReviewOrder = () => {
             Number of Guests:
             <input
               type="number"
-              placeholder="Minimum 10 guests are required to place an order"
-              value={guests} min="10"
+              placeholder={`Minimum ${MIN_GUESTS} guests are required to place an order`}
+              value={guests} min={MIN_GUESTS}
               step="1"
               onKeyDown={(e) => ['e', 'E', '+', '-', '.'].includes(e.key) && e.preventDefault()}
               onChange={(e) => {
@@ -864,11 +364,40 @@ const ReviewOrder = () => {
           ))}
 
           <hr />
-          <p><strong>Price per person:</strong> ₹{pricePerPerson}</p>
-          <p>Total: ₹{total}</p>
-          <p>GST: ₹{gstAmount}</p>
-          <p>Platform: ₹{PLATFORM_CHARGE}</p>
-          <p><strong>Pay Now: ₹{payableNow}</strong></p>
+          <div className="price-summary">
+            <div className="price-row">
+              <span>Price per person</span>
+              <span>₹{pricePerPerson}</span>
+            </div>
+            <div className="price-row subtotal">
+              <span>Subtotal ({guests} guests)</span>
+              <span>₹{total}</span>
+            </div>
+            <div className="price-row gst-item">
+              <span>CGST ({CGST_PERCENT}%)</span>
+              <span>₹{cgstAmount}</span>
+            </div>
+            <div className="price-row gst-item">
+              <span>SGST ({SGST_PERCENT}%)</span>
+              <span>₹{sgstAmount}</span>
+            </div>
+            <div className="price-row total-gst">
+              <span>Total GST</span>
+              <span>₹{totalGst}</span>
+            </div>
+            <div className="price-row">
+              <span>Platform Fee</span>
+              <span>₹{PLATFORM_CHARGE}</span>
+            </div>
+            <div className="price-row total-payable">
+              <span>Total Amount</span>
+              <span>₹{finalAmount}</span>
+            </div>
+            <div className="price-row payable-now">
+              <span>Payable Now ({paymentOption}%)</span>
+              <span>₹{payableNow}</span>
+            </div>
+          </div>
 
           <div className="button-row">
             <button className="adjust-order-btn" onClick={() => navigate(-1)}>

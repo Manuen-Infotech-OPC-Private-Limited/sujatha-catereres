@@ -85,7 +85,8 @@ const LoginPage = () => {
     }
   };
 
-  const verifyOtp = async () => {
+  const verifyOtp = async (providedOtp) => {
+    const otpToVerify = providedOtp || otp;
     if (!confirmationResult) {
       toast.error('No OTP request found.');
       return;
@@ -93,7 +94,7 @@ const LoginPage = () => {
 
     try {
       setIsVerifying(true);
-      const res = await confirmationResult.confirm(otp);
+      const res = await confirmationResult.confirm(otpToVerify);
       const user = res.user;
 
       const idToken = await user.getIdToken();
@@ -148,7 +149,13 @@ const LoginPage = () => {
               id="phone"
               placeholder="Enter 10-digit phone number"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              maxLength={10}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, '');
+                if (val.length <= 10) {
+                  setPhone(val);
+                }
+              }}
               required
             />
             <button type="submit" disabled={isLoading}>
@@ -169,7 +176,13 @@ const LoginPage = () => {
               id="otp"
               placeholder="Enter the OTP"
               value={otp}
-              onChange={(e) => setOtp(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setOtp(val);
+                if (val.length === 6) {
+                  verifyOtp(val);
+                }
+              }}
               required
             />
             <button

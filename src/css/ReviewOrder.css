@@ -101,6 +101,93 @@
   font-weight: 500;
 }
 
+
+/* Price Summary Styling */
+.price-summary {
+  background: #fdfdfd;
+  border-radius: 12px;
+  padding: 1.2rem;
+  border: 1px solid #f0f0f0;
+  margin-top: 1.5rem;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.price-row.subtotal {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.gst-item {
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 0.3rem;
+  padding-left: 10px;
+}
+
+.total-gst {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #555;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.total-payable {
+  border-top: 1px solid #eee;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #222;
+}
+
+.payable-now {
+  background: #e6fffa;
+  color: #0f766e;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 1rem;
+  font-weight: 800;
+  font-size: 1.2rem;
+  border: 1px solid #b2f5ea;
+}
+
+/* Radio Buttons for Payment */
+.column-right h4 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: var(--primary-red);
+  font-size: 1.2rem;
+}
+
+label:has(input[type="radio"]) {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 15px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+label:has(input[type="radio"]:checked) {
+  background-color: #fff0f0;
+  border-color: var(--primary-red);
+  color: var(--primary-red);
+}
+
 /* Inputs */
 input[type="number"],
 input[type="tel"],

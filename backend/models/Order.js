@@ -41,6 +41,8 @@ const orderSchema = new mongoose.Schema(
         },
       },
       pricePerBox: Number,
+      variant: String, // "Premium (199)" or "Classic (179)"
+      deliveryMode: String, // "pickup" or "door"
       items: [String],
       taxes: {
         cgst: Number,

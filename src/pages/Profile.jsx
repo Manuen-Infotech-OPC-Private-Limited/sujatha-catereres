@@ -134,40 +134,6 @@ const Profile = () => {
         fetchOrders();
     }, [API, navigate]);
 
-    // ✅ Listen to global socket events
-    // useEffect(() => {
-    //     if (!socket || !user?._id) return;
-
-    //     const handleOrderUpdate = (updatedOrder) => {
-    //         if (String(updatedOrder.user?._id) === String(user._id)) {
-    //             setOrders((prevOrders) =>
-    //                 prevOrders.map((order) =>
-    //                     order._id === updatedOrder._id ? updatedOrder : order
-    //                 )
-    //             );
-
-    //             sendBrowserNotification(
-    //                 "Sujatha Caterers • Order Update",
-    //                 `Your order ${updatedOrder._id} is now "${updatedOrder.status}".`
-    //             );
-    //         }
-    //     };
-
-    //     const handleNewOrder = (newOrder) => {
-    //         if (String(newOrder.user?._id) === String(user._id)) {
-    //             setOrders((prevOrders) => [newOrder, ...prevOrders]);
-    //         }
-    //     };
-
-    //     socket.on('orderUpdated', handleOrderUpdate);
-    //     socket.on('orderCreated', handleNewOrder);
-
-    //     return () => {
-    //         socket.off('orderUpdated', handleOrderUpdate);
-    //         socket.off('orderCreated', handleNewOrder);
-    //     };
-    // }, [socket, user?._id]);
-
     // Save profile changes
     const handleSave = async () => {
         try {
@@ -248,54 +214,69 @@ const Profile = () => {
                                         const remainingAmount = order.total - (order.payment?.amount || 0);
 
                                         let itemList = [];
+                                        let orderDetails = null;
+
                                         if (order.orderType === "catering") {
                                             itemList = Object.values(order.cart || {})
                                                 .flat()
                                                 .map((item) => item.name);
+                                            
+                                            orderDetails = (
+                                                <>
+                                                    <p><strong>No of Guests:</strong> {order.guests}</p>
+                                                    <p><strong>Package:</strong> {order.selectedPackage} ({order.selectedMealType})</p>
+                                                </>
+                                            );
                                         } else if (order.orderType === "mealbox") {
                                             itemList = order.mealBox?.items || [];
+                                            orderDetails = (
+                                                <>
+                                                    <p><strong>Variant:</strong> {order.mealBox.variant || 'Standard'}</p>
+                                                    <p><strong>Quantity:</strong> {order.mealBox.quantity} Boxes</p>
+                                                    <p><strong>Delivery Mode:</strong> {order.mealBox.deliveryMode === 'door' ? 'Door Delivery' : 'Pickup'}</p>
+                                                </>
+                                            );
                                         }
 
                                         return (
                                             <div key={order._id} className="order-item">
-                                                <p><strong>Order ID:</strong> {order._id}</p>
-                                                <p><strong>Type:</strong> {order.orderType}</p>
-                                                {order.orderType === "mealbox" ? <p><strong>Quantity: {order.mealBox.quantity}</strong></p> :
-                                                    <p><strong>No of Guests:</strong> {order.guests}</p>
-                                                }
-                                                <p><strong>Ordered Date:</strong> {new Date(order.createdAt).toLocaleDateString()}</p>
-                                                <p><strong>Total:</strong> ₹{order.total}</p>
+                                                <div className="order-header-row">
+                                                    <p><strong>Order ID:</strong> #{order._id.slice(-6)}</p>
+                                                    <span className={`status-label ${order.status}`}>
+                                                        {order.status}
+                                                    </span>
+                                                </div>
+                                                
+                                                <p><strong>Type:</strong> {order.orderType === 'mealbox' ? 'Meal Box' : 'Catering'}</p>
+                                                
+                                                {orderDetails}
+
+                                                <p><strong>Ordered:</strong> {new Date(order.createdAt).toLocaleDateString()}</p>
                                                 <p><strong>Delivery Date:</strong> {new Date(order.deliveryDate).toLocaleDateString()}</p>
-                                                <p><strong>Delivery Addr:</strong> {order.deliveryLocation.address}</p>
+                                                <p><strong>{order.mealBox?.deliveryMode === 'pickup' ? 'Pickup Loc:' : 'Delivery Loc:'}</strong> {order.deliveryLocation?.address || 'N/A'}</p>
+                                                
+                                                <p className="order-total"><strong>Total:</strong> ₹{order.total}</p>
 
                                                 {order.payment && (
                                                     <div className="payment-card">
                                                         <h4>Payment Details</h4>
 
                                                         <p>
-                                                            Your payment was made using <strong>{order.payment.provider}</strong>.{" "}
+                                                            Paid via <strong>{order.payment.provider}</strong>.{" "}
                                                             {order.payment.status === "paid" && (
                                                                 <>
-                                                                    The payment has been <strong>successfully completed</strong>, and an amount
-                                                                    of <strong>₹{order.payment.amount}</strong> was received on{" "}
-                                                                    <strong>{new Date(order.payment.paidAt).toLocaleString()}</strong>.
+                                                                    <span style={{color: 'green'}}>Paid Fully</span> (₹{order.payment.amount}) on {new Date(order.payment.paidAt).toLocaleDateString()}
                                                                 </>
                                                             )}
 
                                                             {order.payment.status === "partial" && (
                                                                 <>
-                                                                    A <strong>partial payment</strong> of{" "}
-                                                                    <strong>₹{order.payment.amount}</strong> was received on{" "}
-                                                                    <strong>{new Date(order.payment.paidAt).toLocaleString()}</strong>.{" "}
-                                                                    The remaining balance can be paid at your convenience.
+                                                                    <span style={{color: 'orange'}}>Partial Payment</span> (₹{order.payment.amount}). Remaining: <strong>₹{remainingAmount}</strong>
                                                                 </>
                                                             )}
 
                                                             {order.payment.status === "failed" && (
-                                                                <>
-                                                                    Unfortunately, the payment attempt was <strong>unsuccessful</strong>. Please
-                                                                    try again to complete your order.
-                                                                </>
+                                                                <span style={{color: 'red'}}>Payment Failed</span>
                                                             )}
                                                         </p>
 
@@ -311,16 +292,10 @@ const Profile = () => {
 
                                                 )}
 
-                                                <p>
-                                                    <strong>Order Status:</strong>{" "}
-                                                    <span className={`status-label ${order.status}`}>
-                                                        {order.status}
-                                                    </span>
-                                                </p>
-
-                                                <p>
-                                                    <strong>Items:</strong> {itemList.join(", ")}
-                                                </p>
+                                                <details className="items-dropdown">
+                                                    <summary>View Items ({itemList.length})</summary>
+                                                    <p className="items-text">{itemList.join(", ")}</p>
+                                                </details>
 
                                                 <button
                                                     className="invoice-btn"

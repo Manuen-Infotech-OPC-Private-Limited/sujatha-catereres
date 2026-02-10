@@ -35,15 +35,40 @@ const CollapsibleMenu = ({ menuData, selectedPackage, selectedMealType }) => {
         }
 
         const limit = getCategoryLimit(selectedMealType, selectedPackage, category);
-        const existing = cart[category] || [];
+        
+        // 🔹 Determine the correct cart key (matches cartContext.js logic)
+        const cartKey = (category.toLowerCase() === 'complimentary' && item.selectableGroup)
+            ? `Opted-${item.selectableGroup}`
+            : category;
 
+        const existing = cart[cartKey] || [];
         const isAlreadySelected = existing.some(i => i.name === item.name);
 
         if (isAlreadySelected) {
             // Deselect
-            removeItemFromCategory(category, item.name);
+            removeItemFromCategory(cartKey, item.name);
             toast.info(`"${item.name}" removed from "${category}".`);
         } else {
+            // Check cross-category mutual exclusion (Pongal vs Upma)
+            if (selectedMealType === "Breakfast") {
+                const lowerCat = category.toLowerCase();
+                if (lowerCat === 'pongal') {
+                    // Check if Upma is selected
+                    const upmaSelected = (cart['upma'] || []).length > 0;
+                    if (upmaSelected) {
+                        toast.warn(`You can choose either Pongal OR Upma, not both.`);
+                        return;
+                    }
+                } else if (lowerCat === 'upma') {
+                    // Check if Pongal is selected
+                    const pongalSelected = (cart['pongal'] || []).length > 0;
+                    if (pongalSelected) {
+                        toast.warn(`You can choose either Pongal OR Upma, not both.`);
+                        return;
+                    }
+                }
+            }
+
             if (existing.length >= limit) {
                 toast.info(`Limit reached for "${category}". Remove an item to add new ones.`);
                 return;
@@ -63,9 +88,9 @@ const CollapsibleMenu = ({ menuData, selectedPackage, selectedMealType }) => {
 
                     let label;
                     if (isComplimentary) {
-                        label = `${category.replace(/([A-Z])/g, ' $1').trim()} (automatically selected)`;
+                        label = `${category.replace(/([A-Z])/g, ' $1').trim()} (Select options)`;
                     } else if (limit === 0) {
-                        label = `${category.replace(/([A-Z])/g, ' $1').trim()} (Not applicable in this package)`;
+                        label = `${category.replace(/([A-Z])/g, ' $1').trim()} (Not applicable)`;
                     } else {
                         label = `${category.replace(/([A-Z])/g, ' $1').trim()} (${selectedCount} out of ${limit} selected)`;
                     }
@@ -86,40 +111,67 @@ const CollapsibleMenu = ({ menuData, selectedPackage, selectedMealType }) => {
             {Object.entries(menuData).map(([category, dishes]) =>
                 openCategory === category ? (
                     <div key={category} className="category">
+                        {category.toLowerCase() === 'complimentary' && dishes.some(d => d.selectableGroup === 'drink' && !d.autoInclude) && (
+                            <div className="selection-instruction" style={{
+                                backgroundColor: '#fff3cd',
+                                color: '#856404',
+                                padding: '10px',
+                                margin: '10px 10px 0',
+                                borderRadius: '5px',
+                                fontSize: '0.9rem',
+                                border: '1px solid #ffeeba'
+                            }}>
+                                <i className="fas fa-info-circle"></i> Please select either <strong>Tea</strong> or <strong>Coffee</strong> (only one allowed).
+                            </div>
+                        )}
                         <div className="dish-list-wrapper open">
                             {dishes.length === 0 ? (
                                 <p className="empty-category">No items in this category</p>
                             ) : (
                                 dishes.map((dish) => {
                                     const limit = getCategoryLimit(selectedMealType, selectedPackage, category);
-                                    const selectedCount = (cart[category] || []).length;
                                     const isComplimentary = category.toLowerCase() === 'complimentary';
                                     const isSelectable = !isComplimentary || !!dish.selectableGroup;
+                                    const isAutoIncluded = dish.autoInclude;
+                                    
+                                    // 🔹 Determine the correct cart key for selection check
+                                    const cartKey = (isComplimentary && dish.selectableGroup)
+                                        ? `Opted-${dish.selectableGroup}`
+                                        : category;
 
-                                    const disabled = selectedCount >= limit && !(cart[category] || []).some(i => i.name === dish.name);
+                                    const selectedItems = cart[cartKey] || [];
+                                    const isSelected = selectedItems.some(i => i.name === dish.name);
+                                    const selectedCount = selectedItems.length;
+
+                                    const disabled = !isAutoIncluded && selectedCount >= limit && !isSelected;
+                                    const isDrink = dish.selectableGroup === 'drink';
 
                                     return (
                                         <div
                                             key={dish.name}
                                             onClick={() => {
-                                                if (!disabled && isSelectable) {
+                                                if (!disabled && isSelectable && !isAutoIncluded) {
                                                     handleItemClick(category, dish);
                                                 }
                                             }}
                                             style={{
-                                                cursor: disabled ? 'not-allowed' : 'pointer',
-                                                opacity: disabled ? 0.5 : 1,
+                                                cursor: (disabled || isAutoIncluded) ? 'not-allowed' : 'pointer',
+                                                opacity: (disabled) ? 0.5 : 1,
                                             }}
                                         >
                                             <DishCard
                                                 name={dish.name}
                                                 packages={dish.packages}
                                                 selectedPackage={selectedPackage}
-                                                // image={dish.image}
                                                 image={`${process.env.REACT_APP_API_URL}${dish.image}`}
-                                                isSelected={(cart[category] || []).some(i => i.name === dish.name)}
+                                                isSelected={isSelected}
+                                                tag={isDrink && !isAutoIncluded ? "Select 1" : null}
                                             />
-
+                                            {isAutoIncluded && (
+                                                <div style={{ fontSize: '0.8rem', color: 'green', textAlign: 'center' }}>
+                                                    Included
+                                                </div>
+                                            )}
                                         </div>
                                     );
                                 })

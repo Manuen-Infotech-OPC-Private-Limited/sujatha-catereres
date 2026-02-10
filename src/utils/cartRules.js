@@ -1,22 +1,55 @@
 export function getCategoryLimit(mealType, selectedPackage, category) {
   // Breakfast rules
   if (mealType === "Breakfast") {
-    if (category.toLowerCase() === 'complimentary') {
-      return 0;
+    const lowerCat = category.toLowerCase();
+
+    if (lowerCat === 'complimentary') {
+      // Allow selection for Tea/Coffee (managed by selectableGroup)
+      // Auto-included items don't count towards this cart limit.
+      return 5; 
     }
 
-    // Allowed items per package
-    const breakfastItems = {
-      // Basic: ['idly', 'vada', 'upma'],
-      Classic: ['idly', 'vada', 'pongal'],
-      Premium: ['idly', 'vada', 'pongal', 'dosa'],
-      Luxury: ['idly', 'vada', 'pongal', 'dosa', 'upma'],
+    // Limits configuration
+    const limits = {
+      Basic: {
+        idly: 1,
+        vada: 1,
+        upma: 1,
+        pongal: 0,
+        dosa: 0,
+        mysorebonda: 0,
+        sweets: 0
+      },
+      Classic: {
+        idly: 1,
+        vada: 1,
+        upma: 1,
+        pongal: 1,
+        dosa: 0,
+        mysorebonda: 0,
+        sweets: 1
+      },
+      Premium: {
+        idly: 1,
+        vada: 1,
+        upma: 1,
+        pongal: 1,
+        dosa: 1,
+        mysorebonda: 0,
+        sweets: 1
+      },
+      Luxury: {
+        idly: 1,
+        vada: 1,
+        upma: 1,
+        pongal: 1,
+        dosa: 1,
+        mysorebonda: 1,
+        sweets: 1
+      }
     };
 
-    const allowedItems = breakfastItems[selectedPackage] || [];
-
-    // If the category/item is in the allowed list, limit is 1, else 0
-    return allowedItems.includes(category.toLowerCase()) ? 1 : 0;
+    return limits[selectedPackage]?.[lowerCat] ?? 0;
   }
 
   // Lunch & Dinner rules
@@ -28,18 +61,24 @@ export function getCategoryLimit(mealType, selectedPackage, category) {
       flavoredrice: 1,
       northindian: 1,
       southindian: 1,
+      pickles: 1,
       fries: 1,
       icecreams: 0,
       paan: 0,
+      powders: 0,
       complimentary: 0,
     },
     Classic: {
       sweets: 2,
+      pickles: 2,
+      powders: 0,
       paan: 0,
       complimentary: 0,
     },
     Premium: {
       sweets: 2,
+      powders: 0,
+      pickles: 2,
       hotsnacks: 2,
       indianbreads: 2,
       flavoredrice: 2,
@@ -52,7 +91,9 @@ export function getCategoryLimit(mealType, selectedPackage, category) {
     },
     Luxury: {
       sweets: 3,
+      pickles: 3,
       hotsnacks: 3,
+      powders: 2,
       indianbreads: 2,
       flavoredrice: 2,
       northindian: 2,
