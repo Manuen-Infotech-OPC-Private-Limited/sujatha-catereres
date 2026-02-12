@@ -137,6 +137,7 @@ import CartSummary from '../components/CartSummary';
 import { PRICES } from '../utils/pricing';
 import { getEligibleItems } from '../utils/eligibility';
 import { useMenu } from '../utils/MenuContext';
+import { useLocation } from '../utils/LocationContext';
 
 const OrderPage = () => {
   const [selectedPackage, setSelectedPackage] = useState(
@@ -151,6 +152,21 @@ const OrderPage = () => {
   const isCartEmpty = Object.keys(cart).length === 0;
 
   const { getMenu, loading: loadingMenu, error: menuError } = useMenu();
+  const { 
+    isCateringServiceable, 
+    isLoading: loadingLocation, 
+    requestLocation, 
+    permissionDenied,
+    error: locationError,
+    pincode
+  } = useLocation();
+
+  // Request location on mount
+  useEffect(() => {
+    if (!pincode && !permissionDenied) {
+      requestLocation();
+    }
+  }, [pincode, permissionDenied, requestLocation]);
 
   // Fetch menu via shared cache when meal type changes
   useEffect(() => {
@@ -196,6 +212,43 @@ const OrderPage = () => {
       localStorage.setItem('selectedMealType', mealType);
     }
   };
+
+  if (loadingLocation) {
+    return (
+      <div className="home">
+        <Header />
+        <div className="location-loading">
+          <p>Detecting your location to check serviceability...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (permissionDenied || (pincode && !isCateringServiceable)) {
+    return (
+      <div className="home">
+        <Header />
+        <div className="location-blocked">
+          <div className="blocked-content">
+            <h2>{permissionDenied ? 'Location Required' : 'Outside Service Area'}</h2>
+            <p>
+              {permissionDenied 
+                ? 'We need your location to verify if we can deliver catering services to your area.' 
+                : `Sorry, we currently do not provide catering services in your area (Pincode: ${pincode}). Our catering service is available for pincodes 522001 - 522663.`}
+            </p>
+            {permissionDenied && (
+              <button onClick={requestLocation} className="cta-button">
+                Allow Location Access
+              </button>
+            )}
+            <p className="contact-note">
+              If you believe this is an error, please contact us at <a href="tel:+919703505356">+91 97035 05356</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="home">

@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import OrderPlacedAnimation from '../components/OrderPlacedAnimation';
 import soundSuccess from '../assets/sounds/order-placed.mp3';
 import useAuth from '../hooks/useAuth';
+import { checkCateringServiceable } from '../utils/serviceability';
 
 const CGST_PERCENT = 2.5;
 const SGST_PERCENT = 2.5;
@@ -131,6 +132,12 @@ const ReviewOrder = () => {
       toast.error('Please enter a valid 6-digit pincode');
       return;
     }
+
+    if (!checkCateringServiceable(deliveryLocation.pincode)) {
+      toast.error(`Sorry, we do not provide catering services in your area (Pincode: ${deliveryLocation.pincode}). Available for 522001 - 522663.`);
+      return;
+    }
+
     const selectedDate = new Date(deliveryDate);
     const now = new Date();
     now.setHours(0, 0, 0, 0);

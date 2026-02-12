@@ -5,6 +5,7 @@ import mealBoxImg from '../assets/logos/new_mealbox.png';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../utils/AuthContext'; // ✅ get logged-in user
+import { useLocation } from '../utils/LocationContext';
 
 const PICKUP_LOCATIONS = [
   "Taraka Rama Nagar - 10th Line",
@@ -31,6 +32,21 @@ const MealBox = () => {
   const [loading, setLoading] = useState(false);
   const [showOrderDetails, setShowOrderDetails] = useState(false);
 
+  const { 
+    isMealboxServiceable, 
+    isLoading: loadingLocation, 
+    requestLocation, 
+    permissionDenied,
+    pincode 
+  } = useLocation();
+
+  // Request location on mount
+  useEffect(() => {
+    if (!pincode && !permissionDenied) {
+      requestLocation();
+    }
+  }, [pincode, permissionDenied, requestLocation]);
+
   // New State for Delivery
   const [deliveryDate, setDeliveryDate] = useState('');
   const [deliveryLocation, setDeliveryLocation] = useState({
@@ -52,6 +68,7 @@ const MealBox = () => {
       setDeliveryLocation((prev) => ({
         ...prev,
         address: user.address || '',
+        pincode: pincode || prev.pincode || '',
       }));
     } else if (deliveryMode === 'pickup') {
        // Reset or set to default pickup? 
@@ -63,7 +80,7 @@ const MealBox = () => {
            pincode: '522001' 
        });
     }
-  }, [user, deliveryMode]);
+  }, [user, deliveryMode, pincode]);
 
   // Variant Menu Logic
   const baseItems = [
@@ -245,6 +262,43 @@ const MealBox = () => {
       setLoading(false);
     }
   };
+
+  if (loadingLocation) {
+    return (
+      <div className="home">
+        <Header />
+        <div className="location-loading">
+          <p>Detecting your location to check serviceability...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (permissionDenied || (pincode && !isMealboxServiceable)) {
+    return (
+      <div className="home">
+        <Header />
+        <div className="location-blocked">
+          <div className="blocked-content">
+            <h2>{permissionDenied ? 'Location Required' : 'Outside Service Area'}</h2>
+            <p>
+              {permissionDenied 
+                ? 'We need your location to verify if we can deliver Meal Boxes to your area.' 
+                : `Sorry, we currently do not provide Meal Box delivery in your area (Pincode: ${pincode}).`}
+            </p>
+            {permissionDenied && (
+              <button onClick={requestLocation} className="cta-button">
+                Allow Location Access
+              </button>
+            )}
+            <p className="contact-note">
+              If you believe this is an error, please contact us at <a href="tel:+919703505356">+91 97035 05356</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="home">

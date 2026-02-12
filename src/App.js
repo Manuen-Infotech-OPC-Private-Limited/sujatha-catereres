@@ -20,6 +20,7 @@ import { CartProvider } from './utils/cartContext';
 import { SSEProvider } from './utils/SSEContext';
 import { MenuProvider } from './utils/MenuContext';
 import { AuthProvider } from './utils/AuthContext';
+import { LocationProvider } from './utils/LocationContext';
 
 import ProtectedRoute from './components/ProtectedRoute';
 import MealBox from './pages/MealBox';
@@ -27,13 +28,13 @@ import MealBox from './pages/MealBox';
 
 function App() {
   return (
+    <LocationProvider>
+      <CartProvider>
+        <AuthProvider>
+          <MenuProvider>
 
-    <CartProvider>
-      <AuthProvider>
-        <MenuProvider>
-
-          <SSEProvider>
-            <Router>
+            <SSEProvider>
+              <Router>
 
               <div className="App">
                 <Routes>
@@ -103,6 +104,7 @@ function App() {
         </MenuProvider>
       </AuthProvider>
     </CartProvider>
+  </LocationProvider>
   );
 }
 
