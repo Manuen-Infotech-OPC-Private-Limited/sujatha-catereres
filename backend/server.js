@@ -64,6 +64,7 @@ app.use('/api/gallery', require('./routes/galleryRoutes'));
 app.use('/api/menu', require('./routes/menuRoutes'));
 app.use('/api/payments', require('./routes/payments'));
 app.use('/api/complaints', require('./routes/complaintRoutes'));
+app.use('/api/testing', require('./routes/testingRoutes'));
 
 /* ---------- SSE ---------- */
 app.use('/sse', require('./routes/sseRoutes'));

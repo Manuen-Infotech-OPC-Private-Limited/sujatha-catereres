@@ -17,6 +17,7 @@ import InvoicePage from "./pages/InvoicePage";
 import NotFound from './pages/NotFound';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import DataDeletionRequest from './pages/DataDeletionRequest';
+import ClosedTestingRegistration from './pages/ClosedTestingRegistration';
 
 import { CartProvider } from './utils/cartContext';
 import { SSEProvider } from './utils/SSEContext';
@@ -50,6 +51,7 @@ function App() {
                   <Route path="/register" element={<RegisterPage />} />
                   <Route path="/privacy" element={<PrivacyPolicy />} />
                   <Route path="/request-deletion" element={<DataDeletionRequest />} />
+                  <Route path="/closed-testing" element={<ClosedTestingRegistration />} />
 
                   {/* Protected Routes */}
                   <Route
