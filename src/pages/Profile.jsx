@@ -312,6 +312,15 @@ const Profile = () => {
 
                             )}
                         </div>
+
+                        {/* Account Actions */}
+                        <div className="account-actions-section" data-aos="fade-up">
+                            <h3>Account Management</h3>
+                            <p>To request deletion of your account and associated data, please use our official request form.</p>
+                            <button className="request-deletion-link-btn" onClick={() => navigate('/request-deletion')}>
+                                Request Data Deletion
+                            </button>
+                        </div>
                     </>
                 )}
             </div>

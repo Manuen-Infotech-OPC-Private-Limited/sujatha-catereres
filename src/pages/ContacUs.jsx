@@ -3,6 +3,7 @@ import Header from '../components/Header';
 import '../css/ContactUs.css';
 import { toast } from 'react-toastify';
 import { testimonials } from '../data/testimonials';
+import { useNavigate } from 'react-router-dom';
 import {
   FaPhoneAlt,
   FaWhatsapp,
@@ -10,7 +11,8 @@ import {
   FaInstagram,
   FaEnvelope,
   FaClock,
-  FaMapMarkerAlt
+  FaMapMarkerAlt,
+  FaShieldAlt
 } from 'react-icons/fa';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
@@ -31,6 +33,7 @@ const ContactUs = () => {
 
   const [index, setIndex] = useState(0);
   const api = process.env.REACT_APP_API_URL;
+  const navigate = useNavigate();
 
   // -----------------------------
   // 🔹 AOS INIT
@@ -317,6 +320,16 @@ const ContactUs = () => {
               onClick={() => setIndex(i)}
             />
           ))}
+        </div>
+      </section>
+
+      {/* PRIVACY POLICY BUTTON */}
+      <section className="privacy-button-section" data-aos="fade-up">
+        <div className="privacy-container">
+          <p>Your data security is our priority. We value your privacy.</p>
+          <button className="privacy-view-btn" onClick={() => navigate('/privacy')}>
+            <FaShieldAlt /> View Privacy Policy
+          </button>
         </div>
       </section>
 

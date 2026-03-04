@@ -231,6 +231,47 @@
   background-color: #075f52;
 }
 
+/* Account Actions Section */
+.account-actions-section {
+  margin-top: 3rem;
+  padding: 2rem;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  max-width: 600px;
+}
+
+.account-actions-section h3 {
+  color: #1e293b;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.account-actions-section p {
+  color: #64748b;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.request-deletion-link-btn {
+  background-color: #fff;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-family: var(--font-main);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.request-deletion-link-btn:hover {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+  color: #1e293b;
+}
+
 @media (max-width: 768px) {
   .orders-list {
     justify-content: center; /* centers cards nicely on small screens */

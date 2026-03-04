@@ -15,6 +15,8 @@ import OrderPage from './pages/OrderPage';
 import ReviewOrder from './pages/ReviewOrder';
 import InvoicePage from "./pages/InvoicePage";
 import NotFound from './pages/NotFound';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import DataDeletionRequest from './pages/DataDeletionRequest';
 
 import { CartProvider } from './utils/cartContext';
 import { SSEProvider } from './utils/SSEContext';
@@ -46,6 +48,8 @@ function App() {
                   <Route path="/menu" element={<MenuPage />} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/register" element={<RegisterPage />} />
+                  <Route path="/privacy" element={<PrivacyPolicy />} />
+                  <Route path="/request-deletion" element={<DataDeletionRequest />} />
 
                   {/* Protected Routes */}
                   <Route

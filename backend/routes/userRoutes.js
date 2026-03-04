@@ -133,6 +133,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const DeletionRequest = require("../models/DeletionRequest");
 const { verifyFirebaseToken } = require("../service/firebaseAuth");
 const authenticateToken = require("../service/authToken");
 
@@ -413,6 +414,31 @@ router.post("/logout", (req, res) => {
     sameSite: "none",
   });
   res.status(200).json({ message: "Logged out" });
+});
+
+// Submit a data deletion request (Public)
+router.post("/request-deletion", async (req, res) => {
+  try {
+    const { name, phone, email, reason } = req.body;
+
+    if (!name || !phone) {
+      return res.status(400).json({ error: "Name and phone number are required" });
+    }
+
+    const newRequest = new DeletionRequest({
+      name,
+      phone,
+      email,
+      reason
+    });
+
+    await newRequest.save();
+
+    res.status(201).json({ message: "Deletion request submitted successfully. Our team will process it within 30 days." });
+  } catch (err) {
+    console.error("Error submitting deletion request:", err);
+    res.status(500).json({ error: "Failed to submit deletion request" });
+  }
 });
 
 module.exports = router;
